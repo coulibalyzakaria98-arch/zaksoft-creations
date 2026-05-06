@@ -1,11 +1,12 @@
 'use client'; // AJOUTÉ
 
 import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth';
+import { useRouter } from 'next/navigation';
+import { useAuth } from '../../../hooks/useAuth'; // Corrected relative path
 import { ArrowLeft, Send, Code, Info, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Added this line
 
 export default function CreateTemplatePage() {
   const router = useRouter();
@@ -116,7 +117,7 @@ export default function CreateTemplatePage() {
 
             <div className="space-y-2">
               <div className="flex justify-between items-center">
-                <label className="text-sm font-bold text-gray-700 flex items-5 gap-2">
+                <label className="text-sm font-bold text-gray-700 flex items-center gap-2">
                   <Code className="w-4 h-4" />
                   Configuration JSON
                 </label>
@@ -150,7 +151,7 @@ export default function CreateTemplatePage() {
               Monétisation & Visibilité
             </h2>
             
-            <div className="grid grid-cols-1 md:grid-grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="space-y-2">
                 <label className="text-sm font-bold text-gray-700">Prix de vente</label>
                 <div className="relative">

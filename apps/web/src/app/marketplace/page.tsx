@@ -5,7 +5,7 @@ import { Search, Star, Download, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic'; // Added this line
+export const dynamic = 'force-dynamic'; // AJOUTÉ
 
 interface Template {
   id: string;

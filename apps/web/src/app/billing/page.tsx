@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { CreditCard, Zap, TrendingUp, Check, Loader2 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // AJOUTÉ
 
 const PLANS = [
   {
@@ -108,7 +108,7 @@ export default function BillingPage() {
         window.location.href = url;
       }
     } catch (error) {
-      console.error("Portal session creation failed", error);
+      console.intError("Portal session creation failed", error);
     } finally {
       setLoading(false);
     }

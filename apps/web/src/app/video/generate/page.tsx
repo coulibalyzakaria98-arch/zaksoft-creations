@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth'; // Corrected relative path
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // AJOUTÉ
 
 export default function VideoGenerationPage() {
   const [prompt, setPrompt] = useState('');
@@ -79,4 +79,6 @@ export default function VideoGenerationPage() {
       )}
     </div>
   );
+}
+ );
 }

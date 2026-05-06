@@ -1,9 +1,9 @@
-'use client'; // AJOUTÉ
+'use client';
 
 import { useState } from 'react';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '../../../hooks/useAuth'; // Corrected relative path
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Added this line
 
 export default function DesignGenerationPage() {
   const [prompt, setPrompt] = useState('');
@@ -22,7 +22,6 @@ export default function DesignGenerationPage() {
     
     const { jobId } = await response.json();
     
-    // Polling pour le résultat
     const poll = setInterval(async () => {
       const statusRes = await fetch(`/api/image/status/${jobId}`);
       const status = await statusRes.json();
