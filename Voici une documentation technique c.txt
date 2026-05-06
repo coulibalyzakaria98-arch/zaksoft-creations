@@ -1,0 +1,123 @@
+Voici une documentation technique complète et structurée pour votre équipe, résumant l'architecture, les
+  composants et les procédures opérationnelles de la plateforme ZAKSOFT Créations.
+
+  ---
+
+  📚 DOCUMENTATION TECHNIQUE — ZAKSOFT CRÉATIONS
+
+  1. VUE D'ENSEMBLE
+  ZAKSOFT Créations est une plateforme SaaS multi-tenant permettant la création de contenu par IA (Images, Vidéos,
+  Sites Web). L'architecture repose sur des microservices conteneurisés orchestrés par Kubernetes, avec un frontend
+  moderne en Next.js.
+
+  2. ARCHITECTURE GLOBALE
+  La plateforme utilise un modèle de Microservices découplés communiquant via des APIs REST et des files d'attente
+  Redis (BullMQ).
+
+  Composants Clés :
+   - Frontend : Next.js (Port 3000) - Interface utilisateur et Dashboard.
+   - Backend API (Ingress) : Point d'entrée unique via Nginx/Traefik.
+   - Services Métier :
+       - auth-service (3001) : Gestion des identités et sessions.
+       - video-service (3002) : Pipeline de génération vidéo.
+       - design-service (3003) : Pipeline de génération d'images.
+       - web-gen-service (3004) : Moteur de création de sites web.
+       - billing-service (3005) : Intégration Stripe et monétisation.
+       - marketplace-service (3006) : Boutique de templates communautaires.
+   - Infrastructure :
+       - Base de données : PostgreSQL (via Prisma ORM).
+       - Cache & Queues : Redis (BullMQ).
+       - IA Bridges : Proxys Python (FastAPI) vers les modèles SDXL et SVD.
+
+  ---
+
+  3. DÉTAILS DES SERVICES
+
+  🔐 Auth Service (/services/auth)
+  Le coeur de la sécurité.
+   - Authentification : JWT (JSON Web Tokens).
+   - Session : Utilise des Access Tokens (1h) et des Refresh Tokens (7 jours).
+   - Endpoints Clés :
+       - POST /auth/register : Inscription avec validation.
+       - POST /auth/login : Échange credentials -> tokens.
+       - GET /auth/me : Profil utilisateur (utilisé par le frontend).
+   - Sécurité : Middleware de suppression CSP pour le développement local.
+
+  💳 Billing Service (/services/billing)
+  Gère le cycle de vie financier.
+   - Stripe Integration : Checkout Sessions pour les abonnements.
+   - Webhooks : Écoute checkout.session.completed et invoice.payment_succeeded.
+   - Crédits : Incrémente automatiquement le solde User.credits en base de données.
+
+  🏪 Marketplace Service (/services/marketplace)
+  Système de partage et de gain de crédits.
+   - Logique métier : Un utilisateur gagne 5 crédits bonus pour chaque template publié.
+   - Search : Moteur de recherche filtrable par type (Image, Vidéo, Web).
+
+  ---
+
+  4. RÉSEAU & ACCÈS LOCAL
+
+  La plateforme est configurée pour simuler un environnement de production sur une machine locale via Kubernetes
+  (Minikube).
+
+  Configuration DNS (hosts)
+  Pour accéder aux services, le fichier C:\Windows\System32\drivers\etc\hosts doit contenir :
+
+   1 127.0.0.1  zaksoft.local      # Accès Frontend
+   2 127.0.0.1  api.zaksoft.local  # Accès APIs Backend
+
+  Routage Ingress
+  L'Ingress Controller redirige les requêtes selon le préfixe :
+   - zaksoft.local/ -> Frontend
+   - api.zaksoft.local/auth -> Auth Service
+   - api.zaksoft.local/billing -> Billing Service
+   - ...etc.
+
+  ---
+
+  5. DÉVELOPPEMENT & DÉPLOIEMENT
+
+  Prérequis
+   - Docker Desktop
+   - Minikube
+   - Node.js 20+
+
+  Procédure de Build (Minikube)
+  Pour mettre à jour un service dans le cluster :
+
+   1 # 1. Pointer Docker vers Minikube
+   2 minikube docker-env | Invoke-Expression
+   3
+   4 # 2. Build de l'image
+   5 docker build -t auth-service:v6 ./services/auth
+   6
+   7 # 3. Redéploiement
+   8 kubectl rollout restart deployment auth-service -n zaksoft
+
+  Mock AI Bridges
+  Pour permettre le développement sans carte graphique (GPU) coûteuse, nous utilisons des Mock Bridges
+  (infrastructure/k8s/mock-bridge). Ils simulent une génération IA en 5 secondes et retournent des URLs
+  d'images/vidéos de test.
+
+  ---
+
+  6. SÉCURITÉ & CONVENTIONS
+
+   - Base Image : Toujours utiliser node:20-slim (Debian) pour la compatibilité Prisma/OpenSSL.
+   - Prisma : Le schéma est centralisé dans services/auth/prisma/schema.prisma et copié dans les services
+     dépendants lors du build.
+   - Variables d'env : Les secrets critiques (JWT_SECRET, STRIPE_KEY) doivent être gérés via les Kubernetes Secrets
+     (zaksoft-secrets).
+   - Frontend Middleware : La protection des routes Next.js repose sur les Cookies (et non localStorage) pour être
+     compatible avec le SSR (Server Side Rendering).
+
+  ---
+
+  7. ROADMAP TECHNIQUE (À VENIR)
+   1. S3 Storage : Remplacer les chemins locaux par un bucket AWS S3 ou Cloudflare R2.
+   2. Monitoring : Connecter Grafana aux endpoints /metrics déjà exposés par les services.
+   3. HTTPS : Implémenter cert-manager pour le support SSL local.
+
+  ---
+  Fin de la documentation. Mise à jour le 03/05/2026.

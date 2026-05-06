@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: design-service
+  namespace: zaksoft
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: design
+  template:
+    metadata:
+      labels:
+        app: design
+    spec:
+      containers:
+      - name: design
+        image: design-service:v2
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3003
+        env:
+        - name: REDIS_URL
+          value: "redis://redis-service:6379"
+        - name: SD_BRIDGE_URL
+          value: "http://sd-bridge-service:7861"
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: zaksoft-secrets
+              key: JWT_SECRET
+        resources:
+          requests:
+            memory: "1Gi"
+            cpu: "500m"
+          limits:
+            memory: "2Gi"
+            cpu: "2"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: design-service
+  namespace: zaksoft
+spec:
+  selector:
+    app: design
+  ports:
+  - port: 3003
+    targetPort: 3003

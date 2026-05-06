@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: billing-service
+  namespace: zaksoft
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: billing
+  template:
+    metadata:
+      labels:
+        app: billing
+    spec:
+      containers:
+      - name: billing
+        image: billing-service:v2
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3005
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: zaksoft-secrets
+              key: DATABASE_URL
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: zaksoft-secrets
+              key: JWT_SECRET
+        - name: STRIPE_SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: zaksoft-secrets
+              key: STRIPE_SECRET_KEY
+        - name: STRIPE_WEBHOOK_SECRET
+          value: "whsec_your_mock_secret" # À remplacer par le vrai secret plus tard
+        - name: FRONTEND_URL
+          value: "http://zaksoft.local"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: billing-service
+  namespace: zaksoft
+spec:
+  selector:
+    app: billing
+  ports:
+  - port: 3005
+    targetPort: 3005

@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: backend-isolation
+  namespace: zaksoft
+spec:
+  podSelector:
+    matchLabels:
+      service: backend
+  policyTypes:
+  - Ingress
+  ingress:
+  - from:
+    - podSelector:
+        matchLabels:
+          app: frontend
+    - podSelector:
+        matchLabels:
+          app: ingress-nginx
+    ports:
+    - port: 3001
+    - port: 3005
+    - port: 3006
+    - port: 3007

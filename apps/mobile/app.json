@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "ZAKSOFT Créations",
+    "slug": "zaksoft-creations",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#4f46e5"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.zaksoft.creations"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#4f46e5"
+      },
+      "package": "com.zaksoft.creations"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "zaksoft-creations"
+      }
+    },
+    "plugins": [
+      "expo-secure-store",
+      "expo-image-picker",
+      "expo-font",
+      "expo-router"
+    ]
+  }
+}

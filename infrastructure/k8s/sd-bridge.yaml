@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sd-bridge
+  namespace: zaksoft
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: sd-bridge
+  template:
+    metadata:
+      labels:
+        app: sd-bridge
+    spec:
+      containers:
+      - name: sd-bridge
+        image: mock-bridge:v1
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: sd-bridge-service
+  namespace: zaksoft
+spec:
+  selector:
+    app: sd-bridge
+  ports:
+  - port: 7861
+    targetPort: 8000

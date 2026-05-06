@@ -1,0 +1,13 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: zaksoft-tls
+  namespace: zaksoft
+spec:
+  secretName: zaksoft-tls
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  dnsNames:
+  - zaksoft-creations.com
+  - api.zaksoft-creations.com

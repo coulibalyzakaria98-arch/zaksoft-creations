@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: zaksoft-config
+  namespace: zaksoft
+data:
+  NODE_ENV: "production"
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  POSTGRES_HOST: "postgres-service"
+  POSTGRES_DB: "zaksoft"
+  POSTGRES_PORT: "5432"
+  LOG_LEVEL: "info"
+  CORS_ORIGINS: "https://zaksoft-creations.com,https://api.zaksoft-creations.com"

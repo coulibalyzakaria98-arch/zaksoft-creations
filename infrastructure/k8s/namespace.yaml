@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: zaksoft
+  labels:
+    name: zaksoft
+    environment: production

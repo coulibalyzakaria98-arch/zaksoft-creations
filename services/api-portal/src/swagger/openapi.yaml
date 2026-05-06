@@ -1,0 +1,44 @@
+openapi: 3.0.3
+info:
+  title: ZAKSOFT Créations API
+  description: API publique pour les services IA de ZAKSOFT.
+  version: 2.0.0
+servers:
+  - url: https://api.zaksoft-creations.com/v1
+
+components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: 'Bearer <your_api_key>'
+
+security:
+  - ApiKeyAuth: []
+
+paths:
+  /design/generate:
+    post:
+      summary: Générer une image IA
+      tags: [Design]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [prompt]
+              properties:
+                prompt: { type: string }
+                size: { type: string, enum: [512x512, 1024x1024, 4k] }
+      responses:
+        202:
+          description: Job créé
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  jobId: { type: string }
+                  status: { type: string }

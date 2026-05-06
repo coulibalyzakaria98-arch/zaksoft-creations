@@ -1,0 +1,156 @@
+openapi: 3.0.0
+info:
+  title: ZAKSOFT Créations API
+  version: 1.0.0
+  description: API publique pour la suite créative ZAKSOFT (Design, Vidéo, Web)
+servers:
+  - url: https://api.zaksoft-creations.com/v1
+    description: Production
+  - url: http://localhost:3000/api
+    description: Local development
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/me:
+    get:
+      summary: Récupérer le profil utilisateur
+      responses:
+        200:
+          description: Profil utilisateur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+
+  /design/generate:
+    post:
+      summary: Générer une image (SDXL)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt:
+                  type: string
+                width:
+                  type: integer
+                  default: 1024
+                height:
+                  type: integer
+                  default: 1024
+      responses:
+        202:
+          description: Job de génération créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+
+  /video/generate:
+    post:
+      summary: Générer une vidéo cinématographique
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                prompt:
+                  type: string
+                duration:
+                  type: integer
+                  default: 5
+      responses:
+        202:
+          description: Job de génération créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+
+  /web/generate:
+    post:
+      summary: Générer un site web complet
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                description:
+                  type: string
+                framework:
+                  type: string
+                  enum: [react, nextjs, tailwind]
+      responses:
+        202:
+          description: Job de génération créé
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+
+  /jobs/{jobId}:
+    get:
+      summary: Vérifier le statut d'un job
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Statut actuel du job
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobStatus'
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        tier:
+          type: string
+        credits:
+          type: integer
+    
+    Job:
+      type: object
+      properties:
+        jobId:
+          type: string
+        status:
+          type: string
+    
+    JobStatus:
+      type: object
+      properties:
+        jobId:
+          type: string
+        status:
+          type: string
+          enum: [pending, processing, completed, failed]
+        url:
+          type: string
+        error:
+          type: string

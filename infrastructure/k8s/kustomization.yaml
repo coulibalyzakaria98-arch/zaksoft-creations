@@ -1,0 +1,45 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: zaksoft
+
+resources:
+  - namespace.yaml
+  - configmap.yaml
+  - storage/pvc.yaml
+  - services/auth-deployment.yaml
+  - services/frontend-deployment.yaml
+  - ingress/ingress.yaml
+  - ingress/certificate.yaml
+  - hpa.yaml
+  - network-policies.yaml
+
+images:
+  - name: ghcr.io/zaksoft/auth
+    newTag: latest
+  - name: ghcr.io/zaksoft/design
+    newTag: latest
+  - name: ghcr.io/zaksoft/video
+    newTag: latest
+  - name: ghcr.io/zaksoft/webgen
+    newTag: latest
+  - name: ghcr.io/zaksoft/teams
+    newTag: latest
+  - name: ghcr.io/zaksoft/marketplace
+    newTag: latest
+  - name: ghcr.io/zaksoft/billing
+    newTag: latest
+  - name: ghcr.io/zaksoft/analytics
+    newTag: latest
+  - name: ghcr.io/zaksoft/notifications
+    newTag: latest
+  - name: ghcr.io/zaksoft/frontend
+    newTag: latest
+
+configMapGenerator:
+  - name: zaksoft-config
+    behavior: merge
+    literals:
+      - NODE_ENV=production
+      - API_VERSION=v2
+      - CORS_ORIGINS=https://zaksoft-creations.com,https://api.zaksoft-creations.com

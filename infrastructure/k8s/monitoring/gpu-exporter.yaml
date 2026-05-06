@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: nvidia-dcgm-exporter
+  namespace: zaksoft
+spec:
+  selector:
+    matchLabels:
+      name: nvidia-dcgm-exporter
+  template:
+    metadata:
+      labels:
+        name: nvidia-dcgm-exporter
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "9400"
+    spec:
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+      containers:
+      - name: nvidia-dcgm-exporter
+        image: nvidia/dcgm-exporter:latest
+        ports:
+        - containerPort: 9400
+        resources:
+          limits:
+            nvidia.com/gpu: 1
+          requests:
+            memory: "128Mi"
+            cpu: "100m"

@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  api-gateway:
+    image: ghcr.io/zaksoft/api-gateway:latest
+    ports:
+      - "80:3000"
+    environment:
+      - NODE_ENV=production
+    depends_on:
+      - auth
+      - video
+      - design
+
+  auth:
+    image: ghcr.io/zaksoft/auth:latest
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - REFRESH_SECRET=${REFRESH_SECRET}
+      - PORT=3001
+
+  video:
+    image: ghcr.io/zaksoft/video:latest
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - SVD_BRIDGE_URL=http://svd-bridge:7860
+      - RUNWAY_API_KEY=${RUNWAY_API_KEY}
+      - PORT=3002
+
+  design:
+    image: ghcr.io/zaksoft/design:latest
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - SD_BRIDGE_URL=http://sd-bridge:7861
+      - PORT=3003
+
+  web-gen:
+    image: ghcr.io/zaksoft/web-gen:latest
+    environment:
+      - REDIS_URL=${REDIS_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - PORT=3004
+
+  sd-bridge:
+    image: ghcr.io/zaksoft/sd-bridge:latest
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+
+  svd-bridge:
+    image: ghcr.io/zaksoft/svd-bridge:latest
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

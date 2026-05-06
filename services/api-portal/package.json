@@ -1,0 +1,29 @@
+{
+  "name": "@zaksoft/api-portal",
+  "version": "1.0.0",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "nodemon src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "swagger-ui-express": "^5.0.0",
+    "js-yaml": "^4.1.0",
+    "@prisma/client": "latest",
+    "dotenv": "^16.3.1",
+    "cors": "^2.8.5",
+    "ioredis": "^5.3.2",
+    "jsonwebtoken": "^9.0.2"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/swagger-ui-express": "^4.1.6",
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.10.4",
+    "typescript": "^5.3.3",
+    "nodemon": "^3.0.2",
+    "ts-node": "^10.9.2"
+  }
+}

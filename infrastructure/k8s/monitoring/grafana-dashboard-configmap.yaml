@@ -1,0 +1,54 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: zaksoft
+data:
+  datasources.yaml: |
+    apiVersion: 1
+    datasources:
+    - name: Prometheus
+      type: prometheus
+      access: proxy
+      url: http://prometheus.zaksoft:9090
+      isDefault: true
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboards
+  namespace: zaksoft
+data:
+  video-service-dashboard.json: |
+    {
+      "title": "ZAKSOFT Video Service",
+      "panels": [
+        {
+          "title": "Active Video Generations",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "sum(bullmq_active_jobs{queue=\"video-generation\"})"
+            }
+          ]
+        },
+        {
+          "title": "Queue Length",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "bullmq_waiting_jobs{queue=\"video-generation\"}"
+            }
+          ]
+        },
+        {
+          "title": "GPU Utilization",
+          "type": "graph",
+          "targets": [
+            {
+              "expr": "nvidia_gpu_utilization"
+            }
+          ]
+        }
+      ]
+    }
