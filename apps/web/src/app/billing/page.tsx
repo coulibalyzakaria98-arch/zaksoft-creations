@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { CreditCard, Zap, TrendingUp, Check, Loader2 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Added this line
 
 const PLANS = [
   {
@@ -62,6 +62,8 @@ export default function BillingPage() {
       }
     } catch (error) {
       console.error("Failed to fetch transactions", error);
+    } finally {
+      setLoading(false);
     }
   };
 

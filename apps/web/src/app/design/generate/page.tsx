@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 
-export const dynamic = 'force-dynamic';
+export const dynamic = 'force-dynamic'; // Added this line
 
 export default function DesignGenerationPage() {
   const [prompt, setPrompt] = useState('');
