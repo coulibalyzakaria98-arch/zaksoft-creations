@@ -2,7 +2,7 @@
 'use client';
 
 import { useState, useEffect, createContext, useContext } from 'react';
-import { User, login as apiLogin, register as apiRegister, getMe, requestPasswordReset as apiRequestPasswordReset, resetPassword as apiResetPassword } from '../services/authApi'; // Corrected import path
+import { User, login as apiLogin, register as apiRegister, getMe, requestPasswordReset as apiRequestPasswordReset, resetPassword as apiResetPassword } from '../services/authApi';
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 
@@ -16,17 +16,6 @@ interface AuthContextType {
   requestPasswordReset: (email: string) => Promise<void>;
   resetPassword: (token: string, newPassword: string) => Promise<void>;
 }
-
-const defaultAuthContext: AuthContextType = { // Default context for SSR
-  user: null,
-  token: null,
-  isLoading: true, // Keep loading true during SSR
-  login: async () => {},
-  register: async () => {},
-  logout: () => {},
-  requestPasswordReset: async () => {},
-  resetPassword: async () => {},
-};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -62,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const { accessToken, user } = await apiLogin(email, password) as any;
-    const tokenToUse = accessToken; // Backend renvoie accessToken désormais
+    const tokenToUse = accessToken;
     
     localStorage.setItem('token', tokenToUse);
     Cookies.set('token', tokenToUse, { expires: 7, secure: true, sameSite: 'strict' });
@@ -110,11 +99,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context && typeof window === 'undefined') {
-    // Provide a default context during SSR to prevent errors,
-    // actual data will be loaded client-side.
-    return defaultAuthContext;
-  }
   if (!context) {
     throw new Error('useAuth must be used within AuthProvider');
   }
