@@ -1,10 +1,10 @@
-'use client';
+'use client'; // AJOUTÉ
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { CreditCard, Zap, TrendingUp, Check, Loader2 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic'; // Added this line
+export const dynamic = 'force-dynamic';
 
 const PLANS = [
   {

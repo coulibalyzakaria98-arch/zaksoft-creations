@@ -1,4 +1,4 @@
-'use client';
+'use client'; // AJOUTÉ
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -6,7 +6,7 @@ import { useAuth } from '../../../hooks/useAuth';
 import { ArrowLeft, Send, Code, Info, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic'; // Added this line
+export const dynamic = 'force-dynamic';
 
 export default function CreateTemplatePage() {
   const router = useRouter();

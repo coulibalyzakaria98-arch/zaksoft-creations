@@ -1,9 +1,9 @@
-'use client';
+'use client'; // AJOUTÉ
 
 import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth';
 
-export const dynamic = 'force-dynamic'; // Added this line
+export const dynamic = 'force-dynamic';
 
 export default function VideoGenerationPage() {
   const [prompt, setPrompt] = useState('');
