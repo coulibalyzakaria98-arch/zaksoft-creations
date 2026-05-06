@@ -1,7 +1,7 @@
 'use client'; // AJOUTÉ
 
 import { useState } from 'react';
-import { useAuth } from '../../../hooks/useAuth';
+import { useAuth } from '../../../hooks/useAuth'; // Corrected relative path
 
 export const dynamic = 'force-dynamic';
 
@@ -22,7 +22,6 @@ export default function VideoGenerationPage() {
     
     const { jobId } = await response.json();
     
-    // Polling pour le résultat
     const poll = setInterval(async () => {
       const statusRes = await fetch(`/api/video/status/${jobId}`);
       const status = await statusRes.json();
