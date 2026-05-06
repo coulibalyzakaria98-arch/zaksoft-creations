@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "apps/web/**", "use": "@vercel/next" },
+    { "src": "services/auth/**", "use": "@vercel/node" },
+    { "src": "services/design/**", "use": "@vercel/node" },
+    { "src": "services/video/**", "use": "@vercel/node" },
+    { "src": "services/web-gen/**", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/_/auth/(.*)", "dest": "services/auth/$1" },
+    { "src": "/_/design/(.*)", "dest": "services/design/$1" },
+    { "src": "/_/video/(.*)", "dest": "services/video/$1" },
+    { "src": "/_/web-gen/(.*)", "dest": "services/web-gen/$1" },
+    { "src": "/(.*)", "dest": "apps/web/$1" }
+  ]
+}
