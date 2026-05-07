@@ -108,7 +108,7 @@ export default function BillingPage() {
         window.location.href = url;
       }
     } catch (error) {
-      console.intError("Portal session creation failed", error);
+      console.error("Portal session creation failed", error);
     } finally {
       setLoading(false);
     }
