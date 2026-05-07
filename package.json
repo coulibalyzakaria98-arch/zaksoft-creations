@@ -2,6 +2,11 @@
   "name": "zaksoft-creations",
   "private": true,
   "packageManager": "pnpm@8.15.0",
+  "workspaces": [
+    "apps/*",
+    "services/*",
+    "tests/*"
+  ],
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
