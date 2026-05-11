@@ -1,9 +1,9 @@
-'use client';
+'use client'; // AJOUTÉ
 
 import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth'; // Corrected relative path
 
-export const dynamic = 'force-dynamic'; // Added this line
+export const dynamic = 'force-dynamic'; // AJOUTÉ
 
 export default function DesignGenerationPage() {
   const [prompt, setPrompt] = useState('');

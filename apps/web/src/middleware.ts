@@ -22,7 +22,7 @@ export function middleware(request: NextRequest) {
   // If there is a token and the path is public (login, register, reset), redirect to dashboard
   if (token && isPublicPath) {
     // Prevent logged-in users from accessing login/register/reset pages
-    return NextResponse.redirect(new URL('/', request.url));
+    return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
   // Otherwise, allow the request to proceed

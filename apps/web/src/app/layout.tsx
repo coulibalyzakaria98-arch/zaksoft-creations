@@ -2,7 +2,9 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { AuthProvider } from '@/hooks/useAuth'; // Changé pour l'import direct
+import { ClientProviders } from '@/components/providers/ClientProviders';
+import { ToasterProvider } from '@/components/providers/ToasterProvider';
+import { ErrorBoundary } from '@/components/error/ErrorBoundary';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -19,9 +21,12 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={inter.className}>
-        <AuthProvider>  {/* PROTECTION NÉCESSAIRE */}
-          {children}
-        </AuthProvider>
+        <ErrorBoundary>
+          <ClientProviders>
+            {children}
+          </ClientProviders>
+        </ErrorBoundary>
+        <ToasterProvider />
       </body>
     </html>
   );

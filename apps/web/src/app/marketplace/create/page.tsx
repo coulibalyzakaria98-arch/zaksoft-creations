@@ -6,7 +6,7 @@ import { useAuth } from '../../../hooks/useAuth'; // Corrected relative path
 import { ArrowLeft, Send, Code, Info, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic'; // Added this line
+export const dynamic = 'force-dynamic'; // AJOUTÉ
 
 export default function CreateTemplatePage() {
   const router = useRouter();
@@ -134,7 +134,7 @@ export default function CreateTemplatePage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700">URL de l'image d'aperçu (Thumbnail)</label>
+              <label className="text-sm font-bold text-gray-700">URL de lB'image d'aperçu (Thumbnail)</label>
               <input
                 type="url"
                 placeholder="https://images.unsplash.com/..."
@@ -161,7 +161,7 @@ export default function CreateTemplatePage() {
                     max="1000"
                     value={formData.price}
                     onChange={(e) => setFormData({ ...formData, price: parseInt(e.target.value) || 0 })}
-                    className="w-full pl-4 pr-16 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-lg font-bold"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-lg font-bold"
                   />
                   <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-bold">
                     CRÉDITS
@@ -239,4 +239,5 @@ export default function CreateTemplatePage() {
       </div>
     </div>
   );
+} );
 }

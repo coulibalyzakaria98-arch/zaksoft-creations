@@ -1,6 +1,6 @@
 'use client'; // AJOUTÉ
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Search, Star, Download, Loader2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
@@ -197,5 +197,8 @@ export default function MarketplacePage() {
         </div>
       )}
     </div>
+  );
+}
+
   );
 }
