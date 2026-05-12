@@ -15,7 +15,7 @@ export default function DesignGenerationPage() {
   const handleGenerate = async () => {
     setIsGenerating(true);
     
-    const response = await fetch('/api/image/generate', {
+    const response = await fetch('/_/design/image/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ prompt, options: { width: 1024, height: 1024 } })
@@ -24,7 +24,7 @@ export default function DesignGenerationPage() {
     const { jobId } = await response.json();
     
     const poll = setInterval(async () => {
-      const statusRes = await fetch(`/api/image/status/${jobId}`);
+      const statusRes = await fetch(`/_/design/image/status/${jobId}`);
       const status = await statusRes.json();
       
       if (status.status === 'completed') {
