@@ -1,11 +1,12 @@
 {
   "version": 2,
   "builds": [
-    { "src": "apps/web/**", "use": "@vercel/next" },
+    { "src": "apps/web/package.json", "use": "@vercel/next" },
     { "src": "services/design/src/index.ts", "use": "@vercel/node" }
   ],
   "routes": [
     { "src": "/_/design/(.*)", "dest": "services/design/src/index.ts" },
     { "src": "/(.*)", "dest": "apps/web/$1" }
-  ]
+  ],
+  "outputDirectory": "apps/web/.next"
 }
