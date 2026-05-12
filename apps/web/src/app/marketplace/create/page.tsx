@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import { ArrowLeft, Send, Code, Info, Loader2 } from 'lucide-react';
 import Link from 'next/link';
@@ -231,19 +232,6 @@ export default function CreateTemplatePage() {
   "prompt": "neon tiger...",
   "steps": 30,
   "guidance": 7.5
-}`}
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-   </div>
-      </div>
-    </div>
-  );
-}
 }`}
             </div>
           </div>

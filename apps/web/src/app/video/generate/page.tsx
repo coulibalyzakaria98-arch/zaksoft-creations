@@ -1,7 +1,7 @@
 'use client'; // AJOUTÉ
 
 import { useState } from 'react';
-import { useAuth } from '../../../hooks/useAuth'; // Corrected relative path
+import { useAuth } from '@/hooks/useAuth';
 
 export const dynamic = 'force-dynamic'; // AJOUTÉ
 
