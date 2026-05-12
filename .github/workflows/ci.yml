@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+  security-events: write
+
 jobs:
   lint-and-test:
     runs-on: ubuntu-latest
@@ -42,9 +46,10 @@ jobs:
           output: 'trivy-results.sarif'
       
       - name: Upload SARIF
-        uses: github/codeql-action/upload-sarif@v2
+        uses: github/codeql-action/upload-sarif@v3
         with:
           sarif_file: 'trivy-results.sarif'
+          token: ${{ secrets.GITHUB_TOKEN }}
 
   build-images:
     needs: [lint-and-test, security-scan]
