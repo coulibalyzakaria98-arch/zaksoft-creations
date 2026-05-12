@@ -230,6 +230,81 @@ app.get('/auth/me', authenticate, async (req: any, res) => {
   }
 });
 
+/**
+ * Middleware de validation du rôle Admin
+ */
+const isAdmin = async (req: any, res: any, next: any) => {
+  try {
+    const user = await prisma.user.findUnique({ where: { id: req.userId } });
+    if (!user || user.role !== 'admin') {
+      return res.status(403).json({ error: 'Accès refusé. Droits administrateur requis.' });
+    }
+    next();
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la vérification des droits' });
+  }
+};
+
+/**
+ * GET /auth/admin/stats
+ * Statistiques globales pour le dashboard admin
+ */
+app.get('/auth/admin/stats', authenticate, isAdmin, async (req, res) => {
+  try {
+    const totalUsers = await prisma.user.count();
+    
+    // Répartition par industrie
+    const industryStats = await prisma.user.groupBy({
+      by: ['industry'],
+      _count: {
+        _all: true
+      }
+    });
+
+    // Répartition par source (howDidYouHear)
+    const sourceStats = await prisma.user.groupBy({
+      by: ['howDidYouHear'],
+      _count: {
+        _all: true
+      }
+    });
+
+    // Répartition par taille d'entreprise
+    const companySizeStats = await prisma.user.groupBy({
+      by: ['companySize'],
+      _count: {
+        _all: true
+      }
+    });
+
+    // Inscriptions récentes (7 derniers jours)
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    const recentRegistrations = await prisma.user.findMany({
+      where: {
+        createdAt: {
+          gte: sevenDaysAgo
+        }
+      },
+      select: {
+        createdAt: true
+      }
+    });
+
+    res.json({
+      totalUsers,
+      industryStats: industryStats.map(s => ({ name: s.industry || 'Non spécifié', value: s._count._all })),
+      sourceStats: sourceStats.map(s => ({ name: s.howDidYouHear || 'Non spécifié', value: s._count._all })),
+      companySizeStats: companySizeStats.map(s => ({ name: s.companySize || 'Non spécifié', value: s._count._all })),
+      recentRegistrations
+    });
+  } catch (error) {
+    console.error('Erreur stats admin:', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
+  }
+});
+
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'auth' });

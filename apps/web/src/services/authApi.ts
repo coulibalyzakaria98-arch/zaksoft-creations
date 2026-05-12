@@ -37,3 +37,10 @@ export async function requestPasswordReset(email: string): Promise<void> {
 export async function resetPassword(token: string, newPassword: string): Promise<void> {
   await axios.post(`${AUTH_API_URL}/auth/reset-password`, { token, newPassword });
 }
+
+export async function getAdminStats(token: string): Promise<any> {
+  const response = await axios.get(`${AUTH_API_URL}/auth/admin/stats`, {
+    headers: { Authorization: `Bearer ${token}` }
+  });
+  return response.data;
+}
