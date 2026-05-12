@@ -239,7 +239,7 @@ export default function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Taille de l'entreprise</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Taille de l&apos;entreprise</label>
                   <select
                     name="companySize"
                     value={formData.companySize}
@@ -262,7 +262,7 @@ export default function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Secteur d'activité</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Secteur d&apos;activité</label>
                   <select
                     name="industry"
                     value={formData.industry}

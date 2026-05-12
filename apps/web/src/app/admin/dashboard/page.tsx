@@ -67,7 +67,7 @@ export default function AdminDashboard() {
         <div>
           <ShieldCheck className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-gray-900">Accès Refusé</h1>
-          <p className="text-gray-600 mt-2">Vous n'avez pas les droits nécessaires pour accéder à cette page.</p>
+          <p className="text-gray-600 mt-2">Vous n&apos;avez pas les droits nécessaires pour accéder à cette page.</p>
         </div>
       </div>
     );
@@ -134,7 +134,7 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                 <TrendingUp className="text-indigo-600 w-5 h-5" />
-                Sources d'Acquisition
+                Sources d&apos;Acquisition
               </h2>
             </div>
             <div className="h-[300px]">

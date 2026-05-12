@@ -36,7 +36,7 @@ export default function AnalyticsPage() {
       </div>
 
       <div className="bg-white p-10 rounded-[48px] border border-gray-100 shadow-sm h-[400px]">
-        <h2 className="text-xl font-black mb-8">Évolution de l'utilisation</h2>
+        <h2 className="text-xl font-black mb-8">Évolution de l&apos;utilisation</h2>
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data?.usage || []}>
             <CartesianGrid strokeDasharray="3 3" vertical={false} />
