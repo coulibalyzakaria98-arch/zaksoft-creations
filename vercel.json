@@ -3,7 +3,6 @@
   "rootDirectory": ".",
   "buildCommand": "pnpm --filter @zaksoft/web build",
   "installCommand": "pnpm install",
-  "outputDirectory": "apps/web/.next",
   "devCommand": "pnpm --filter @zaksoft/web dev",
   "functions": {
     "apps/web/.next/server/app/**/*.js": {
