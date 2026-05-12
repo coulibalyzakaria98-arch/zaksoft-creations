@@ -1,13 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
-import { Eye, EyeOff, Briefcase, User, Building2, Globe } from 'lucide-react'; // Added Building2 and Globe for companySize/industry, Briefcase for position
 import Link from 'next/link';
 import { toast } from 'sonner';
-
-export const dynamic = 'force-dynamic';
+import { Eye, EyeOff, Building2, User, Briefcase, Globe, Loader2, Send } from 'lucide-react';
 
 export default function RegisterPage() {
   const { register } = useAuth();
@@ -65,7 +62,7 @@ export default function RegisterPage() {
 
   const intendedUses = [
     'Création de contenu pour réseaux sociaux',
-    'Génération d'images pour site web',
+    'Génération d\'images pour site web',
     'Création de vidéos marketing',
     'Développement de sites web',
     'Design produit / UI',
@@ -167,13 +164,14 @@ export default function RegisterPage() {
         industry: formData.industry,
         intendedUse: formData.intendedUse,
         howDidYouHear: formData.howDidYouHear,
-        newsletter: formData.newsletter
+        newsletter: formData.newsletter,
+        website: formData.website,
+        budget: formData.budget
       });
       
       toast.success('Compte créé avec succès !');
     } catch (error) {
       toast.error('Erreur lors de la création du compte');
-      console.error("Registration failed", error);
     } finally {
       setLoading(false);
     }
@@ -306,7 +304,7 @@ export default function RegisterPage() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
                     >
                       {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                     </button>
@@ -333,7 +331,7 @@ export default function RegisterPage() {
             {/* Projet */}
             <div>
               <h2 className="text-lg font-semibold text-gray-800 mb-4">Votre projet</h2>
-              <div className="grid grid-cols-1 md:grid-grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Utilisation prévue</label>
                   <select
@@ -366,7 +364,7 @@ export default function RegisterPage() {
                     value={formData.website}
                     onChange={handleChange}
                     placeholder="https://..."
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                   />
                 </div>
                 <div>
@@ -386,23 +384,23 @@ export default function RegisterPage() {
             
             {/* Options */}
             <div className="space-y-3">
-              <label className="flex items-center gap-3">
+              <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   name="newsletter"
                   checked={formData.newsletter}
                   onChange={handleChange}
-                  className="w-4 h-4 text-indigo-600 rounded"
+                  className="w-4 h-4 text-indigo-600 rounded focus:ring-indigo-500 border-gray-300"
                 />
                 <span className="text-sm text-gray-700">Je souhaite recevoir la newsletter et les offres spéciales</span>
               </label>
-              <label className="flex items-center gap-3">
+              <label className="flex items-center gap-3 cursor-pointer">
                 <input
                   type="checkbox"
                   name="termsAccepted"
                   checked={formData.termsAccepted}
                   onChange={handleChange}
-                  className={`w-4 h-4 rounded ${errors.termsAccepted ? 'border-red-500' : ''}`}
+                  className={`w-4 h-4 rounded focus:ring-indigo-500 ${errors.termsAccepted ? 'border-red-500' : 'border-gray-300'}`}
                 />
                 <span className="text-sm text-gray-700">
                   J'accepte les <Link href="/terms" className="text-indigo-600 hover:underline">Conditions d'utilisation</Link> et la{' '}
@@ -416,17 +414,26 @@ export default function RegisterPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-bold text-lg hover:bg-indigo-700 disabled:opacity-50 transition-all shadow-lg active:scale-95 flex justify-center items-center gap-3"
+              className="w-full bg-gradient-to-r from-indigo-600 to-purple-600 text-white py-4 rounded-xl font-bold text-lg hover:from-indigo-700 hover:to-purple-700 transition-all disabled:opacity-50 flex items-center justify-center gap-2 shadow-lg active:scale-[0.98]"
             >
-              {loading ? <Loader2 className="w-6 h-6 animate-spin" /> : <Send className="w-5 h-5" />}
-              {loading ? 'Publication en cours...' : 'Créer un compte'}
+              {loading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Création en cours...
+                </>
+              ) : (
+                <>
+                  <Send className="w-5 h-5" />
+                  Créer un compte
+                </>
+              )}
             </button>
             
             <p className="text-center text-gray-600">
               Déjà inscrit ?{' '}
-              <Link href="/auth/login" className="text-indigo-600 hover:underline">
+              <Link href="/auth/login" className="text-indigo-600 hover:underline font-medium">
                 Se connecter
-              </Bouton>
+              </Link>
             </p>
           </form>
         </div>

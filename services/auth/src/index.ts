@@ -64,15 +64,19 @@ const generateTokens = (user: { id: string; tier: string }) => {
 // Endpoint d'inscription
 app.post('/auth/register', async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { 
+      email, password, firstName, lastName, 
+      companyName, companySize, position, industry,
+      website, intendedUse, budget, howDidYouHear, newsletter 
+    } = req.body;
     
     // Validation basique
     if (!email || !password || !email.includes('@')) {
       return res.status(400).json({ error: 'Email valide et mot de passe requis' });
     }
 
-    if (password.length < 6) {
-      return res.status(400).json({ error: 'Le mot de passe doit faire au moins 6 caractères' });
+    if (password.length < 8) {
+      return res.status(400).json({ error: 'Le mot de passe doit faire au moins 8 caractères' });
     }
 
     // Vérifier si l'utilisateur existe déjà
@@ -87,6 +91,17 @@ app.post('/auth/register', async (req, res) => {
       data: { 
         email, 
         passwordHash: hashedPassword, 
+        firstName,
+        lastName,
+        companyName,
+        companySize,
+        position,
+        industry,
+        website,
+        intendedUse,
+        budget,
+        howDidYouHear,
+        newsletter: !!newsletter,
         tier: 'free', 
         credits: 10 
       }
@@ -101,7 +116,9 @@ app.post('/auth/register', async (req, res) => {
         id: user.id, 
         email: user.email, 
         tier: user.tier, 
-        credits: user.credits 
+        credits: user.credits,
+        firstName: user.firstName,
+        lastName: user.lastName
       } 
     });
   } catch (error) {

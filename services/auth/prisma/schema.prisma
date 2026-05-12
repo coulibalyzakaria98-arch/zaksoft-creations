@@ -11,6 +11,17 @@ model User {
   id                    String                @id @default(cuid())
   email                 String                @unique
   passwordHash          String
+  firstName             String?
+  lastName              String?
+  companyName           String?
+  companySize           String?
+  position              String?
+  industry              String?
+  website               String?
+  intendedUse           String?
+  budget                String?
+  howDidYouHear         String?
+  newsletter            Boolean               @default(false)
   tier                  Tier                  @default(free)
   credits               Int                   @default(10)
   stripeCustomerId      String?               @unique

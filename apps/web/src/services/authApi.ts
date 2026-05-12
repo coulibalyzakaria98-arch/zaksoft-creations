@@ -12,8 +12,8 @@ export interface User {
 }
 
 // Existing functions
-export async function register(email: string, password: string): Promise<{ token: string; user: User }> {
-  const response = await axios.post(`${AUTH_API_URL}/auth/register`, { email, password });
+export async function register(data: any): Promise<{ accessToken: string; refreshToken: string; user: User }> {
+  const response = await axios.post(`${AUTH_API_URL}/auth/register`, data);
   return response.data;
 }
 
