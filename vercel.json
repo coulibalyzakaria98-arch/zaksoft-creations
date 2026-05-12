@@ -13,6 +13,6 @@
     { "source": "/_/auth/(.*)", "destination": "/api/auth/$1" },
     { "source": "/_/design/(.*)", "destination": "/api/design/$1" },
     { "source": "/_/video/(.*)", "destination": "/api/video/$1" },
-    { "source": "/(.*)", "dest": "apps/web/$1" }
+    { "source": "/(.*)", "destination": "apps/web/$1" }
   ]
 }
