@@ -43,6 +43,14 @@ app.get('/health', (req, res) => {
 // Monter les métriques (avant auth pour le monitoring)
 app.use(metricsApp);
 
+// Normaliser les requêtes Vercel sous /_/design pour que l'Express route correctement
+app.use((req, res, next) => {
+  if (req.url.startsWith('/_/design')) {
+    req.url = req.url.replace('/_/design', '');
+  }
+  next();
+});
+
 // Appliquer l'authentification sur les routes de génération
 app.use('/image', authenticate);
 

@@ -14,29 +14,54 @@ export default function DesignGenerationPage() {
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    
-    const response = await fetch('/_/design/image/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, options: { width: 1024, height: 1024 } })
-    });
-    
-    const { jobId } = await response.json();
-    
-    const poll = setInterval(async () => {
-      const statusRes = await fetch(`/_/design/image/status/${jobId}`);
-      const status = await statusRes.json();
-      
-      if (status.status === 'completed') {
-        setImageUrl(status.url);
-        setIsGenerating(false);
-        clearInterval(poll);
-      } else if (status.status === 'failed') {
-        setIsGenerating(false);
-        clearInterval(poll);
-        alert('Génération échouée');
+
+    try {
+      const response = await fetch('/_/design/image/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, options: { width: 1024, height: 1024 } })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`Design API POST failed ${response.status}: ${errorText}`);
       }
-    }, 2000);
+
+      const { jobId } = await response.json();
+      if (!jobId) {
+        throw new Error('Job ID manquant dans la réponse du service de génération');
+      }
+
+      const poll = setInterval(async () => {
+        try {
+          const statusRes = await fetch(`/_/design/image/status/${jobId}`);
+          if (!statusRes.ok) {
+            const errorText = await statusRes.text();
+            throw new Error(`Design status failed ${statusRes.status}: ${errorText}`);
+          }
+
+          const status = await statusRes.json();
+          if (status.status === 'completed') {
+            setImageUrl(status.url);
+            setIsGenerating(false);
+            clearInterval(poll);
+          } else if (status.status === 'failed') {
+            setIsGenerating(false);
+            clearInterval(poll);
+            alert('Génération échouée');
+          }
+        } catch (pollError) {
+          console.error('Erreur polling design status:', pollError);
+          setIsGenerating(false);
+          clearInterval(poll);
+          alert(`Erreur de statut de génération : ${pollError instanceof Error ? pollError.message : 'Erreur inconnue'}`);
+        }
+      }, 2000);
+    } catch (error) {
+      console.error('Design generation error:', error);
+      setIsGenerating(false);
+      alert(`Erreur génération : ${error instanceof Error ? error.message : 'Erreur inconnue'}`);
+    }
   };
 
   return (
