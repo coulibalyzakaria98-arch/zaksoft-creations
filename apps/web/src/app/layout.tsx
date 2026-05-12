@@ -1,18 +1,19 @@
 // apps/web/src/app/layout.tsx
-'use client'; // AJOUTER CETTE LIGNE
+'use client'; // Maintient 'use client'
 
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { AuthProvider } from '@/hooks/useAuth'; // Changé pour l'import direct
+import { AuthProvider } from '@/hooks/useAuth';
+import { ThemeProvider } from '@/components/providers/ThemeProvider'; // Import ThemeProvider
+import { ToastProvider } from '@/components/providers/ToastProvider'; // Import ToastProvider
 
 const inter = Inter({ subsets: ['latin'] });
 
-// La section metadata est supprimée car elle ne peut pas être exportée depuis un composant client
-// export const metadata: Metadata = {
-//   title: 'ZAKSOFT Créations',
-//   description: 'Plateforme de création de contenu par IA',
-// };
+export const metadata: Metadata = {
+  title: 'ZAKSOFT Créations',
+  description: 'Plateforme de création de contenu par IA',
+};
 
 export default function RootLayout({
   children,
@@ -20,10 +21,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
+    <html lang="fr" suppressHydrationWarning> {/* Added suppressHydrationWarning for ThemeProvider */}
       <body className={inter.className}>
         <AuthProvider>
-          {children}
+          <ThemeProvider> {/* Wrap with ThemeProvider */}
+            <ToastProvider /> {/* Add ToastProvider */}
+            {children}
+          </</ThemeProvider>
         </AuthProvider>
       </body>
     </html>
