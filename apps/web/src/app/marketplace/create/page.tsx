@@ -7,6 +7,7 @@ import { ArrowLeft, Send, Code, Info, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic'; // AJOUTÉ
+export const fetchCache = 'force-no-store';
 
 export default function CreateTemplatePage() {
   const router = useRouter();

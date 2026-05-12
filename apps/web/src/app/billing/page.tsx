@@ -5,6 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { CreditCard, Zap, TrendingUp, Check, Loader2 } from 'lucide-react';
 
 export const dynamic = 'force-dynamic'; // AJOUTÉ
+export const fetchCache = 'force-no-store';
 
 const PLANS = [
   {

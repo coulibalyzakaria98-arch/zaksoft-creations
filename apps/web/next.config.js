@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
+const isWindows = process.platform === 'win32';
 const nextConfig = {
-  output: 'standalone',
+  output: isWindows ? undefined : 'standalone',
   reactStrictMode: true,
   trailingSlash: false,
   experimental: {

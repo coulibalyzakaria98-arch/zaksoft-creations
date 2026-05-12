@@ -23,6 +23,7 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 
 export const dynamic = 'force-dynamic';
+export const fetchCache = 'force-no-store';
 
 const navigation = [
   { name: 'Accueil', href: '/dashboard', icon: Home },

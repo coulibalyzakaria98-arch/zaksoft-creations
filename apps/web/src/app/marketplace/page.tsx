@@ -6,6 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic'; // AJOUTÉ
+export const fetchCache = 'force-no-store';
 
 interface Template {
   id: string;

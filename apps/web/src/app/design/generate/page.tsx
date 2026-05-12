@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth'; // Corrected relative path
 
 export const dynamic = 'force-dynamic'; // AJOUTÉ
+export const fetchCache = 'force-no-store';
 
 export default function DesignGenerationPage() {
   const [prompt, setPrompt] = useState('');
