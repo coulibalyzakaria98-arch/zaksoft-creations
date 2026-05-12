@@ -1,5 +1,4 @@
 // apps/web/src/app/layout.tsx
-'use client'; // AJOUTER CETTE LIGNE
 
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
