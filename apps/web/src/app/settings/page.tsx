@@ -1,9 +1,8 @@
 'use client';
-export const dynamic = 'force-dynamic';
-export const fetchCache = 'force-no-store';
 
 import { useState } from 'react';
-import { useAuth } from '@/hooks/useAuth'; // Assuming alias @ points to src
+import { useAuth } from '@/hooks/useAuth';
+import { CreditCard, Zap, TrendingUp, Check, Loader2, Settings, LayoutDashboard } from 'lucide-react';
 
 export default function SettingsPage() {
   const { user } = useAuth();
