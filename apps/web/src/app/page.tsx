@@ -3,6 +3,8 @@ import { redirect } from 'next/navigation';
 import { cookies } from 'next/headers';
 import LandingPage from '@/components/landing/LandingPage';
 
+export const dynamic = 'force-dynamic';
+
 export default function HomePage() {
   // Check if user is authenticated on the server side
   const cookieStore = cookies();

@@ -2,11 +2,19 @@
 const nextConfig = {
   output: 'standalone',
   reactStrictMode: true,
-  // Disable static generation completely for pages using useAuth()
-  // by not defining getStaticProps/getStaticPaths, and let them be dynamic at runtime.
+  trailingSlash: false,
+  experimental: {
+    serverComponentsExternalPackages: []
+  },
   images: {
     unoptimized: true
-  }
+  },
+  // Force all pages to be dynamic (no static generation)
+  generateBuildId: async () => {
+    return 'build-' + Date.now()
+  },
+  // Disable static optimization for all pages
+  staticPageGenerationTimeout: 0
 };
 
 module.exports = nextConfig;

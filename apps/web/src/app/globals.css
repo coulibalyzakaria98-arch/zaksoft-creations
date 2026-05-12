@@ -1,4 +1,3 @@
-/* apps/web/src/app/globals.css */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,9 +5,11 @@
 /* Styles de base */
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  background: #f3f4f6; /* Couleur de fond gris clair */
+  color: #1f2937;     /* Couleur de texte gris foncé */
 }
 
-/* Masquer la scrollbar par défaut */
+/* Masquer la scrollbar par défaut pour une apparence plus propre */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -18,10 +19,46 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c7d2fe;
+  background: #c7d2fe; /* Couleur indigo clair pour le pouce */
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #818cf8;
+  background: #818cf8; /* Couleur indigo plus foncée au survol */
+}
+
+/* Sidebar Styles (si nécessaire, sinon Tailwind suffit) */
+.sidebar {
+  width: 260px;
+  background: white;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  border-right: 1px solid #e5e7eb;
+  padding: 24px 16px;
+}
+
+/* Main content */
+.main-content {
+  margin-left: 260px;
+  padding: 24px;
+}
+
+/* Cards */
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Bouton pro */
+.btn-pro {
+  background: #4f46e5; /* Couleur indigo */
+  color: white;
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
 }

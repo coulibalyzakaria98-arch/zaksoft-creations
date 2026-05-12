@@ -22,6 +22,8 @@ import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/hooks/useAuth';
 
+export const dynamic = 'force-dynamic';
+
 const navigation = [
   { name: 'Accueil', href: '/dashboard', icon: Home },
   { name: 'Créer Image', href: '/design/generate', icon: Image },

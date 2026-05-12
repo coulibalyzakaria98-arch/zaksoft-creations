@@ -1,17 +1,18 @@
 // apps/web/src/app/layout.tsx
+'use client'; // AJOUTER CETTE LIGNE
+
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
-import { ClientProviders } from '@/components/providers/ClientProviders';
-import { ToasterProvider } from '@/components/providers/ToasterProvider';
-import { ErrorBoundary } from '@/components/error/ErrorBoundary';
+import { AuthProvider } from '@/hooks/useAuth'; // Changé pour l'import direct
 
 const inter = Inter({ subsets: ['latin'] });
 
-export const metadata: Metadata = {
-  title: 'ZAKSOFT Créations',
-  description: 'Plateforme de création de contenu par IA',
-};
+// La section metadata est supprimée car elle ne peut pas être exportée depuis un composant client
+// export const metadata: Metadata = {
+//   title: 'ZAKSOFT Créations',
+//   description: 'Plateforme de création de contenu par IA',
+// };
 
 export default function RootLayout({
   children,
@@ -21,12 +22,9 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body className={inter.className}>
-        <ErrorBoundary>
-          <ClientProviders>
-            {children}
-          </ClientProviders>
-        </ErrorBoundary>
-        <ToasterProvider />
+        <AuthProvider>
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
