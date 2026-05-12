@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useAuth } from '../../../hooks/useAuth'; // Corrected relative path
 
 export const dynamic = 'force-dynamic'; // AJOUTÉ
-export const fetchCache = 'force-no-store';
 
 export default function VideoGenerationPage() {
   const [prompt, setPrompt] = useState('');
@@ -50,7 +49,7 @@ export default function VideoGenerationPage() {
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Un chat astronaute flottant dans l'espace, style Pixar, musique épique..."
+          placeholder="Un chat astronaute flottant dans l{' '}espace, style Pixar, musique épique..."
           className="w-full h-32 p-4 border rounded-lg mb-4 focus:ring-2 focus:ring-purple-500 outline-none"
         />
         
@@ -81,3 +80,4 @@ export default function VideoGenerationPage() {
     </div>
   );
 }
+

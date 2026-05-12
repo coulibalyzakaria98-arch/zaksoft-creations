@@ -1,5 +1,5 @@
 import { authenticate } from './auth';
 import { limiter } from './rate-limit';
-import { generateSchema } from './validation/generateSchema'; // Correction de l'importation
+import { generateSchema } from './validation/generateSchema';
 
 export { authenticate, limiter, generateSchema };

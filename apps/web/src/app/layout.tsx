@@ -1,11 +1,12 @@
 // apps/web/src/app/layout.tsx
+'use client';
 
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/hooks/useAuth';
-import { ThemeProvider } from '@/components/providers/ThemeProvider'; // Import ThemeProvider
-import { ToastProvider } from '@/components/providers/ToastProvider'; // Import ToastProvider
+import { ThemeProvider } from '@/components/providers/ThemeProvider';
+import { ToastProvider } from '@/components/providers/ToastProvider';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -20,11 +21,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" suppressHydrationWarning> {/* Added suppressHydrationWarning for ThemeProvider */}
+    <html lang="fr" suppressHydrationWarning>
       <body className={inter.className}>
         <AuthProvider>
-          <ThemeProvider> {/* Wrap with ThemeProvider */}
-            <ToastProvider /> {/* Add ToastProvider */}
+          <ThemeProvider>
+            <ToastProvider />
+            {children}
+          </ThemeProvider>
+        </AuthProvider>
+      </body>
+    </html>
+  );
+}
+{/* Add ToastProvider */}
             {children}
           </ThemeProvider>
         </AuthProvider>

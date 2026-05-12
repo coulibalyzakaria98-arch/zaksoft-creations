@@ -1,11 +1,11 @@
-'use client'; // AJOUTÉ
+// apps/web/src/app/billing/page.tsx
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { CreditCard, Zap, TrendingUp, Check, Loader2 } from 'lucide-react';
 
-export const dynamic = 'force-dynamic'; // AJOUTÉ
-export const fetchCache = 'force-no-store';
+export const dynamic = 'force-dynamic';
 
 const PLANS = [
   {

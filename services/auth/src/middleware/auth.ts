@@ -9,12 +9,10 @@ export const authenticate = (req: Request, res: Response, next: NextFunction) =>
   }
   
   try {
-    // Use a strong secret, ideally from environment variables
     const decoded = jwt.verify(token, process.env.JWT_SECRET!); 
-    req.user = decoded as any; // Attach user to request
+    req.user = decoded as any;
     next();
   } catch (error) {
     return res.status(401).json({ error: 'Token invalide' });
   }
 };
-

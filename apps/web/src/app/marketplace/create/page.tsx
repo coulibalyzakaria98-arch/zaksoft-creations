@@ -1,13 +1,11 @@
-'use client'; // AJOUTÉ
+'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useAuth } from '../../../hooks/useAuth'; // Corrected relative path
+import { useAuth } from '@/hooks/useAuth';
 import { ArrowLeft, Send, Code, Info, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
-export const dynamic = 'force-dynamic'; // AJOUTÉ
-export const fetchCache = 'force-no-store';
+export const dynamic = 'force-dynamic';
 
 export default function CreateTemplatePage() {
   const router = useRouter();
@@ -135,7 +133,7 @@ export default function CreateTemplatePage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700">URL de lB'image d'aperçu (Thumbnail)</label>
+              <label className="text-sm font-bold text-gray-700">URL de l'image d'aperçu (Thumbnail)</label>
               <input
                 type="url"
                 placeholder="https://images.unsplash.com/..."
@@ -233,6 +231,19 @@ export default function CreateTemplatePage() {
   "prompt": "neon tiger...",
   "steps": 30,
   "guidance": 7.5
+}`}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+   </div>
+      </div>
+    </div>
+  );
+}
 }`}
             </div>
           </div>
