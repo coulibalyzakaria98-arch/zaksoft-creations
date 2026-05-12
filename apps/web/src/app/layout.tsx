@@ -1,6 +1,4 @@
 // apps/web/src/app/layout.tsx
-'use client';
-
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
@@ -26,14 +24,6 @@ export default function RootLayout({
         <AuthProvider>
           <ThemeProvider>
             <ToastProvider />
-            {children}
-          </ThemeProvider>
-        </AuthProvider>
-      </body>
-    </html>
-  );
-}
-{/* Add ToastProvider */}
             {children}
           </ThemeProvider>
         </AuthProvider>
