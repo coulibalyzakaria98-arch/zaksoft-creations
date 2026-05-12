@@ -1,21 +1,11 @@
 /** @type {import('next').NextConfig} */
-const isWindows = process.platform === 'win32';
 const nextConfig = {
-  output: isWindows ? undefined : 'standalone',
+  output: 'standalone', // Commented out to ensure default .next output for Vercel
   reactStrictMode: true,
-  trailingSlash: false,
-  experimental: {
-    serverComponentsExternalPackages: []
-  },
-  images: {
-    unoptimized: true
-  },
-  // Force all pages to be dynamic (no static generation)
-  generateBuildId: async () => {
-    return 'build-' + Date.now()
-  },
-  // Disable static optimization for all pages
-  staticPageGenerationTimeout: 0
+  // output: 'standalone', // Commented out to ensure default .next output for Vercel
+  
+  // Skip static generation for pages that require AuthProvider during build
+  // or handle client-side rendering explicitly.
 };
 
 module.exports = nextConfig;
