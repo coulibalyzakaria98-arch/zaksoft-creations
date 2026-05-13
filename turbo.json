@@ -9,6 +9,9 @@
     "lint": {
       "dependsOn": []
     },
+    "type-check": {
+      "dependsOn": []
+    },
     "dev": {
       "cache": false
     },
