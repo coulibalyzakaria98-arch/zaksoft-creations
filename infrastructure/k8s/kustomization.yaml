@@ -8,7 +8,7 @@ resources:
   - configmap.yaml
   - storage/pvc.yaml
   - services/auth-deployment.yaml
-  - services/frontend-deployment.yaml
+  - frontend.yaml
   - ingress/ingress.yaml
   - ingress/certificate.yaml
   - hpa.yaml

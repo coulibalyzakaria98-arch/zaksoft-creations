@@ -403,8 +403,8 @@ export default function RegisterPage() {
                   className={`w-4 h-4 rounded focus:ring-indigo-500 ${errors.termsAccepted ? 'border-red-500' : 'border-gray-300'}`}
                 />
                 <span className="text-sm text-gray-700">
-                  J'accepte les <Link href="/terms" className="text-indigo-600 hover:underline">Conditions d'utilisation</Link> et la{' '}
-                  <Link href="/privacy" className="text-indigo-600 hover:underline">Politique de confidentialité</Link>
+                  J&apos;accepte les <Link href="/terms" className="text-indigo-600 hover:underline font-medium">Conditions d&apos;utilisation</Link> et la{' '}
+                  <Link href="/privacy" className="text-indigo-600 hover:underline font-medium">Politique de confidentialité</Link>
                 </span>
               </label>
               {errors.termsAccepted && <p className="text-red-500 text-xs">{errors.termsAccepted}</p>}

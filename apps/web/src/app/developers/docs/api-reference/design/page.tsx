@@ -28,7 +28,7 @@ export default function DesignAPIReference() {
                        <code className="text-indigo-600 font-black">prompt</code>
                        <span className="bg-indigo-50 text-indigo-500 text-[10px] font-black px-2 py-0.5 rounded uppercase">Required</span>
                     </div>
-                    <p className="text-gray-500 text-sm">Description textuelle détaillée de l'image souhaitée.</p>
+                    <p className="text-gray-500 text-sm">Description textuelle détaillée de l&apos;image souhaitée.</p>
                  </div>
                  <span className="text-gray-400 font-mono text-xs italic">string</span>
               </div>

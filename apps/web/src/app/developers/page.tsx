@@ -19,7 +19,7 @@ export default function DeveloperPortalPage() {
       <div className="flex justify-between items-end mb-12">
         <div>
           <h1 className="text-4xl font-black text-gray-900 tracking-tight">Console Développeur</h1>
-          <p className="text-gray-500 mt-2 text-lg">Gérez vos intégrations et clés d'accès API.</p>
+          <p className="text-gray-500 mt-2 text-lg">Gérez vos intégrations et clés d&apos;accès API.</p>
         </div>
         <div className="bg-indigo-600 px-6 py-3 rounded-2xl shadow-lg shadow-indigo-100 flex items-center gap-3">
            <Zap size={20} color="white" fill="white" />
@@ -33,7 +33,7 @@ export default function DeveloperPortalPage() {
               <Key size={28} color="#4f46e5" />
            </div>
            <h3 className="text-xl font-bold text-gray-900 mb-2">Clés API</h3>
-           <p className="text-gray-500 text-sm leading-5">Créez et gérez vos jetons d'authentification sécurisés.</p>
+           <p className="text-gray-500 text-sm leading-5">Créez et gérez vos jetons d&apos;authentification sécurisés.</p>
         </Link>
 
         <Link href="/developers/webhooks" className="bg-white p-8 rounded-[32px] border border-gray-100 shadow-sm hover:shadow-xl transition-all group">
@@ -55,7 +55,7 @@ export default function DeveloperPortalPage() {
 
       <div className="bg-gray-900 rounded-[48px] p-10 relative overflow-hidden">
          <div className="relative z-10">
-            <h2 className="text-white text-3xl font-black mb-4">Besoin d'un accès Enterprise ?</h2>
+            <h2 className="text-white text-3xl font-black mb-4">Besoin d&apos;un accès Enterprise ?</h2>
             <p className="text-indigo-200 max-w-xl text-lg mb-8">Pour les volumes élevés et des limites de débit personnalisées, contactez notre équipe commerciale.</p>
             <TouchableOpacity className="bg-white px-10 py-4 rounded-2xl self-start flex-row items-center gap-3">
                <Send size={20} color="#4f46e5" />

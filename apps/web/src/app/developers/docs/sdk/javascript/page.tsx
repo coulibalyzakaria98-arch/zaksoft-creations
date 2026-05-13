@@ -24,7 +24,7 @@ export default function JavaScriptSDKPage() {
         </div>
 
         <div className="bg-white rounded-[40px] border border-gray-100 p-10 shadow-sm">
-           <h2 className="text-2xl font-black text-gray-900 mb-8">Exemple d'utilisation</h2>
+           <h2 className="text-2xl font-black text-gray-900 mb-8">Exemple d&apos;utilisation</h2>
            <pre className="bg-gray-50 p-8 rounded-3xl font-mono text-sm text-gray-700 leading-relaxed overflow-x-auto">
 {`import { Zaksoft } from '@zaksoft/api';
 

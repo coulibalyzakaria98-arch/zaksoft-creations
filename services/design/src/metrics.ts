@@ -1,5 +1,6 @@
 import promClient from 'prom-client';
 import express from 'express';
+import { Queue } from 'bullmq';
 
 const app = express();
 const register = new promClient.Registry();
@@ -29,5 +30,16 @@ app.get('/metrics', async (req, res) => {
   res.set('Content-Type', register.contentType);
   res.end(await register.metrics());
 });
+
+/**
+ * Configure le monitoring d'une queue BullMQ
+ */
+export function setupBullMQMetrics(queue: Queue) {
+  setInterval(async () => {
+    const counts = await queue.getJobCounts('active', 'waiting');
+    activeJobsGauge.set({ queue: queue.name }, counts.active);
+    waitingJobsGauge.set({ queue: queue.name }, counts.waiting);
+  }, 5000);
+}
 
 export const metricsApp = app;

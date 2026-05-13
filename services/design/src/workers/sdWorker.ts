@@ -1,6 +1,7 @@
 import { Worker } from 'bullmq';
 import axios from 'axios';
 import IORedis from 'ioredis';
+import { storageService } from '@zaksoft/storage';
 
 const redis = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');
 
@@ -57,13 +58,15 @@ export const sdBridgeWorker = new Worker(
     
     const imageUrl = await worker.generateImage(prompt, options);
     
-    // Simuler le stockage S3
-    const imageBuffer = await axios.get(imageUrl, { responseType: 'arraybuffer' });
+    // Stockage S3 Réel
+    const imageResponse = await axios.get(imageUrl, { responseType: 'arraybuffer' });
     const s3Key = `images/${job.id}.png`;
     
-    console.log(`Uploaded image to S3: ${s3Key}`);
+    const s3Url = await storageService.uploadFile(Buffer.from(imageResponse.data), s3Key, 'image/png');
     
-    return { url: `https://storage.zaksoft.com/${s3Key}` };
+    console.log(`Uploaded image to S3: ${s3Url}`);
+    
+    return { url: s3Url };
   },
   { connection: redis }
 );

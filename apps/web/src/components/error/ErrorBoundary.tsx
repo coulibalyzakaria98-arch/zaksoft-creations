@@ -76,7 +76,7 @@ function DefaultErrorFallback({ error, resetError }: { error?: Error; resetError
             Réessayer
           </Button>
           <Button onClick={() => window.location.href = '/'}>
-            Retour à l'accueil
+            Retour à l&apos;accueil
           </Button>
         </div>
       </div>

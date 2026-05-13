@@ -78,7 +78,7 @@ export default function LandingPage() {
               </Link>
               <Link href="/register">
                 <Button className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700">
-                  S'inscrire
+                  S&apos;inscrire
                 </Button>
               </Link>
             </div>
@@ -94,7 +94,7 @@ export default function LandingPage() {
             <span className="bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
               {' '}incroyable{' '}
             </span>
-            avec l'IA
+            avec l&apos;IA
           </h1>
           <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
             Transformez vos idées en images et vidéos professionnelles en quelques clics.
@@ -188,7 +188,7 @@ export default function LandingPage() {
                     ))}
                   </div>
                   <CardDescription className="text-gray-600 italic">
-                    "{testimonial.content}"
+                    &quot;{testimonial.content}&quot;
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

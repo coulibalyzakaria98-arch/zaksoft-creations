@@ -9,7 +9,7 @@ export default function RateLimitsPage() {
   return (
     <div className="py-8">
       <h1 className="text-4xl font-black text-gray-900 mb-6 tracking-tight">Rate Limits</h1>
-      <p className="text-gray-500 text-xl mb-12 font-medium">Contrôle de débit et quotas d'utilisation de l'API.</p>
+      <p className="text-gray-500 text-xl mb-12 font-medium">Contrôle de débit et quotas d&apos;utilisation de l&apos;API.</p>
 
       <div className="bg-white rounded-[40px] border border-gray-100 p-10 mb-12 shadow-sm">
         <table className="w-full">

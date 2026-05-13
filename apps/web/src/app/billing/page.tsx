@@ -1,7 +1,7 @@
 // apps/web/src/app/billing/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { CreditCard, Zap, TrendingUp, Check, Loader2 } from 'lucide-react';
 
@@ -48,13 +48,7 @@ export default function BillingPage() {
   const [loading, setLoading] = useState(false);
   const [transactions, setTransactions] = useState([]);
 
-  useEffect(() => {
-    if (user) {
-      fetchTransactions();
-    }
-  }, [user]);
-
-  const fetchTransactions = async () => {
+  const fetchTransactions = useCallback(async () => {
     try {
       const res = await fetch(`/api/billing/transactions?userId=${user?.id}`);
       if (res.ok) {
@@ -66,7 +60,13 @@ export default function BillingPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      fetchTransactions();
+    }
+  }, [user, fetchTransactions]);
 
   const handleSubscribe = async (priceId: string | null) => {
     if (!priceId) return;

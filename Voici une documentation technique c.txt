@@ -115,7 +115,7 @@ Voici une documentation technique complète et structurée pour votre équipe, r
   ---
 
   7. ROADMAP TECHNIQUE (À VENIR)
-   1. S3 Storage : Remplacer les chemins locaux par un bucket AWS S3 ou Cloudflare R2.
+   1. S3 Storage : ✅ TERMINÉ - Implémenté via le package partagé @zaksoft/storage.
    2. Monitoring : Connecter Grafana aux endpoints /metrics déjà exposés par les services.
    3. HTTPS : Implémenter cert-manager pour le support SSL local.
 

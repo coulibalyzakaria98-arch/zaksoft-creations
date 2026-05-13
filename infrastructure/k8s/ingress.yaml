@@ -4,8 +4,15 @@ metadata:
   name: zaksoft-ingress
   namespace: zaksoft
   annotations:
-    kubernetes.io/ingress.class: traefik # Assuming traefik is the ingress controller
+    kubernetes.io/ingress.class: nginx
+    cert-manager.io/cluster-issuer: zaksoft-selfsigned-issuer
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
 spec:
+  tls:
+  - hosts:
+    - zaksoft.local
+    - api.zaksoft.local
+    secretName: zaksoft-local-tls
   rules:
   - host: api.zaksoft.local
     http:

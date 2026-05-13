@@ -7,7 +7,7 @@ export default function NotFound() {
         <h1 className="text-3xl font-bold mb-4">Page non trouvée</h1>
         <p className="text-gray-600 mb-6">La page demandée est introuvable.</p>
         <a href="/" className="rounded-full border border-slate-200 px-5 py-3 text-slate-700 hover:bg-slate-100">
-          Retour à l'accueil
+          Retour à l&apos;accueil
         </a>
       </div>
     </div>

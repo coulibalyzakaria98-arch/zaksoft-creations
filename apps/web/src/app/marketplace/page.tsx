@@ -15,6 +15,7 @@ import {
   ArrowRight,
   Loader2
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { toast } from 'sonner';
 
@@ -117,10 +118,11 @@ export default function MarketplacePage() {
               >
                 <div className="aspect-video w-full bg-gray-100 relative overflow-hidden">
                   {template.thumbnail ? (
-                    <img 
-                      src={template.thumbnail} 
+                    <Image
+                      src={template.thumbnail}
                       alt={template.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      fill
+                      className="object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-300">

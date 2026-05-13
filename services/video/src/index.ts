@@ -3,7 +3,7 @@ import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { metricsApp } from './metrics';
+import { metricsApp, setupBullMQMetrics } from './metrics';
 import { authenticate, AuthRequest } from './middleware/auth';
 
 dotenv.config();
@@ -25,6 +25,9 @@ const videoQueue = new Queue('video-generation', {
     removeOnComplete: true
   }
 });
+
+// Initialiser les métriques BullMQ
+setupBullMQMetrics(videoQueue);
 
 app.use(cors());
 app.use(express.json());

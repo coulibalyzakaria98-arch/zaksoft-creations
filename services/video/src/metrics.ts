@@ -1,5 +1,6 @@
 import promClient from 'prom-client';
 import express from 'express';
+import { Queue } from 'bullmq';
 
 const app = express();
 // Initialiser le registre Prometheus
@@ -41,16 +42,15 @@ app.get('/metrics', async (req, res) => {
   res.end(await register.metrics());
 });
 
-// Placeholder for BullMQ stats update
-async function getBullMQStats() {
-  return { active: 0, waiting: 0 };
+/**
+ * Configure le monitoring d'une queue BullMQ
+ */
+export function setupBullMQMetrics(queue: Queue) {
+  setInterval(async () => {
+    const counts = await queue.getJobCounts('active', 'waiting');
+    activeJobsGauge.set({ queue: queue.name }, counts.active);
+    waitingJobsGauge.set({ queue: queue.name }, counts.waiting);
+  }, 5000);
 }
-
-// Mise à jour périodique des stats BullMQ
-setInterval(async () => {
-  const queueMetrics = await getBullMQStats();
-  activeJobsGauge.set({ queue: 'video-generation' }, queueMetrics.active);
-  waitingJobsGauge.set({ queue: 'video-generation' }, queueMetrics.waiting);
-}, 5000);
 
 export const metricsApp = app;

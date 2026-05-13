@@ -2,6 +2,7 @@ import { Worker } from 'bullmq';
 import axios from 'axios';
 import IORedis from 'ioredis';
 import dotenv from 'dotenv';
+import { storageService } from '@zaksoft/storage';
 
 dotenv.config();
 
@@ -90,17 +91,16 @@ export const svdBridgeWorker = new Worker(
     const worker = new SVDWorker({ url: svdUrl });
     const videoUrl = await worker.generateVideoFromImage(imageUrl, options);
     
-    // Téléchargement et stockage (Mock S3)
+    // Téléchargement et stockage S3
     const s3Key = `videos/${userId || 'anonymous'}/${job.id}.mp4`;
     
-    // TODO: Implémenter le vrai upload S3 ici
-    // const response = await axios.get(videoUrl, { responseType: 'arraybuffer' });
-    // await s3.putObject(s3Key, response.data);
+    const response = await axios.get(videoUrl, { responseType: 'arraybuffer' });
+    const s3Url = await storageService.uploadFile(Buffer.from(response.data), s3Key, 'video/mp4');
     
-    console.log(`[Job ${job.id}] Vidéo générée avec succès : ${s3Key}`);
+    console.log(`[Job ${job.id}] Vidéo générée et uploadée avec succès : ${s3Url}`);
     
     return { 
-      url: `https://storage.zaksoft.com/${s3Key}`,
+      url: s3Url,
       source: videoUrl 
     };
   },

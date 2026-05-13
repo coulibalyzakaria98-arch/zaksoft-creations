@@ -134,7 +134,7 @@ export default function CreateTemplatePage() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-bold text-gray-700">URL de l'image d'aperçu (Thumbnail)</label>
+              <label className="text-sm font-bold text-gray-700">URL de l&apos;image d&apos;aperçu (Thumbnail)</label>
               <input
                 type="url"
                 placeholder="https://images.unsplash.com/..."
@@ -185,7 +185,7 @@ export default function CreateTemplatePage() {
                     Publier publiquement
                   </span>
                 </label>
-                <p className="text-[11px] text-gray-400 mt-1 ml-15 italic">Permet aux autres utilisateurs de voir et d'acheter votre template.</p>
+                <p className="text-[11px] text-gray-400 mt-1 ml-15 italic">Permet aux autres utilisateurs de voir et d&apos;acheter votre template.</p>
               </div>
             </div>
           </div>
@@ -225,7 +225,7 @@ export default function CreateTemplatePage() {
           <div className="bg-white rounded-2xl p-6 border shadow-sm">
             <h3 className="font-bold text-gray-900 mb-4">Aide au formatage</h3>
             <p className="text-sm text-gray-500 leading-relaxed mb-4">
-              Pour les prompts d'images, incluez les paramètres de style, d'éclairage et les mots-clés négatifs dans le JSON.
+              Pour les prompts d&apos;images, incluez les paramètres de style, d&apos;éclairage et les mots-clés négatifs dans le JSON.
             </p>
             <div className="bg-gray-50 p-4 rounded-xl font-mono text-[10px] text-gray-600">
               {`{

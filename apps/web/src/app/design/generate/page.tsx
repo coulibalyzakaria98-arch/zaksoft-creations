@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 
 export const dynamic = 'force-dynamic';
@@ -44,7 +45,7 @@ export default function DesignGenerationPage() {
       
       <div className="bg-white p-6 rounded-xl shadow-md">
         <label className="block text-sm font-medium text-gray-700 mb-2">
-          Prompt de l'image
+          Prompt de l&apos;image
         </label>
         <textarea
           value={prompt}
@@ -65,14 +66,16 @@ export default function DesignGenerationPage() {
       {imageUrl && (
         <div className="mt-8 bg-white p-4 rounded-xl shadow-lg">
           <h2 className="text-xl font-semibold mb-4">Votre Création</h2>
-          <img src={imageUrl} alt="Generated design" className="w-full rounded-lg" />
+          <div className="relative w-full h-96">
+            <Image src={imageUrl} alt="Generated design" fill className="object-cover rounded-lg" />
+          </div>
           <div className="mt-4 flex justify-end">
              <a 
                href={imageUrl} 
                download={`design-${Date.now()}.png`}
                className="text-purple-600 font-medium hover:underline"
              >
-               Télécharger l'image HD
+               Télécharger l&apos;image HD
              </a>
           </div>
         </div>

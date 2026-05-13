@@ -10,6 +10,8 @@ import { writeFile } from 'fs/promises';
 import { createReadStream } from 'fs';
 import dotenv from 'dotenv';
 
+import { storageService } from '@zaksoft/storage';
+
 dotenv.config();
 
 if (ffmpegPath) {
@@ -36,11 +38,6 @@ const bufferFromResponse = async (source: any): Promise<Buffer> => {
     return Buffer.from(source.data);
   }
   throw new Error('Unsupported audio response format from ElevenLabs');
-};
-
-const uploadToS3 = async (filePath: string, key: string) => {
-  // TODO: implémenter l'upload réel vers AWS S3 / Cloudflare R2
-  return `https://storage.zaksoft.com/${key}`;
 };
 
 export const videoWorker = new Worker('video-generation', async (job) => {
@@ -103,7 +100,7 @@ export const videoWorker = new Worker('video-generation', async (job) => {
   });
 
   const s3Key = `videos/${userId || 'anonymous'}/${job.id}.mp4`;
-  const s3Url = await uploadToS3(outputPath, s3Key);
+  const s3Url = await storageService.uploadFile(createReadStream(outputPath), s3Key, 'video/mp4');
 
   return { url: s3Url, subtitles };
 }, { connection: redis });

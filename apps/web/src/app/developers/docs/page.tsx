@@ -45,7 +45,7 @@ export default function DocsLanding() {
       <div className="text-center mb-16">
         <h1 className="text-5xl font-black text-gray-900 mb-6 tracking-tight">API Documentation</h1>
         <p className="text-xl text-gray-500 max-w-2xl mx-auto font-medium">
-          La plateforme ZAKSOFT est conçue pour les développeurs. Intégrez nos moteurs d'IA générative directement dans votre workflow.
+          La plateforme ZAKSOFT est conçue pour les développeurs. Intégrez nos moteurs d&apos;IA générative directement dans votre workflow.
         </p>
       </div>
 

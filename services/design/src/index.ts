@@ -3,7 +3,7 @@ import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { metricsApp } from './metrics';
+import { metricsApp, setupBullMQMetrics } from './metrics';
 import { authenticate, AuthRequest } from './middleware/auth';
 
 // Charger les variables d'environnement
@@ -31,6 +31,9 @@ const imageQueue = new Queue('image-generation', {
     removeOnComplete: true
   }
 });
+
+// Initialiser les métriques BullMQ
+setupBullMQMetrics(imageQueue);
 
 app.use(cors());
 app.use(express.json());

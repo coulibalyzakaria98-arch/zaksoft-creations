@@ -10,7 +10,7 @@ export default function AuthenticationPage() {
   return (
     <div className="py-8">
       <h1 className="text-4xl font-black text-gray-900 mb-6 tracking-tight">Authentification</h1>
-      <p className="text-gray-500 text-xl mb-12 font-medium">Toutes les requêtes vers l'API ZAKSOFT doivent être authentifiées via une clé API sécurisée.</p>
+      <p className="text-gray-500 text-xl mb-12 font-medium">Toutes les requêtes vers l&apos;API ZAKSOFT doivent être authentifiées via une clé API sécurisée.</p>
 
       <div className="space-y-12">
         <div className="bg-white rounded-[40px] border border-gray-100 p-10 shadow-sm">
@@ -21,7 +21,7 @@ export default function AuthenticationPage() {
             <h2 className="text-2xl font-black text-gray-900">Obtenir une clé API</h2>
           </div>
           <p className="text-gray-600 leading-relaxed mb-6">
-            Vous pouvez générer vos clés d'accès depuis votre <Link href="/developers/api-keys" className="text-indigo-600 font-bold underline">Console Développeur</Link>. 
+            Vous pouvez générer vos clés d&apos;accès depuis votre <Link href="/developers/api-keys" className="text-indigo-600 font-bold underline">Console Développeur</Link>. 
             Une clé API commence toujours par le préfixe <code className="bg-gray-100 px-2 py-1 rounded font-mono font-bold">zak_</code>.
           </p>
         </div>
@@ -31,9 +31,9 @@ export default function AuthenticationPage() {
             <div className="bg-white/10 w-12 h-12 rounded-xl items-center justify-center">
                <Shield className="w-6 h-6 text-indigo-400" />
             </div>
-            <h2 className="text-2xl font-black text-white">Usage de l'en-tête HTTP</h2>
+            <h2 className="text-2xl font-black text-white">Usage de l&apos;en-tête HTTP</h2>
           </div>
-          <p className="text-indigo-200 mb-6 font-medium">Transmettez votre clé via l'en-tête standard Bearer Token :</p>
+          <p className="text-indigo-200 mb-6 font-medium">Transmettez votre clé via l&apos;en-tête standard Bearer Token :</p>
           <div className="bg-black/40 rounded-2xl p-6 border border-white/5">
             <pre className="text-emerald-400 font-mono text-sm">
               Authorization: Bearer zak_live_51P2uJ1L9uJ...
