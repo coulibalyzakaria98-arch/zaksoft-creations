@@ -9,10 +9,9 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@zaksoft/storage": "workspace:^",
     "axios": "^1.9.0",
     "@zaksoft/storage": "workspace:*",
-    "cors": "^2.8.5",
+    "bullmq": "^4.14.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "ioredis": "^5.3.2",
