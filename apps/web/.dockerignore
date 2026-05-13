@@ -1,4 +1,6 @@
 node_modules
+.next
+.turbo
 .env
 .npm
 *.log
@@ -8,24 +10,12 @@ node_modules
 *.md
 *.yaml
 *.yml
-infrastructure/
-services/
-tests/
-scripts/
-docs/
-apps/
-turbo.json
-pnpm-lock.yaml
-vercel.json
-postgres.yaml
-auth.yaml
-CONTRIBUTING.md
-LIVRAISON_FINALE.md
-Voici une documentation technique c.txt
-DIAGRAMMES D'ARCHITECTURE (MERMAID)/
-src/
-next.config.js
-postcss.config.js
-tailwind.config.js
-tsconfig.json
-next-env.d.ts
+# Allow source and config for build
+!src/
+!next.config.js
+!postcss.config.js
+!tailwind.config.js
+!tsconfig.json
+!next-env.d.ts
+!package.json
+!pnpm-lock.yaml

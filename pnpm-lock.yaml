@@ -686,6 +686,9 @@ importers:
       jsonwebtoken:
         specifier: ^9.0.2
         version: 9.0.3
+      openai:
+        specifier: ^5.0.0
+        version: 5.23.2
       prom-client:
         specifier: ^15.0.0
         version: 15.1.3
