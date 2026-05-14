@@ -1,18 +1,5 @@
 {
-  "framework": "nextjs",
-  "rootDirectory": ".",
-  "buildCommand": "pnpm --filter @zaksoft/web build",
+  "buildCommand": "cd apps/web && next build",
   "installCommand": "pnpm install",
-  "devCommand": "pnpm --filter @zaksoft/web dev",
-  "functions": {
-    "apps/web/.next/server/app/**/*.js": {
-      "maxDuration": 60
-    }
-  },
-  "rewrites": [
-    { "source": "/_/auth/(.*)", "destination": "/api/auth/$1" },
-    { "source": "/_/design/(.*)", "destination": "/api/design/$1" },
-    { "source": "/_/video/(.*)", "destination": "/api/video/$1" },
-    { "source": "/(.*)", "destination": "apps/web/$1" }
-  ]
+  "framework": "nextjs"
 }
