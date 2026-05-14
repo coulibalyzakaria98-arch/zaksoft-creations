@@ -1,0 +1,692 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                    String                @id @default(cuid())
+  email                 String                @unique
+  passwordHash          String
+  tier                  Tier                  @default(free)
+  credits               Int                   @default(10)
+  stripeCustomerId      String?               @unique
+  stripeSubscriptionId  String?
+  createdAt             DateTime              @default(now())
+  updatedAt             DateTime              @updatedAt
+  
+  memberships           Membership[]
+  ownedTeams            Team[]                @relation("TeamOwner")
+  invitations           Invitation[]
+  projects              Project[]
+  sharedProjects        SharedProjectAccess[]
+  transactions          CreditTransaction[]
+  templates             Template[]
+  reviews               Review[]
+  downloads             Download[]
+  favorites             Favorite[]
+  comments              ProjectComment[]
+  activities            ProjectActivity[]
+  teamActivities        TeamActivity[]
+  apiKeys               ApiKey[]
+  websites              Website[]
+  pushDevices           PushDevice[]
+  notifications         UserNotification[]
+  notificationPrefs    UserNotificationPreference[]
+  usageEvents           UsageEvent[]
+  dailyUsage            DailyUsage[]
+  monthlyUsage          MonthlyUsage[]
+}
+
+model Team {
+  id          String       @id @default(cuid())
+  name        String
+  slug        String       @unique
+  description String?
+  avatar      String?
+  ownerId     String
+  owner       User         @relation("TeamOwner", fields: [ownerId], references: [id])
+  projects    Project[]
+  members     Membership[]
+  invitations Invitation[]
+  activities  TeamActivity[]
+  usageEvents UsageEvent[]
+  dailyUsage  DailyUsage[]
+  monthlyUsage MonthlyUsage[]
+  settings    Json?        @default("{}")
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@index([slug])
+}
+
+model Membership {
+  id        String   @id @default(cuid())
+  role      TeamRole @default(MEMBER)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id])
+  joinedAt  DateTime @default(now())
+
+  @@unique([userId, teamId])
+  @@index([userId])
+  @@index([teamId])
+}
+
+model Invitation {
+  id          String         @id @default(cuid())
+  email       String
+  teamId      String
+  team        Team           @relation(fields: [teamId], references: [id])
+  invitedBy   String
+  inviter     User           @relation(fields: [invitedBy], references: [id])
+  role        TeamRole       @default(MEMBER)
+  token       String         @unique
+  status      InvitationStatus @default(PENDING)
+  expiresAt   DateTime
+  createdAt   DateTime       @default(now())
+  acceptedAt  DateTime?
+  
+  @@index([token])
+  @@index([email, status])
+}
+
+model Project {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  type        ProjectType
+  config      Json
+  outputUrl   String?
+  teamId      String?
+  team        Team?    @relation(fields: [teamId], references: [id])
+  ownerId     String
+  owner       User     @relation(fields: [ownerId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  sharedWith  SharedProjectAccess[]
+  comments    ProjectComment[]
+  versions    ProjectVersion[]
+  activities  ProjectActivity[]
+  
+  @@index([teamId])
+  @@index([ownerId])
+}
+
+model ProjectComment {
+  id        String   @id @default(cuid())
+  content   String
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  parentId  String?
+  parent    ProjectComment? @relation("CommentReplies", fields: [parentId], references: [id])
+  replies   ProjectComment[] @relation("CommentReplies")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId])
+}
+
+model ProjectVersion {
+  id         String   @id @default(cuid())
+  projectId  String
+  project    Project  @relation(fields: [projectId], references: [id])
+  version    Int
+  snapshot   Json
+  createdBy  String
+  createdAt  DateTime @default(now())
+  
+  @@unique([projectId, version])
+  @@index([projectId, version])
+}
+
+model ProjectActivity {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String
+  details   Json?
+  createdAt DateTime @default(now())
+  
+  @@index([projectId, createdAt])
+}
+
+model TeamActivity {
+  id        String   @id @default(cuid())
+  teamId    String
+  team      Team     @relation(fields: [teamId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  action    String
+  details   Json?
+  createdAt DateTime @default(now())
+  
+  @@index([teamId, createdAt])
+}
+
+model ApiKey {
+  id              String         @id @default(cuid())
+  name            String
+  key             String         @unique
+  userId          String
+  user            User           @relation(fields: [userId], references: [id])
+  permissions     ApiPermission[]
+  rateLimit       Int            @default(100)
+  rateLimitWindow Int            @default(60000)
+  lastUsedAt      DateTime?
+  expiresAt       DateTime?
+  isActive        Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  usage           ApiUsage[]
+  webhooks        Webhook[]
+  
+  @@index([key])
+  @@index([userId])
+}
+
+model ApiPermission {
+  id        String   @id @default(cuid())
+  apiKeyId  String
+  apiKey    ApiKey   @relation(fields: [apiKeyId], references: [id])
+  resource  String   // design, video, web, teams, marketplace
+  action    String   // read, write, delete
+  createdAt DateTime @default(now())
+  
+  @@unique([apiKeyId, resource, action])
+}
+
+model ApiUsage {
+  id         String   @id @default(cuid())
+  apiKeyId   String
+  apiKey     ApiKey   @relation(fields: [apiKeyId], references: [id])
+  endpoint   String
+  method     String
+  statusCode Int
+  duration   Int
+  ip         String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+  
+  @@index([apiKeyId, createdAt])
+}
+
+model Webhook {
+  id              String            @id @default(cuid())
+  name            String
+  url             String
+  secret          String
+  apiKeyId        String
+  apiKey          ApiKey            @relation(fields: [apiKeyId], references: [id])
+  events          WebhookEvent[]
+  isActive        Boolean           @default(true)
+  lastTriggeredAt DateTime?
+  lastError       String?
+  createdAt       DateTime          @default(now())
+  deliveries      WebhookDelivery[]
+}
+
+model WebhookDelivery {
+  id             String   @id @default(cuid())
+  webhookId      String
+  webhook        Webhook  @relation(fields: [webhookId], references: [id])
+  event          String
+  payload        Json
+  responseStatus Int?
+  responseBody   String?
+  error          String?
+  duration       Int
+  createdAt      DateTime @default(now())
+  
+  @@index([webhookId, createdAt])
+}
+
+model Website {
+  id             String   @id @default(cuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id])
+  generatedHtml  String
+  templateConfig Json?
+  deployUrl      String?
+  lastDeployedAt DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  
+  deployments    Deployment[]
+  customDomains  CustomDomain[]
+  
+  @@index([userId])
+}
+
+model Deployment {
+  id            String         @id @default(cuid())
+  websiteId     String
+  website       Website        @relation(fields: [websiteId], references: [id])
+  platform      DeploymentPlatform
+  environment   DeploymentEnvironment @default(PRODUCTION)
+  status        DeploymentStatus @default(PENDING)
+  url           String?
+  previewUrl    String?
+  branch        String?
+  commitHash    String?
+  logs          Json?
+  metadata      Json?
+  startedAt     DateTime?
+  completedAt   DateTime?
+  error         String?
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  
+  checks        UptimeCheck[]
+  analytics     DeploymentAnalytics[]
+  
+  @@index([websiteId])
+  @@index([status])
+}
+
+model UptimeCheck {
+  id            String   @id @default(cuid())
+  deploymentId  String
+  deployment    Deployment @relation(fields: [deploymentId], references: [id])
+  status        Boolean
+  responseTime  Int
+  timestamp     DateTime @default(now())
+  
+  @@index([deploymentId, timestamp])
+}
+
+model CustomDomain {
+  id            String   @id @default(cuid())
+  websiteId     String
+  website       Website  @relation(fields: [websiteId], references: [id])
+  domain        String   @unique
+  verified      Boolean  @default(false)
+  sslEnabled    Boolean  @default(false)
+  sslIssuedAt   DateTime?
+  sslExpiresAt  DateTime?
+  verificationToken String?
+  createdAt     DateTime @default(now())
+  
+  @@index([domain])
+}
+
+model DeploymentAnalytics {
+  id            String   @id @default(cuid())
+  deploymentId  String
+  deployment    Deployment @relation(fields: [deploymentId], references: [id])
+  visitors      Int      @default(0)
+  pageViews     Int      @default(0)
+  avgLoadTime   Float
+  bounceRate    Float
+  date          DateTime @default(now())
+  
+  @@unique([deploymentId, date])
+}
+
+model PushDevice {
+  id            String         @id @default(cuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  token         String         @unique
+  platform      DevicePlatform
+  appVersion    String?
+  osVersion     String?
+  model         String?
+  isActive      Boolean        @default(true)
+  lastUsedAt    DateTime       @default(now())
+  createdAt     DateTime       @default(now())
+  
+  notifications UserNotification[]
+  
+  @@index([userId])
+  @@index([token])
+}
+
+model UserNotification {
+  id            String         @id @default(cuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  deviceId      String?
+  device        PushDevice?    @relation(fields: [deviceId], references: [id])
+  type          NotificationType
+  title         String
+  body          String
+  data          Json?
+  imageUrl      String?
+  priority      NotificationPriority @default(NORMAL)
+  status        NotificationStatus @default(SENT)
+  sentAt        DateTime       @default(now())
+  readAt        DateTime?
+  deliveredAt   DateTime?
+  error         String?
+  
+  @@index([userId, status, sentAt])
+  @@index([type, sentAt])
+}
+
+model UserNotificationPreference {
+  id            String         @id @default(cuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  channel       NotificationChannel
+  type          NotificationType
+  enabled       Boolean        @default(true)
+  updatedAt     DateTime       @updatedAt 
+  
+  @@unique([userId, channel, type])
+}
+
+model UsageEvent {
+  id            String         @id @default(cuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  teamId        String?
+  team          Team?          @relation(fields: [teamId], references: [id])
+  service       ServiceType
+  operation     String
+  cost          Float
+  credits       Int
+  duration      Int
+  status        String
+  metadata      Json?
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime       @default(now())
+  
+  @@index([userId, createdAt])
+  @@index([teamId, createdAt])
+  @@index([service, createdAt])
+  @@index([createdAt])
+}
+
+model DailyUsage {
+  id            String         @id @default(cuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  teamId        String?
+  team          Team?          @relation(fields: [teamId], references: [id])
+  date          DateTime
+  service       ServiceType
+  operations    Int
+  totalCost     Float
+  totalCredits  Int
+  avgDuration   Float
+  createdAt     DateTime       @default(now())
+  
+  @@unique([userId, date, service])
+  @@index([userId, date])
+  @@index([teamId, date])
+}
+
+model MonthlyUsage {
+  id            String         @id @default(cuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  teamId        String?
+  team          Team?          @relation(fields: [teamId], references: [id])
+  month         DateTime
+  service       ServiceType
+  operations    Int
+  totalCost     Float
+  totalCredits  Int
+  avgDuration   Float
+  createdAt     DateTime       @default(now())
+  
+  @@unique([userId, month, service])
+  @@index([userId, month])
+}
+
+model CostAnalysis {
+  id            String         @id @default(cuid())
+  period        String         // day, week, month
+  startDate     DateTime
+  endDate       DateTime
+  totalCost     Float
+  costByService Json
+  costByUser    Json
+  costByTeam    Json
+  projections   Json?
+  createdAt     DateTime       @default(now())
+  
+  @@index([period, startDate])
+}
+
+model Forecast {
+  id            String         @id @default(cuid())
+  userId        String?
+  teamId        String?
+  service       ServiceType?
+  period        String         // day, week, month
+  predictedCost Float
+  predictedCredits Int
+  confidence    Float
+  factors       Json
+  createdAt     DateTime       @default(now())
+  
+  @@index([userId, period])
+  @@index([teamId, period])
+}
+
+model SharedProjectAccess {
+  id          String   @id @default(cuid())
+  projectId   String
+  project     Project  @relation(fields: [projectId], references: [id])
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+  permission  ProjectPermission @default(VIEW)
+  createdAt   DateTime @default(now())
+  
+  @@unique([projectId, userId])
+}
+
+model CreditTransaction {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  amount    Int
+  operation String
+  metadata  Json?
+  timestamp DateTime @default(now())
+}
+
+model Template {
+  id          String   @id @default(cuid())
+  name        String
+  description String?
+  type        TemplateType
+  config      Json
+  thumbnail   String?
+  price       Int      @default(0)
+  isPublic    Boolean  @default(false)
+  views       Int      @default(0)
+  avgRating   Float    @default(0)
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id])
+  categoryId  String?
+  category    Category? @relation(fields: [categoryId], references: [id])
+  reviews     Review[]
+  downloads   Download[]
+  favorites   Favorite[]
+  createdAt   DateTime @default(now())
+}
+
+model Category {
+  id        String     @id @default(cuid())
+  name      String     @unique
+  templates Template[]
+}
+
+model Review {
+  id         String   @id @default(cuid())
+  rating     Int
+  comment    String?
+  templateId String
+  template   Template @relation(fields: [templateId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Download {
+  id         String   @id @default(cuid())
+  templateId String
+  template   Template @relation(fields: [templateId], references: [id])
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  createdAt  DateTime @default(now())
+}
+
+model Favorite {
+  id         String   @id @default(cuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+  templateId String
+  template   Template @relation(fields: [templateId], references: [id])
+
+  @@unique([userId, templateId])
+}
+
+enum Tier {
+  free
+  basic
+  pro
+  enterprise
+}
+
+enum TeamRole {
+  OWNER
+  ADMIN
+  MEMBER
+  VIEWER
+}
+
+enum Role {
+  owner
+  admin
+  member
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  EXPIRED
+  CANCELLED
+}
+
+enum ProjectType {
+  DESIGN
+  VIDEO
+  WEBSITE
+}
+
+enum ProjectPermission {
+  VIEW
+  EDIT
+  ADMIN
+}
+
+enum TemplateType {
+  image_prompt
+  video_prompt
+  website_template
+}
+
+enum WebhookEvent {
+  JOB_COMPLETED
+  JOB_FAILED
+  PROJECT_CREATED
+  PROJECT_UPDATED
+  TEMPLATE_PURCHASED
+  CREDITS_UPDATED
+  TEAM_INVITATION
+}
+
+enum DeploymentPlatform {
+  VERCEL
+  NETLIFY
+  CLOUDFLARE_PAGES
+  GITHUB_PAGES
+  AWS_S3
+  CUSTOM_FTP
+  CUSTOM_SFTP
+}
+
+enum DeploymentEnvironment {
+  PREVIEW
+  PRODUCTION
+}
+
+enum DeploymentStatus {
+  PENDING
+  PREPARING
+  BUILDING
+  UPLOADING
+  DEPLOYING
+  SUCCESS
+  FAILED
+  CANCELLED
+}
+
+enum DevicePlatform {
+  IOS
+  ANDROID
+  WEB
+  EXPO
+}
+
+enum NotificationType {
+  JOB_COMPLETED
+  JOB_FAILED
+  JOB_PROGRESS
+  TEAM_INVITE
+  TEAM_MEMBER_JOINED
+  CREDITS_LOW
+  CREDITS_ADDED
+  SUBSCRIPTION_RENEWED
+  DEPLOYMENT_SUCCESS
+  DEPLOYMENT_FAILED
+  TEMPLATE_PURCHASED
+  TEMPLATE_APPROVED
+  MARKETPLACE_SALE
+  COMMENT_RECEIVED
+  MENTION_RECEIVED
+}
+
+enum NotificationPriority {
+  LOW
+  NORMAL
+  HIGH
+  CRITICAL
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  DELIVERED
+  READ
+  FAILED
+}
+
+enum NotificationChannel {
+  PUSH
+  EMAIL
+  SMS
+  WEBHOOK
+}
+
+enum ServiceType {
+  DESIGN
+  VIDEO
+  WEB
+  TEAMS
+  MARKETPLACE
+  DEPLOYMENT
+}

@@ -1,8 +1,69 @@
-node_modules
-**/node_modules
+# Ignore build output
+/dist
+/out
+/out-tsc
+
+# Ignore Next.js files
+/.next/
+/next.config.js
+
+# Node modules
+/node_modules
+
+# Vercel deploy output
+/.vercel/
+
+# pnpm
+/pnpm-lock.yaml
+# If you are using the pnpm store, you might want to ignore it too.
+# However, it's generally recommended to let pnpm manage the store.
+# /.pnpm-store
+
+# Turbo cache and logs
+.turbo/
+**/ .turbo/
+# Turbo daemon logs
+.turbo/daemon/
+# Turbo cookies
+.turbo/cookies/
+
+# Environment variables
 .env
 .env.local
-dist
-build
-.next
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# VS Code settings
+.vscode/
+
+# IDE directories
+.idea/
+*.iml
+
+# Logs
 *.log
+
+# Editor directories
+.editorconfig
+
+# Build output
+build-output.txt
+
+# Docker
+docker-compose.yml
+docker-compose.dev.yml
+docker-compose.prod.yml
+Dockerfile
+
+# Kubernetes
+infrastructure/k8s/
+
+# Other config files
+auth.yaml
+postgres.yaml
+vercel.json
