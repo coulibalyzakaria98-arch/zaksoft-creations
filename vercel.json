@@ -1,16 +1,7 @@
 {
-  "rewrites": [
-    {
-      "source": "/_/auth/(.*)",
-      "destination": "/api/auth/$1"
-    },
-    {
-      "source": "/_/design/(.*)",
-      "destination": "/api/design/$1"
-    },
-    {
-      "source": "/_/video/(.*)",
-      "destination": "/api/video/$1"
-    }
-  ]
+  "framework": "nextjs",
+  "buildCommand": "cd apps/web && next build",
+  "devCommand": "cd apps/web && next dev",
+  "installCommand": "pnpm install",
+  "outputDirectory": "apps/web/.next"
 }
