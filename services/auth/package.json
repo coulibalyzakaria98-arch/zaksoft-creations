@@ -6,7 +6,8 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "ts-node src/index.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "tsc --noEmit",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@prisma/adapter-pg": "5.11.0",
