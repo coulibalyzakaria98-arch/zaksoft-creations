@@ -1,4 +1,18 @@
 {
   "framework": "nextjs",
-  "rootDirectory": "."
+  "rootDirectory": ".",
+  "rewrites": [
+    {
+      "source": "/_/auth/(.*)",
+      "destination": "/api/auth/$1"
+    },
+    {
+      "source": "/_/design/(.*)",
+      "destination": "/api/design/$1"
+    },
+    {
+      "source": "/_/video/(.*)",
+      "destination": "/api/video/$1"
+    }
+  ]
 }
