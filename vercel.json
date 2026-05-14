@@ -1,7 +1,8 @@
 {
+  "rootDirectory": "apps/web",
   "framework": "nextjs",
-  "buildCommand": "pnpm --filter @zaksoft/web build",
-  "devCommand": "pnpm --filter @zaksoft/web dev",
+  "buildCommand": "pnpm exec next build",
+  "devCommand": "pnpm exec next dev",
   "installCommand": "pnpm install",
-  "outputDirectory": "apps/web/.next"
+  "outputDirectory": ".next"
 }
