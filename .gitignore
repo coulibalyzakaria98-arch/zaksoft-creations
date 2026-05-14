@@ -66,4 +66,4 @@ infrastructure/k8s/
 # Other config files
 auth.yaml
 postgres.yaml
-vercel.json
+# vercel.json is removed/cleared as per previous instructions
