@@ -1,25 +1,25 @@
-# Dockerfile
-FROM node:20-slim
-
-# Installer les dépendances système nécessaires pour Prisma
-RUN apt-get update -y && apt-get install -y openssl libssl-dev && rm -rf /var/lib/apt/lists/*
+# Dockerfile pour le service Auth
+FROM node:20-alpine
 
 WORKDIR /app
 
 # Copier les fichiers de dépendances
 COPY package*.json ./
+# Copier le schéma Prisma AVANT npm install pour que postinstall fonctionne
+COPY prisma ./prisma/
 
 # Installer les dépendances
 RUN npm install
 
-# Copier le reste du code
+# Copier le reste du code source
 COPY . .
 
-# Générer le client Prisma
+# Générer le client Prisma au cas où
 RUN npx prisma generate
 
-# Exposer le port
 EXPOSE 3001
 
-# Démarrer avec ts-node
-CMD ["npx", "ts-node", "src/index.ts"]
+ENV PORT 3001
+ENV NODE_ENV production
+
+CMD ["npm", "run", "start"]
