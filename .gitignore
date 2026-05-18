@@ -67,3 +67,5 @@ infrastructure/k8s/
 auth.yaml
 postgres.yaml
 # vercel.json is removed/cleared as per previous instructions
+.vercel
+.env*.local
