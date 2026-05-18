@@ -78,4 +78,5 @@ jobs:
       
       - name: Build and push all images
         run: |
-          pnpm run docker:build -- --push
+          pnpm run docker:build
+          pnpm run docker:push
