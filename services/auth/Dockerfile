@@ -1,20 +1,22 @@
 # Dockerfile pour le service Auth
-FROM node:20-alpine
+FROM node:20-slim
+
+# Installer OpenSSL (nécessaire pour Prisma)
+RUN apt-get update -y && apt-get install -y openssl && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Copier les fichiers de dépendances
+# Copier les fichiers de dépendances ET le dossier prisma
 COPY package*.json ./
-# Copier le schéma Prisma AVANT npm install pour que postinstall fonctionne
 COPY prisma ./prisma/
 
-# Installer les dépendances
+# Installer les dépendances (le postinstall pourra générer le client)
 RUN npm install
 
-# Copier le reste du code source
+# Copier le reste du code
 COPY . .
 
-# Générer le client Prisma au cas où
+# Générer le client Prisma (au cas où)
 RUN npx prisma generate
 
 EXPOSE 3001
