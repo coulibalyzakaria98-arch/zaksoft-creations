@@ -14,8 +14,9 @@
     "test": "turbo run test",
     "lint": "turbo run lint",
     "type-check": "turbo run type-check",
-    "docker:build": "docker compose -f infrastructure/docker/docker-compose.prod.yml build"
-  },
+    "docker:build": "docker compose -f infrastructure/docker/docker-compose.prod.yml build",
+    "docker:push": "docker compose -f infrastructure/docker/docker-compose.prod.yml push"
+    },
   "devDependencies": {
     "turbo": "^1.11.3",
     "prettier": "^3.1.1"
