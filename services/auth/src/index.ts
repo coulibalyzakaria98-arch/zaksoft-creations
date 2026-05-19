@@ -4,6 +4,10 @@ import bcrypt from 'bcrypt';
 import { PrismaClient } from '@prisma/client';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import helmet from 'helmet';
+import { z } from 'zod';
+import { authLimiter } from './middleware/rate-limit';
+import { registerSchema } from './middleware/validation';
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -24,16 +28,10 @@ if (!JWT_SECRET) {
 
 console.log('Environment variables loaded successfully.');
 
+app.use(helmet()); // Apply security headers
 app.use(cors());
 app.use(express.json());
-
-// ⚠️ IMPORTANT : Désactiver CSP pour le développement (évite le blocage des ressources externes)
-app.use((req, res, next) => {
-  res.removeHeader('Content-Security-Policy');
-  res.removeHeader('X-Content-Type-Options');
-  res.removeHeader('X-Frame-Options');
-  next();
-});
+app.use(authLimiter); // Apply rate limiting
 
 // Test database connection
 prisma.$connect()
@@ -64,21 +62,13 @@ const generateTokens = (user: { id: string; tier: string }) => {
 // Endpoint d'inscription
 app.post('/auth/register', async (req, res) => {
   try {
+    const validatedData = registerSchema.parse(req.body);
     const { 
       email, password, firstName, lastName, 
       companyName, companySize, position, industry,
       website, intendedUse, budget, howDidYouHear, newsletter 
-    } = req.body;
+    } = validatedData;
     
-    // Validation basique
-    if (!email || !password || !email.includes('@')) {
-      return res.status(400).json({ error: 'Email valide et mot de passe requis' });
-    }
-
-    if (password.length < 8) {
-      return res.status(400).json({ error: 'Le mot de passe doit faire au moins 8 caractères' });
-    }
-
     // Vérifier si l'utilisateur existe déjà
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
@@ -91,17 +81,18 @@ app.post('/auth/register', async (req, res) => {
       data: { 
         email, 
         passwordHash: hashedPassword, 
-        // firstName,
-        // lastName,
-        // companyName,
-        // companySize,
-        // position,
-        // industry,
-        // website,
-        // intendedUse,
-        // budget,
-        // howDidYouHear,
-        // newsletter: !!newsletter,
+        firstName: firstName || null,
+        lastName: lastName || null,
+        companyName: companyName || null,
+        companySize: companySize || null,
+        position: position || null,
+        industry: industry || null,
+        role: 'user',
+        howDidYouHear: howDidYouHear || null,
+        website: website || null,
+        intendedUse: intendedUse || null,
+        budget: budget || null,
+        newsletter: !!newsletter,
         tier: 'free', 
         credits: 10 
       }
@@ -123,6 +114,9 @@ app.post('/auth/register', async (req, res) => {
       } 
     });
   } catch (error) {
+    if (error instanceof z.ZodError) {
+      return res.status(400).json({ error: error.errors });
+    }
     console.error('Erreur inscription:', error);
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
