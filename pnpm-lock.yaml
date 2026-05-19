@@ -271,6 +271,12 @@ importers:
       '@prisma/client':
         specifier: 5.11.0
         version: 5.11.0(prisma@5.11.0)
+      '@zaksoft/health':
+        specifier: workspace:^
+        version: link:../../packages/health
+      '@zaksoft/logging':
+        specifier: workspace:^
+        version: link:../../packages/logging
       cors:
         specifier: ^2.8.5
         version: 2.8.6
@@ -433,6 +439,12 @@ importers:
 
   services/design:
     dependencies:
+      '@zaksoft/health':
+        specifier: workspace:^
+        version: link:../../packages/health
+      '@zaksoft/logging':
+        specifier: workspace:^
+        version: link:../../packages/logging
       '@zaksoft/storage':
         specifier: workspace:*
         version: link:../../packages/storage
@@ -485,6 +497,12 @@ importers:
       '@prisma/client':
         specifier: 5.11.0
         version: 5.11.0(prisma@5.11.0)
+      '@zaksoft/health':
+        specifier: workspace:^
+        version: link:../../packages/health
+      '@zaksoft/logging':
+        specifier: workspace:^
+        version: link:../../packages/logging
       bullmq:
         specifier: ^4.14.0
         version: 4.18.3
@@ -583,6 +601,12 @@ importers:
       '@prisma/client':
         specifier: 5.11.0
         version: 5.11.0(prisma@5.11.0)
+      '@zaksoft/health':
+        specifier: workspace:^
+        version: link:../../packages/health
+      '@zaksoft/logging':
+        specifier: workspace:^
+        version: link:../../packages/logging
       bullmq:
         specifier: ^4.14.0
         version: 4.18.3
@@ -702,6 +726,12 @@ importers:
       '@prisma/client':
         specifier: 5.11.0
         version: 5.11.0(prisma@5.11.0)
+      '@zaksoft/health':
+        specifier: workspace:^
+        version: link:../../packages/health
+      '@zaksoft/logging':
+        specifier: workspace:^
+        version: link:../../packages/logging
       '@zaksoft/storage':
         specifier: workspace:^
         version: link:../../packages/storage

@@ -9,6 +9,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@zaksoft/health": "workspace:^",
+    "@zaksoft/logging": "workspace:^",
     "@zaksoft/storage": "workspace:*",
     "axios": "^1.16.0",
     "bullmq": "^4.14.0",

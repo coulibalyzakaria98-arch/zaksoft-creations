@@ -5,6 +5,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { metricsApp, setupBullMQMetrics } from './metrics';
 import { authenticate, AuthRequest } from './middleware/auth';
+import { healthCheck } from '@zaksoft/health';
+import logger from '@zaksoft/logging';
 
 // Charger les variables d'environnement
 dotenv.config();
@@ -40,7 +42,7 @@ app.use(express.json());
 
 // Health check (avant auth)
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'design' });
+  res.json(healthCheck('design', '1.0.0'));
 });
 
 // Monter les métriques (avant auth pour le monitoring)
@@ -83,7 +85,7 @@ app.post('/image/generate', async (req: AuthRequest, res) => {
       message: 'Demande de génération enregistrée'
     });
   } catch (error) {
-    console.error('Erreur génération image:', error);
+    logger.error('Erreur génération image:', { error });
     res.status(500).json({ error: 'Erreur lors de la mise en file d\'attente du job' });
   }
 });
@@ -113,11 +115,11 @@ app.get('/image/status/:jobId', async (req, res) => {
       error: state === 'failed' ? job.failedReason : null
     });
   } catch (error) {
-    console.error('Erreur récupération statut:', error);
+    logger.error('Erreur récupération statut:', { error });
     res.status(500).json({ error: 'Erreur lors de la récupération du statut' });
   }
 });
 
 app.listen(port, () => {
-  console.log(`Design service running on port ${port}`);
+  logger.info('Design service started', { port });
 });
