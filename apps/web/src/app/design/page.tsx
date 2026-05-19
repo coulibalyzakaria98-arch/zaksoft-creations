@@ -4,14 +4,12 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { FormSkeleton } from '@/components/ui/skeletons/FormSkeleton';
 import { CardSkeleton } from '@/components/ui/skeletons/CardSkeleton';
-// import { generateImage } from '@/services/designApi'; // Mocking
-
-const generateImage = async (prompt: string) => ({ jobId: '123' });
+import { generateImage, getImageStatus } from '@/services/designApi';
 
 export default function DesignPage() {
   const [prompt, setPrompt] = useState('');
   const [generating, setGenerating] = useState(false);
-  const [images] = useState<string[]>([]);
+  const [images, setImages] = useState<string[]>([]);
   const { isLoading } = useAuth();
 
   if (isLoading) {
@@ -30,11 +28,21 @@ export default function DesignPage() {
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      await generateImage(prompt);
-      // Polling logic...
+      const { jobId } = await generateImage(prompt);
+      // Polling logic
+      const interval = setInterval(async () => {
+        const status = await getImageStatus(jobId);
+        if (status.status === 'completed') {
+          setImages(prev => [status.result.url, ...prev]);
+          setGenerating(false);
+          clearInterval(interval);
+        } else if (status.status === 'failed') {
+          setGenerating(false);
+          clearInterval(interval);
+        }
+      }, 2000);
     } catch (error) {
-      console.error(error);
-    } finally {
+      console.error('Generation failed:', error);
       setGenerating(false);
     }
   };
@@ -55,7 +63,7 @@ export default function DesignPage() {
           disabled={generating}
           className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
         >
-          {generating ? 'Génération...' : 'Générer l'image'}
+          {generating ? 'Génération...' : "Générer l'image"}
         </button>
       </div>
 
