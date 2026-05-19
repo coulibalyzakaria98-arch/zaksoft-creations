@@ -5,6 +5,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { metricsApp, setupBullMQMetrics } from './metrics';
 import { authenticate, AuthRequest } from './middleware/auth';
+import { healthCheck } from '@zaksoft/health';
+import logger from '@zaksoft/logging';
 
 dotenv.config();
 
@@ -33,7 +35,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'video' });
+  res.json(healthCheck('video', '1.0.0'));
 });
 
 app.use(metricsApp);
@@ -60,7 +62,7 @@ app.post('/video/generate', async (req: AuthRequest, res) => {
     
     res.status(202).json({ jobId: job.id, status: 'queued' });
   } catch (error) {
-    console.error('Erreur vidéo generate:', error);
+    logger.error('Erreur vidéo generate:', { error });
     res.status(500).json({ error: 'Erreur interne' });
   }
 });
@@ -87,5 +89,5 @@ app.get('/video/status/:jobId', async (req, res) => {
 });
 
 app.listen(port, () => {
-  console.log(`Video service running on port ${port}`);
+  logger.info('Video service started', { port });
 });

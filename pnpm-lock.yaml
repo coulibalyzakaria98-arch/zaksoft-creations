@@ -629,6 +629,12 @@ importers:
 
   services/video:
     dependencies:
+      '@zaksoft/health':
+        specifier: workspace:^
+        version: link:../../packages/health
+      '@zaksoft/logging':
+        specifier: workspace:^
+        version: link:../../packages/logging
       '@zaksoft/storage':
         specifier: workspace:^
         version: link:../../packages/storage
