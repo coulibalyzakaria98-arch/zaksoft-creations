@@ -91,17 +91,17 @@ app.post('/auth/register', async (req, res) => {
       data: { 
         email, 
         passwordHash: hashedPassword, 
-        firstName,
-        lastName,
-        companyName,
-        companySize,
-        position,
-        industry,
-        website,
-        intendedUse,
-        budget,
-        howDidYouHear,
-        newsletter: !!newsletter,
+        // firstName,
+        // lastName,
+        // companyName,
+        // companySize,
+        // position,
+        // industry,
+        // website,
+        // intendedUse,
+        // budget,
+        // howDidYouHear,
+        // newsletter: !!newsletter,
         tier: 'free', 
         credits: 10 
       }
@@ -116,9 +116,9 @@ app.post('/auth/register', async (req, res) => {
         id: user.id, 
         email: user.email, 
         tier: user.tier, 
-        credits: user.credits,
-        firstName: user.firstName,
-        lastName: user.lastName
+        credits: user.credits
+        // firstName: user.firstName,
+        // lastName: user.lastName
       } 
     });
   } catch (error) {
