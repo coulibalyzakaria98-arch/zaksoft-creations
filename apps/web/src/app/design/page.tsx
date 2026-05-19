@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 import { FormSkeleton } from '@/components/ui/skeletons/FormSkeleton';
 import { CardSkeleton } from '@/components/ui/skeletons/CardSkeleton';
@@ -63,7 +64,7 @@ export default function DesignPage() {
           disabled={generating}
           className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
         >
-          {generating ? 'Génération...' : "Générer l'image"}
+          {generating ? 'Génération...' : "Générer l&apos;image"}
         </button>
       </div>
 
@@ -77,7 +78,14 @@ export default function DesignPage() {
         ) : (
           images.map((url, i) => (
             <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <img src={url} alt={`Génération ${i + 1}`} className="w-full h-64 object-cover" />
+              <Image 
+                src={url} 
+                alt={`Génération ${i + 1}`} 
+                width={800} 
+                height={400} 
+                className="w-full h-64 object-cover" 
+                unoptimized
+              />
             </div>
           ))
         )}
