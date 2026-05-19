@@ -179,6 +179,15 @@ importers:
         specifier: ^5
         version: 5.9.3
 
+  packages/health:
+    devDependencies:
+      '@types/node':
+        specifier: ^20.10.4
+        version: 20.19.39
+      typescript:
+        specifier: ^5.3.3
+        version: 5.9.3
+
   packages/logging:
     dependencies:
       winston:
@@ -317,6 +326,12 @@ importers:
       '@types/helmet':
         specifier: ^4.0.0
         version: 4.0.0
+      '@zaksoft/health':
+        specifier: workspace:*
+        version: link:../../packages/health
+      '@zaksoft/logging':
+        specifier: workspace:*
+        version: link:../../packages/logging
       bcrypt:
         specifier: ^5.1.1
         version: 5.1.1

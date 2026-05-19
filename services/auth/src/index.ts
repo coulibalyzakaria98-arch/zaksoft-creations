@@ -8,12 +8,14 @@ import helmet from 'helmet';
 import { z } from 'zod';
 import { authLimiter } from './middleware/rate-limit';
 import { registerSchema } from './middleware/validation';
+import { healthCheck } from '@zaksoft/health';
+import logger from '@zaksoft/logging';
 
 // Charger les variables d'environnement
 dotenv.config();
 
-console.log('--- Auth Service Starting ---');
-console.log('Node Version:', process.version);
+logger.info('--- Auth Service Starting ---');
+logger.info('Node Version:', { version: process.version });
 
 const app = express();
 const prisma = new PrismaClient();
@@ -22,11 +24,11 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET || 'fallback-refresh-secret';
 
 if (!JWT_SECRET) {
-  console.error('FATAL ERROR: JWT_SECRET is not defined in environment variables.');
+  logger.error('FATAL ERROR: JWT_SECRET is not defined in environment variables.');
   process.exit(1);
 }
 
-console.log('Environment variables loaded successfully.');
+logger.info('Environment variables loaded successfully.');
 
 app.use(helmet()); // Apply security headers
 app.use(cors());
@@ -35,9 +37,9 @@ app.use(authLimiter); // Apply rate limiting
 
 // Test database connection
 prisma.$connect()
-  .then(() => console.log('Successfully connected to the database.'))
+  .then(() => logger.info('Successfully connected to the database.'))
   .catch((err) => {
-    console.error('FAILED to connect to the database:', err);
+    logger.error('FAILED to connect to the database:', err);
   });
 
 /**
@@ -117,7 +119,7 @@ app.post('/auth/register', async (req, res) => {
     if (error instanceof z.ZodError) {
       return res.status(400).json({ error: error.errors });
     }
-    console.error('Erreur inscription:', error);
+    logger.error('Erreur inscription:', { error });
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
 });
@@ -154,7 +156,7 @@ app.post('/auth/login', async (req, res) => {
       } 
     });
   } catch (error) {
-    console.error('Erreur connexion:', error);
+    logger.error('Erreur connexion:', { error });
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
 });
@@ -295,18 +297,18 @@ app.get('/auth/admin/stats', authenticate, isAdmin, async (req, res) => {
       recentRegistrations
     });
   } catch (error) {
-    console.error('Erreur stats admin:', error);
+    logger.error('Erreur stats admin:', { error });
     res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
   }
 });
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'auth' });
+  res.json(healthCheck('auth', '1.0.0'));
 });
 
 const PORT = process.env.PORT || 3001;
 
 app.listen(PORT, () => {
-  console.log(`Auth service running on port ${PORT}`);
+  logger.info(`Auth service running on port ${PORT}`);
 });
