@@ -12,6 +12,8 @@ import { teamDashboard } from './dashboard/teamDashboard';
 import { activityFeed } from './dashboard/activityFeed';
 import { commentSystem } from './collaboration/commentSystem';
 import { initializeWebSocket } from './websocket/teamSync';
+import { healthCheck } from '@zaksoft/health';
+import logger from '@zaksoft/logging';
 
 const app = express();
 const httpServer = createServer(app);
@@ -23,6 +25,11 @@ initializeWebSocket(httpServer);
 
 app.use(cors());
 app.use(express.json());
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json(healthCheck('teams', '1.0.0'));
+});
 
 const authenticate = (req: any, res: any, next: any) => {
   req.user = { id: req.headers['x-user-id'] || 'user_1' };
@@ -36,39 +43,60 @@ app.post('/teams', async (req: any, res) => {
   try {
     const team = await teamManager.createTeam({ ...req.body, ownerId: req.user.id });
     res.json(team);
-  } catch (error: any) { res.status(500).json({ error: error.message }); }
+  } catch (error: any) { 
+    logger.error('Error creating team', { error: error.message });
+    res.status(500).json({ error: error.message }); 
+  }
 });
 
 app.get('/teams', async (req: any, res) => {
   try { res.json(await teamManager.getUserTeams(req.user.id)); }
-  catch (error: any) { res.status(500).json({ error: error.message }); }
+  catch (error: any) { 
+    logger.error('Error getting teams', { error: error.message });
+    res.status(500).json({ error: error.message }); 
+  }
 });
 
 app.get('/teams/:teamId', teamAuth as any, async (req: any, res) => {
   try { res.json(await teamManager.getTeamWithMembers(req.params.teamId)); }
-  catch (error: any) { res.status(500).json({ error: error.message }); }
+  catch (error: any) { 
+    logger.error('Error getting team details', { error: error.message, teamId: req.params.teamId });
+    res.status(500).json({ error: error.message }); 
+  }
 });
 
 // ============ DASHBOARD & ACTIVITY ============
 app.get('/teams/:teamId/dashboard/stats', teamAuth as any, async (req: any, res) => {
   try { res.json(await teamDashboard.getTeamStats(req.params.teamId)); }
-  catch (error: any) { res.status(500).json({ error: error.message }); }
+  catch (error: any) { 
+    logger.error('Error getting stats', { error: error.message, teamId: req.params.teamId });
+    res.status(500).json({ error: error.message }); 
+  }
 });
 
 app.get('/teams/:teamId/activity', teamAuth as any, async (req: any, res) => {
   try { res.json(await activityFeed.getTeamActivityFeed(req.params.teamId, Number(req.query.limit || 50))); }
-  catch (error: any) { res.status(500).json({ error: error.message }); }
+  catch (error: any) { 
+    logger.error('Error getting activity', { error: error.message, teamId: req.params.teamId });
+    res.status(500).json({ error: error.message }); 
+  }
 });
 
 // ============ COMMENTS ============
 app.get('/projects/:projectId/comments', async (req: any, res) => {
   try { res.json(await commentSystem.getComments(req.params.projectId, req.user.id)); }
-  catch (error: any) { res.status(500).json({ error: error.message }); }
+  catch (error: any) { 
+    logger.error('Error getting comments', { error: error.message, projectId: req.params.projectId });
+    res.status(500).json({ error: error.message }); 
+  }
 });
 
 app.post('/projects/:projectId/comments', async (req: any, res) => {
   try { res.json(await commentSystem.addComment(req.params.projectId, req.user.id, req.body.content, req.body.parentId)); }
-  catch (error: any) { res.status(500).json({ error: error.message }); }
+  catch (error: any) { 
+    logger.error('Error adding comment', { error: error.message, projectId: req.params.projectId });
+    res.status(500).json({ error: error.message }); 
+  }
 });
 
 // ============ INVITATIONS ============
@@ -77,8 +105,11 @@ app.post('/teams/:teamId/invitations', teamAuth as any, requireTeamRole(['OWNER'
     const invitation = await invitationManager.createInvitation({ ...req.body, teamId: req.params.teamId, invitedBy: req.user.id });
     await invitationQueue.add('send', { invitationId: invitation.id });
     res.json(invitation);
-  } catch (error: any) { res.status(500).json({ error: error.message }); }
+  } catch (error: any) { 
+    logger.error('Error creating invitation', { error: error.message, teamId: req.params.teamId });
+    res.status(500).json({ error: error.message }); 
+  }
 });
 
 const PORT = process.env.TEAMS_SERVICE_PORT || 3007;
-httpServer.listen(PORT, () => console.log(`Teams service (with WS) on ${PORT}`));
+httpServer.listen(PORT, () => logger.info('Teams service started', { port: PORT }));

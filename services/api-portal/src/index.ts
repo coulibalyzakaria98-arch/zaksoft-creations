@@ -8,10 +8,17 @@ import swaggerUi from 'swagger-ui-express';
 import jsyaml from 'js-yaml';
 import fs from 'fs';
 import path from 'path';
+import { healthCheck } from '@zaksoft/health';
+import logger from '@zaksoft/logging';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json(healthCheck('api-portal', '1.0.0'));
+});
 
 // ============ SWAGGER DOCS ============
 const openApiSpec = jsyaml.load(fs.readFileSync(path.join(__dirname, 'swagger/openapi.yaml'), 'utf8')) as any;
@@ -28,12 +35,18 @@ app.post('/developer/api-keys', authenticate, async (req: any, res) => {
   try {
     const key = await apiKeyManager.createApiKey({ ...req.body, userId: req.user.id });
     res.json(key);
-  } catch (error: any) { res.status(500).json({ error: error.message }); }
+  } catch (error: any) {
+    logger.error('Error creating api-key', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.get('/developer/api-keys', authenticate, async (req: any, res) => {
   try { res.json(await apiKeyManager.getUserApiKeys(req.user.id)); }
-  catch (error: any) { res.status(500).json({ error: error.message }); }
+  catch (error: any) { 
+    logger.error('Error getting api-keys', { error: error.message });
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // ============ PUBLIC API V1 ============
@@ -46,4 +59,4 @@ app.post('/v1/design/generate', apiKeyAuth, rateLimiter, async (req: any, res) =
 });
 
 const PORT = process.env.API_PORTAL_PORT || 3008;
-app.listen(PORT, () => console.log(`API Portal & Swagger running on ${PORT}`));
+app.listen(PORT, () => logger.info('API Portal & Swagger running', { port: PORT }));

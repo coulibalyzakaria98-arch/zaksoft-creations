@@ -7,6 +7,8 @@ import dotenv from 'dotenv';
 import { templateManager } from './services/templateManager';
 import { searchEngine } from './services/searchEngine';
 import { authenticate, AuthRequest } from './middleware/auth';
+import { healthCheck } from '@zaksoft/health';
+import logger from '@zaksoft/logging';
 
 dotenv.config();
 
@@ -33,7 +35,7 @@ app.use(express.json({ limit: '50mb' }));
 
 // Health check (avant auth)
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'marketplace' });
+  res.json(healthCheck('marketplace', '1.0.0'));
 });
 
 // ============ ENDPOINTS PUBLICS ============
@@ -53,6 +55,7 @@ app.get('/templates', async (req, res) => {
     
     res.json(templates);
   } catch (error: any) {
+    logger.error('Error searching templates', { error: error.message });
     res.status(500).json({ error: error.message });
   }
 });
@@ -64,6 +67,7 @@ app.get('/templates/:id', async (req, res) => {
     if (!template) return res.status(404).json({ error: 'Template not found' });
     res.json(template);
   } catch (error: any) {
+    logger.error('Error getting template', { error: error.message, templateId: id });
     res.status(500).json({ error: error.message });
   }
 });
@@ -75,6 +79,7 @@ app.get('/categories', async (req, res) => {
     });
     res.json(categories);
   } catch (error: any) {
+    logger.error('Error getting categories', { error: error.message });
     res.status(500).json({ error: error.message });
   }
 });
@@ -102,10 +107,10 @@ app.post('/templates', authenticate, async (req: AuthRequest, res) => {
       authorId: userId
     });
     
-    console.log(`[Marketplace] Nouveau template créé : ${template.id} par ${userId}`);
+    logger.info('Nouveau template créé', { templateId: template.id, userId });
     res.status(201).json(template);
   } catch (error: any) {
-    console.error('Erreur création template:', error);
+    logger.error('Erreur création template:', { error: error.message });
     res.status(500).json({ error: error.message });
   }
 });
@@ -125,9 +130,10 @@ app.post('/templates/:id/import', authenticate, async (req: AuthRequest, res) =>
       message: 'Import du template en cours'
     });
   } catch (error: any) {
+    logger.error('Erreur import template:', { error: error.message });
     res.status(500).json({ error: error.message });
   }
 });
 
 const PORT = process.env.PORT || 3006;
-app.listen(PORT, () => console.log(`Marketplace service running on port ${PORT}`));
+app.listen(PORT, () => logger.info('Marketplace service running', { port: PORT }));
