@@ -116,9 +116,10 @@ app.post('/auth/register', async (req, res) => {
         id: user.id, 
         email: user.email, 
         tier: user.tier, 
-        credits: user.credits
-        // firstName: user.firstName,
-        // lastName: user.lastName
+        credits: user.credits,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role
       } 
     });
   } catch (error) {
