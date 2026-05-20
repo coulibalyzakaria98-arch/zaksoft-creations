@@ -9,33 +9,34 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const client_1 = require("@prisma/client");
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const helmet_1 = __importDefault(require("helmet"));
+const zod_1 = require("zod");
+const rate_limit_1 = require("./middleware/rate-limit");
+const validation_1 = require("./middleware/validation");
+const health_1 = require("@zaksoft/health");
+const logging_1 = __importDefault(require("@zaksoft/logging"));
 // Charger les variables d'environnement
 dotenv_1.default.config();
-console.log('--- Auth Service Starting ---');
-console.log('Node Version:', process.version);
+logging_1.default.info('--- Auth Service Starting ---');
+logging_1.default.info('Node Version:', { version: process.version });
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET || 'fallback-refresh-secret';
 if (!JWT_SECRET) {
-    console.error('FATAL ERROR: JWT_SECRET is not defined in environment variables.');
+    logging_1.default.error('FATAL ERROR: JWT_SECRET is not defined in environment variables.');
     process.exit(1);
 }
-console.log('Environment variables loaded successfully.');
+logging_1.default.info('Environment variables loaded successfully.');
+app.use((0, helmet_1.default)()); // Apply security headers
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
-// ⚠️ IMPORTANT : Désactiver CSP pour le développement (évite le blocage des ressources externes)
-app.use((req, res, next) => {
-    res.removeHeader('Content-Security-Policy');
-    res.removeHeader('X-Content-Type-Options');
-    res.removeHeader('X-Frame-Options');
-    next();
-});
+app.use(rate_limit_1.authLimiter); // Apply rate limiting
 // Test database connection
 prisma.$connect()
-    .then(() => console.log('Successfully connected to the database.'))
+    .then(() => logging_1.default.info('Successfully connected to the database.'))
     .catch((err) => {
-    console.error('FAILED to connect to the database:', err);
+    logging_1.default.error('FAILED to connect to the database:', err);
 });
 /**
  * Génère une paire de tokens (Access & Refresh)
@@ -48,14 +49,8 @@ const generateTokens = (user) => {
 // Endpoint d'inscription
 app.post('/auth/register', async (req, res) => {
     try {
-        const { email, password, firstName, lastName, companyName, companySize, position, industry, website, intendedUse, budget, howDidYouHear, newsletter } = req.body;
-        // Validation basique
-        if (!email || !password || !email.includes('@')) {
-            return res.status(400).json({ error: 'Email valide et mot de passe requis' });
-        }
-        if (password.length < 8) {
-            return res.status(400).json({ error: 'Le mot de passe doit faire au moins 8 caractères' });
-        }
+        const validatedData = validation_1.registerSchema.parse(req.body);
+        const { email, password, firstName, lastName, companyName, companySize, position, industry, website, intendedUse, budget, howDidYouHear, newsletter } = validatedData;
         // Vérifier si l'utilisateur existe déjà
         const existingUser = await prisma.user.findUnique({ where: { email } });
         if (existingUser) {
@@ -66,16 +61,17 @@ app.post('/auth/register', async (req, res) => {
             data: {
                 email,
                 passwordHash: hashedPassword,
-                firstName,
-                lastName,
-                companyName,
-                companySize,
-                position,
-                industry,
-                website,
-                intendedUse,
-                budget,
-                howDidYouHear,
+                firstName: firstName || null,
+                lastName: lastName || null,
+                companyName: companyName || null,
+                companySize: companySize || null,
+                position: position || null,
+                industry: industry || null,
+                role: 'user',
+                howDidYouHear: howDidYouHear || null,
+                website: website || null,
+                intendedUse: intendedUse || null,
+                budget: budget || null,
                 newsletter: !!newsletter,
                 tier: 'free',
                 credits: 10
@@ -91,12 +87,16 @@ app.post('/auth/register', async (req, res) => {
                 tier: user.tier,
                 credits: user.credits,
                 firstName: user.firstName,
-                lastName: user.lastName
+                lastName: user.lastName,
+                role: user.role
             }
         });
     }
     catch (error) {
-        console.error('Erreur inscription:', error);
+        if (error instanceof zod_1.z.ZodError) {
+            return res.status(400).json({ error: error.errors });
+        }
+        logging_1.default.error('Erreur inscription:', { error });
         res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });
@@ -128,7 +128,7 @@ app.post('/auth/login', async (req, res) => {
         });
     }
     catch (error) {
-        console.error('Erreur connexion:', error);
+        logging_1.default.error('Erreur connexion:', { error });
         res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });
@@ -257,15 +257,15 @@ app.get('/auth/admin/stats', authenticate, isAdmin, async (req, res) => {
         });
     }
     catch (error) {
-        console.error('Erreur stats admin:', error);
+        logging_1.default.error('Erreur stats admin:', { error });
         res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
     }
 });
 // Health check endpoint
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', service: 'auth' });
+    res.json((0, health_1.healthCheck)('auth', '1.0.0'));
 });
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-    console.log(`Auth service running on port ${PORT}`);
+    logging_1.default.info(`Auth service running on port ${PORT}`);
 });
