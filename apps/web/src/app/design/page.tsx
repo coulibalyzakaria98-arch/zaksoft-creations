@@ -64,7 +64,7 @@ export default function DesignPage() {
           disabled={generating}
           className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
         >
-          {generating ? 'Génération...' : "Générer l&apos;image"}
+          {generating ? 'Génération...' : <>Générer l{String.fromCharCode(39)}image</>}
         </button>
       </div>
 

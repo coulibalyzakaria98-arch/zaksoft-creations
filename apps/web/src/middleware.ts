@@ -3,7 +3,14 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
 // Paths that do not require authentication
-const publicPaths = ['/login', '/register', '/request-reset', '/reset-password'];
+const publicPaths = [
+  '/login',
+  '/register',
+  '/request-reset',
+  '/reset-password',
+  '/auth/login',
+  '/auth/register',
+];
 
 export function middleware(request: NextRequest) {
   // Le middleware s'exécute côté serveur (Edge Runtime)

@@ -2,6 +2,8 @@ import { z } from 'zod';
 
 // Schéma de validation pour l'inscription
 export const registerSchema = z.object({
+  firstName: z.string().min(1, 'Le prénom est requis'),
+  lastName: z.string().min(1, 'Le nom est requis'),
   email: z
     .string()
     .min(1, 'L\'email est requis')
@@ -13,10 +15,20 @@ export const registerSchema = z.object({
     .regex(/[a-z]/, 'Le mot de passe doit contenir au moins une minuscule')
     .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre')
     .regex(/[^A-Za-z0-9]/, 'Le mot de passe doit contenir au moins un caractère spécial'),
-  confirmPassword: z.string().min(1, 'La confirmation du mot de passe est requise'),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: 'Les mots de passe ne correspondent pas',
-  path: ['confirmPassword'],
+  companyName: z.string().min(1, 'Le nom de l\'entreprise est requis'),
+  companySize: z.enum(['1-10', '11-50', '51-200', '201-500', '500+'], {
+    errorMap: () => ({ message: 'La taille de l\'entreprise est requise' }),
+  }),
+  position: z.string().min(1, 'Le poste est requis'),
+  industry: z.string().min(1, 'Le secteur d\'activité est requis'),
+  website: z.string().url('URL invalide').optional().or(z.literal('')),
+  intendedUse: z.string().min(1, 'L\'usage prévu est requis'),
+  budget: z.string().min(1, 'Le budget est requis'),
+  howDidYouHear: z.string().optional(),
+  newsletter: z.boolean().optional(),
+  termsAccepted: z.boolean().refine((value) => value === true, {
+    message: 'Vous devez accepter les conditions d\'utilisation',
+  }),
 });
 
 // Schéma de validation pour la connexion
