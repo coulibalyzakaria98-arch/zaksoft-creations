@@ -11,6 +11,7 @@ const publicPaths = [
   '/reset-password',
   '/auth/login',
   '/auth/register',
+  '/auth/register/business',
 ];
 
 export function middleware(request: NextRequest) {
