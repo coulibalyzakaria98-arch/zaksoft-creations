@@ -1,5 +1,4 @@
 {
-  "rootDirectory": "apps/web",
   "framework": "nextjs",
   "buildCommand": "pnpm exec next build",
   "devCommand": "pnpm exec next dev",
