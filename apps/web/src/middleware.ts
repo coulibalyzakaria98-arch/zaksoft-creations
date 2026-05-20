@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server';
 
 // Paths that do not require authentication
 const publicPaths = [
+  '/',
   '/login',
   '/register',
   '/request-reset',
@@ -19,7 +20,9 @@ export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Check if the current path is one of the public paths
-  const isPublicPath = publicPaths.some(path => pathname.startsWith(path));
+  const isPublicPath = publicPaths.some(path => 
+    pathname === path || pathname.startsWith(path + '/')
+  );
 
   // If there's no token and the path is not public, redirect to login
   if (!token && !isPublicPath) {
