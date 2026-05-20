@@ -252,7 +252,7 @@ app.get('/auth/admin/stats', authenticate, isAdmin, async (req, res) => {
     
     // Répartition par industrie
     const industryStats = await prisma.user.groupBy({
-      by: ['industry'],
+      by: ['industry'] as const,
       _count: {
         _all: true
       }
@@ -260,7 +260,7 @@ app.get('/auth/admin/stats', authenticate, isAdmin, async (req, res) => {
 
     // Répartition par source (howDidYouHear)
     const sourceStats = await prisma.user.groupBy({
-      by: ['howDidYouHear'],
+      by: ['howDidYouHear'] as const,
       _count: {
         _all: true
       }
@@ -268,7 +268,7 @@ app.get('/auth/admin/stats', authenticate, isAdmin, async (req, res) => {
 
     // Répartition par taille d'entreprise
     const companySizeStats = await prisma.user.groupBy({
-      by: ['companySize'],
+      by: ['companySize'] as const,
       _count: {
         _all: true
       }

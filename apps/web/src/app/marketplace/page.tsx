@@ -3,10 +3,10 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { CardSkeleton } from '@/components/ui/skeletons/CardSkeleton';
-import { marketplaceService } from '@/services/marketplaceApi';
+import { marketplaceService, TemplateSummary } from '@/services/marketplaceApi';
 
 export default function MarketplacePage() {
-  const [templates, setTemplates] = useState([]);
+  const [templates, setTemplates] = useState<TemplateSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const { isLoading: authLoading } = useAuth();
 

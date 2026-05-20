@@ -6,6 +6,7 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "ts-node src/index.ts",
+    "pretype-check": "prisma generate",
     "type-check": "tsc --noEmit",
     "postinstall": "prisma generate"
   },

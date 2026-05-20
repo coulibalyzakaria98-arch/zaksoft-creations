@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id      String   @id @default(cuid())
+  apiKeys ApiKey[]
+}
+
+model ApiKey {
+  id              String          @id @default(cuid())
+  name            String
+  key             String          @unique
+  userId          String
+  user            User            @relation(fields: [userId], references: [id])
+  permissions     ApiPermission[]
+  rateLimit       Int             @default(100)
+  rateLimitWindow Int             @default(60000)
+  lastUsedAt      DateTime?
+  expiresAt       DateTime?
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+
+  @@index([key])
+  @@index([userId])
+}
+
+model ApiPermission {
+  id        String   @id @default(cuid())
+  apiKeyId  String
+  apiKey    ApiKey   @relation(fields: [apiKeyId], references: [id])
+  resource  String
+  action    String
+  createdAt DateTime @default(now())
+
+  @@unique([apiKeyId, resource, action])
+}

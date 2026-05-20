@@ -1,3 +1,6 @@
 {
-  "/auth/register/page": "app/auth/register/page.js"
+  "/auth/register/business/page": "app/auth/register/business/page.js",
+  "/login/page": "app/login/page.js",
+  "/auth/register/page": "app/auth/register/page.js",
+  "/page": "app/page.js"
 }

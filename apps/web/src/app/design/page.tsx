@@ -33,8 +33,9 @@ export default function DesignPage() {
       // Polling logic
       const interval = setInterval(async () => {
         const status = await getImageStatus(jobId);
-        if (status.status === 'completed') {
-          setImages(prev => [status.result.url, ...prev]);
+        const url = status.result?.url;
+        if (status.status === 'completed' && url) {
+          setImages(prev => [url, ...prev]);
           setGenerating(false);
           clearInterval(interval);
         } else if (status.status === 'failed') {

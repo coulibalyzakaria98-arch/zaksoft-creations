@@ -16,9 +16,7 @@ export const registerSchema = z.object({
     .regex(/[0-9]/, 'Le mot de passe doit contenir au moins un chiffre')
     .regex(/[^A-Za-z0-9]/, 'Le mot de passe doit contenir au moins un caractère spécial'),
   companyName: z.string().min(1, 'Le nom de l\'entreprise est requis'),
-  companySize: z.enum(['1-10', '11-50', '51-200', '201-500', '500+'], {
-    errorMap: () => ({ message: 'La taille de l\'entreprise est requise' }),
-  }),
+  companySize: z.enum(['1-10', '11-50', '51-200', '201-500', '500+'] as const),
   position: z.string().min(1, 'Le poste est requis'),
   industry: z.string().min(1, 'Le secteur d\'activité est requis'),
   website: z.string().url('URL invalide').optional().or(z.literal('')),
