@@ -52,11 +52,11 @@ export default function DesignPage() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Formulaire */}
       <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-lg font-semibold mb-4">🎨 Génération d'image</h2>
+        <h2 className="text-lg font-semibold mb-4">🎨 Génération d&apos;image</h2>
         <textarea
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Décrivez l'image que vous souhaitez créer..."
+          placeholder="Décrivez l&apos;image que vous souhaitez créer..."
           className="w-full h-32 p-3 border rounded-lg mb-4"
         />
         <button

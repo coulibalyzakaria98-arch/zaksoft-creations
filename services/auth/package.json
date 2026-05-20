@@ -4,7 +4,8 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "ls -la prisma/ && prisma generate --schema=./prisma/schema.prisma --no-engine && tsc",
+    "prebuild": "node -e \"const fs=require('fs'); if(!fs.existsSync('prisma/schema.prisma')){throw new Error('Prisma schema missing at prisma/schema.prisma')}\"",
+    "build": "prisma generate --schema=./prisma/schema.prisma --no-engine && tsc",
     "start": "node dist/index.js",
     "type-check": "tsc --noEmit",
     "postinstall": "prisma generate --schema=./prisma/schema.prisma --no-engine"

@@ -245,7 +245,7 @@ export default function AuthRegisterPage() {
                       className="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
                     />
                     <Label htmlFor="newsletter" className="mb-0">
-                      Je souhaite recevoir des conseils sur l'optimisation IA pour mon entreprise.
+                      Je souhaite recevoir des conseils sur l&apos;optimisation IA pour mon entreprise.
                     </Label>
                   </div>
                 </div>
