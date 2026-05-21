@@ -60,7 +60,7 @@ export default function LandingPage() {
       rating: 5
     },
     {
-      text: 'L'API est puissante et bien documentée. Intégration en quelques heures.',
+      text: "L'API est puissante et bien documentée. Intégration en quelques heures.",
       author: 'Thomas L.',
       role: 'Développeur Full-Stack',
       rating: 5
