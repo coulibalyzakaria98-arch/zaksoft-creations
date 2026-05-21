@@ -1,17 +1,11 @@
-// apps/web/src/app/layout.tsx
-import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
 import { AuthProvider } from '@/hooks/useAuth';
 import { ThemeProvider } from '@/components/providers/ThemeProvider';
 import { ToastProvider } from '@/components/providers/ToastProvider';
+import { AIBackground } from '@/components/ui/AIBackground';
+import './globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
-
-export const metadata: Metadata = {
-  title: 'ZAKSOFT Créations',
-  description: 'Plateforme de création de contenu par IA',
-};
 
 export default function RootLayout({
   children,
@@ -21,12 +15,18 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning>
       <body className={inter.className}>
-        <AuthProvider>
-          <ThemeProvider>
-            <ToastProvider />
-            {children}
-          </ThemeProvider>
-        </AuthProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            <ToastProvider>
+              <div className="relative min-h-screen bg-gradient-to-br from-gray-900 via-indigo-950 to-purple-950">
+                <AIBackground />
+                <div className="relative z-10">
+                  {children}
+                </div>
+              </div>
+            </ToastProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

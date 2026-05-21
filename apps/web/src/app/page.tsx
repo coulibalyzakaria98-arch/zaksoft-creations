@@ -88,9 +88,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden text-white">
-      {/* Fond animé */}
-      <AIBackground />
+    <div className="relative overflow-hidden text-white">
       
       {/* Contenu avec effet de verre */}
       <div className="relative z-10">
