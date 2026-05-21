@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Sparkles, Video, ShoppingBag, Code, ArrowRight, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { AIBackground } from '@/components/ui/AIBackground';
+import { ImageCarousel } from '@/components/ui/ImageCarousel';
 
 export default function LandingPage() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
