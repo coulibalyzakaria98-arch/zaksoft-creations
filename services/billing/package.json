@@ -6,7 +6,7 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "ts-node src/index.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "prisma generate --schema=./prisma/schema.prisma && tsc --noEmit"
   },
   "dependencies": {
     "express": "^4.18.2",
