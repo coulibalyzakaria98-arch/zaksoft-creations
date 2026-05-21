@@ -1,8 +1,16 @@
-// apps/web/src/components/providers/ToastProvider.tsx
 'use client';
 
 import { Toaster } from 'sonner';
 
-export function ToastProvider() {
-  return <Toaster position="top-right" richColors />;
+interface ToastProviderProps {
+  children: React.ReactNode;
+}
+
+export function ToastProvider({ children }: ToastProviderProps) {
+  return (
+    <>
+      {children}
+      <Toaster position="top-right" richColors />
+    </>
+  );
 }
