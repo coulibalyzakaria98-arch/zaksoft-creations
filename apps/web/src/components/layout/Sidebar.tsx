@@ -13,6 +13,7 @@ import {
   Settings,
   Sparkles
 } from 'lucide-react';
+import { Logo } from './Logo';
 
 const menuItems = [
   { name: 'Dashboard', href: '/', icon: LayoutDashboard },
@@ -31,14 +32,8 @@ export function Sidebar() {
   return (
     <aside className="fixed left-0 top-0 h-full w-64 bg-white border-r border-gray-200 flex flex-col">
       {/* Logo */}
-      <div className="p-6 border-b border-gray-100">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-600 to-purple-600 rounded-lg flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
-          <span className="text-xl font-bold text-gray-800">ZAKSOFT</span>
-        </div>
-        <p className="text-xs text-gray-400 mt-1">Créations IA</p>
+      <div className="p-6 border-b border-gray-100 flex justify-center">
+        <Logo />
       </div>
 
       {/* Navigation */}

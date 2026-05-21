@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
+import { Logo } from './Logo';
 
 const menuItems = [
   { name: 'Dashboard', href: '/' },
@@ -40,7 +41,7 @@ export function MobileMenu() {
         }`}
       >
         <div className="p-4 border-b flex justify-between items-center">
-          <span className="font-bold text-xl text-indigo-600">ZAKSOFT</span>
+          <Logo />
           <button onClick={() => setIsOpen(false)} className="p-2">
             <X className="w-5 h-5" />
           </button>
