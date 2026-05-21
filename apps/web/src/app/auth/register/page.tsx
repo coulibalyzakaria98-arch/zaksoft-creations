@@ -1,3 +1,80 @@
-import BusinessRegisterPage from './business/page';
+"use client";
 
-export default BusinessRegisterPage;
+import { useState } from 'react';
+import Link from 'next/link';
+import { useAuth } from '@/hooks/useAuth';
+import { toast } from 'sonner';
+
+export default function SimpleRegisterPage() {
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [loading, setLoading] = useState(false);
+	const { register } = useAuth();
+
+	const handleSubmit = async (e: React.FormEvent) => {
+		e.preventDefault();
+		setLoading(true);
+		try {
+			await register({ email, password });
+			toast.success('Compte créé avec succès !');
+		} catch (error) {
+			toast.error('Erreur lors de la création du compte');
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	return (
+		<div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center p-4">
+			<div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+				<div className="text-center mb-8">
+					<h1 className="text-2xl font-bold text-gray-900">Créer un compte</h1>
+					<p className="text-gray-600 mt-2">Pour les utilisateurs individuels</p>
+				</div>
+
+				<form onSubmit={handleSubmit} className="space-y-6">
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+						<input
+							type="email"
+							value={email}
+							onChange={(e) => setEmail(e.target.value)}
+							className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+							required
+						/>
+					</div>
+
+					<div>
+						<label className="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
+						<input
+							type="password"
+							value={password}
+							onChange={(e) => setPassword(e.target.value)}
+							className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+							required
+						/>
+					</div>
+
+					<button
+						type="submit"
+						disabled={loading}
+						className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700"
+					>
+						{loading ? 'Création...' : 'Créer un compte'}
+					</button>
+				</form>
+
+				<div className="mt-6 text-center">
+					<Link href="/auth/login" className="text-indigo-600 hover:underline">
+						Déjà inscrit ? Se connecter
+					</Link>
+					<div className="mt-4">
+						<Link href="/auth/register/business" className="text-sm text-gray-500 hover:text-gray-700">
+							Vous êtes une entreprise ? → Inscription B2B
+						</Link>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
