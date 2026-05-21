@@ -8,27 +8,27 @@ const images = [
   {
     url: 'https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=500&fit=crop',
     title: 'Design IA - Futuriste',
-    prompt: 'Une ville futuriste avec des néons et des drones'
+    prompt: "Une ville futuriste avec des néons et des drones"
   },
   {
     url: 'https://images.unsplash.com/photo-1536240474400-b3b87e2f87dd?w=800&h=500&fit=crop',
     title: 'Vidéo IA - Cinématique',
-    prompt: 'Coucher de soleil sur l'océan, style cinématique'
+    prompt: "Coucher de soleil sur l'océan, style cinématique"
   },
   {
     url: 'https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?w=800&h=500&fit=crop',
     title: 'Web IA - Moderne',
-    prompt: 'Site web moderne pour agence créative'
+    prompt: "Site web moderne pour agence créative"
   },
   {
     url: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=800&h=500&fit=crop',
     title: 'Design IA - Minimaliste',
-    prompt: 'Logo minimaliste pour startup tech'
+    prompt: "Logo minimaliste pour startup tech"
   },
   {
     url: 'https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?w=800&h=500&fit=crop',
     title: 'Vidéo IA - Animation',
-    prompt: 'Animation 3D de particules lumineuses'
+    prompt: "Animation 3D de particules lumineuses"
   }
 ];
 
