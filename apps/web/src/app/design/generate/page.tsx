@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
+import { generateImage, getImageStatus } from '@/services/designApi';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,29 +15,25 @@ export default function DesignGenerationPage() {
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    
-    const response = await fetch('/api/image/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, options: { width: 1024, height: 1024 } })
-    });
-    
-    const { jobId } = await response.json();
-    
-    const poll = setInterval(async () => {
-      const statusRes = await fetch(`/api/image/status/${jobId}`);
-      const status = await statusRes.json();
-      
-      if (status.status === 'completed') {
-        setImageUrl(status.url);
-        setIsGenerating(false);
-        clearInterval(poll);
-      } else if (status.status === 'failed') {
-        setIsGenerating(false);
-        clearInterval(poll);
-        alert('Génération échouée');
-      }
-    }, 2000);
+    try {
+      const { jobId } = await generateImage(prompt, { width: 1024, height: 1024 });
+      const poll = setInterval(async () => {
+        const status = await getImageStatus(jobId);
+        if (status.status === 'completed' && status.url) {
+          setImageUrl(status.url);
+          setIsGenerating(false);
+          clearInterval(poll);
+        } else if (status.status === 'failed') {
+          setIsGenerating(false);
+          clearInterval(poll);
+          alert('Génération échouée');
+        }
+      }, 2000);
+    } catch (error) {
+      console.error('Image generation failed', error);
+      setIsGenerating(false);
+      alert('Erreur lors de la génération d\'image');
+    }
   };
 
   return (

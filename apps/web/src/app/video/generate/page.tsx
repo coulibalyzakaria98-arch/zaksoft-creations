@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
+import { generateVideo, getVideoStatus } from '@/services/videoApi';
 
-export const dynamic = 'force-dynamic'; // AJOUTÉ
+export const dynamic = 'force-dynamic';
 
 export default function VideoGenerationPage() {
   const [prompt, setPrompt] = useState('');
@@ -13,29 +14,25 @@ export default function VideoGenerationPage() {
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    
-    const response = await fetch('/api/video/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt, options: { duration: 5 } })
-    });
-    
-    const { jobId } = await response.json();
-    
-    const poll = setInterval(async () => {
-      const statusRes = await fetch(`/api/video/status/${jobId}`);
-      const status = await statusRes.json();
-      
-      if (status.status === 'completed') {
-        setVideoUrl(status.url);
-        setIsGenerating(false);
-        clearInterval(poll);
-      } else if (status.status === 'failed') {
-        setIsGenerating(false);
-        clearInterval(poll);
-        alert('Génération vidéo échouée');
-      }
-    }, 2000);
+    try {
+      const { jobId } = await generateVideo(prompt, { duration: 5 });
+      const poll = setInterval(async () => {
+        const status = await getVideoStatus(jobId);
+        if (status.status === 'completed' && status.url) {
+          setVideoUrl(status.url);
+          setIsGenerating(false);
+          clearInterval(poll);
+        } else if (status.status === 'failed') {
+          setIsGenerating(false);
+          clearInterval(poll);
+          alert('Génération vidéo échouée');
+        }
+      }, 2000);
+    } catch (error) {
+      console.error('Video generation failed', error);
+      setIsGenerating(false);
+      alert('Erreur lors de la génération vidéo');
+    }
   };
 
   return (
