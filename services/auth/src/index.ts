@@ -31,7 +31,21 @@ if (!JWT_SECRET) {
 logger.info('Environment variables loaded successfully.');
 
 app.use(helmet()); // Apply security headers
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:3000',
+    'http://localhost:3001',
+    'https://zaksoft-creations.vercel.app',
+    /\.vercel\.app$/,  // All Vercel deployments
+  ],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+// Handle pre-flight OPTIONS requests
+app.options('*', cors());
+
 app.use(express.json());
 app.use(authLimiter); // Apply rate limiting
 
