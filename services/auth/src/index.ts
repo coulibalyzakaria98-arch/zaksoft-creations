@@ -11,6 +11,9 @@ import { registerSchema } from './middleware/validation';
 import { healthCheck } from '@zaksoft/health';
 import logger from '@zaksoft/logging';
 
+// Debug log
+console.log('--- Starting Auth Service Initialization ---');
+
 // Charger les variables d'environnement
 dotenv.config();
 
