@@ -321,8 +321,8 @@ app.get('/health', (req, res) => {
   res.json(healthCheck('auth', '1.0.0'));
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = Number(process.env.PORT) || 3001;
 
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () => {
   logger.info(`Auth service running on port ${PORT}`);
 });
