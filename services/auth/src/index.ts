@@ -6,8 +6,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import { z } from 'zod';
-import { authLimiter } from './middleware/rate-limit';
-import { registerSchema } from './middleware/validation';
+import { authLimiter } from './middleware/rate-limit.js';
+import { registerSchema } from './middleware/validation.js';
 import { healthCheck } from '@zaksoft/health';
 import logger from '@zaksoft/logging';
 
