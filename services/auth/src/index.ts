@@ -6,7 +6,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import { z } from 'zod';
-import { authLimiter } from './middleware/rate-limit.js';
+// import { authLimiter } from './middleware/rate-limit.js';
 import { registerSchema } from './middleware/validation.js';
 import { healthCheck } from '@zaksoft/health';
 import logger from '@zaksoft/logging';
@@ -63,7 +63,7 @@ app.use(cors(corsOptions));
 app.options('*', cors(corsOptions));
 
 app.use(express.json());
-app.use(authLimiter); // Apply rate limiting
+// app.use(authLimiter); // Apply rate limiting
 
 // Test database connection
 prisma.$connect()
@@ -337,8 +337,9 @@ app.get('/health', (req, res) => {
   res.json(healthCheck('auth', '1.0.0'));
 });
 
-const PORT = Number(process.env.PORT) || 3001;
+const PORT = Number(process.env.PORT) || 10000;
 
 app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Auth service running on port ${PORT}`);
   logger.info(`Auth service running on port ${PORT}`);
 });
