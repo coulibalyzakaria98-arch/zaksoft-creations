@@ -5,6 +5,7 @@ import { ArrowRight, Play, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { AnimatedText } from '../ui/AnimatedText';
+import { DashboardPreview } from '../ui/DashboardPreview';
 
 export function Hero() {
   return (
@@ -87,37 +88,9 @@ export function Hero() {
         </div>
 
         {/* Dashboard Preview Mockup */}
-        <motion.div
-          initial={{ opacity: 0, y: 100 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.8, type: 'spring', damping: 20 }}
-          className="mt-20 relative"
-        >
-          <div className="relative mx-auto max-w-5xl rounded-2xl border border-white/10 bg-white/5 p-2 backdrop-blur-sm overflow-hidden shadow-2xl">
-            <div className="aspect-[16/10] rounded-xl bg-secondary overflow-hidden relative">
-              {/* This would be an image or video in production */}
-              <div className="absolute inset-0 bg-gradient-to-br from-secondary via-black to-secondary flex items-center justify-center">
-                <div className="grid grid-cols-3 gap-4 p-8 w-full h-full opacity-20">
-                    {[...Array(6)].map((_, i) => (
-                        <div key={i} className="bg-white/10 rounded-lg animate-pulse" />
-                    ))}
-                </div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="flex flex-col items-center">
-                        <div className="w-20 h-20 bg-primary/20 rounded-full flex items-center justify-center border border-primary/30">
-                            <Sparkles className="w-10 h-10 text-primary" />
-                        </div>
-                        <span className="mt-4 text-primary font-mono text-sm tracking-widest uppercase">Dashboard Preview</span>
-                    </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          
-          {/* Decorative elements */}
-          <div className="absolute -top-10 -right-10 w-40 h-40 bg-accent-2/20 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-10 -left-10 w-40 h-40 bg-accent-3/20 rounded-full blur-3xl pointer-events-none" />
-        </motion.div>
+        <div className="mt-20 max-w-5xl mx-auto">
+          <DashboardPreview />
+        </div>
       </div>
     </section>
   );
