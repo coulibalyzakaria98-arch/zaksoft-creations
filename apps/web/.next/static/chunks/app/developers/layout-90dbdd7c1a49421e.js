@@ -1,0 +1,36 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[834],{15439:function(e,t,r){"use strict";r.d(t,{Z:function(){return o}});var n=r(45978),s={xmlns:"http://www.w3.org/2000/svg",width:24,height:24,viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:2,strokeLinecap:"round",strokeLinejoin:"round"};/**
+ * @license lucide-react v0.294.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let i=e=>e.replace(/([a-z0-9])([A-Z])/g,"$1-$2").toLowerCase().trim(),o=(e,t)=>{let r=(0,n.forwardRef)(({color:r="currentColor",size:o=24,strokeWidth:a=2,absoluteStrokeWidth:c,className:l="",children:d,...h},u)=>(0,n.createElement)("svg",{ref:u,...s,width:o,height:o,stroke:r,strokeWidth:c?24*Number(a)/Number(o):a,className:["lucide",`lucide-${i(e)}`,l].join(" "),...h},[...t.map(([e,t])=>(0,n.createElement)(e,t)),...Array.isArray(d)?d:[d]]));return r.displayName=`${e}`,r}},73180:function(e,t,r){"use strict";r.d(t,{Z:function(){return n}});/**
+ * @license lucide-react v0.294.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let n=(0,r(15439).Z)("Code",[["polyline",{points:"16 18 22 12 16 6",key:"z7tu5w"}],["polyline",{points:"8 6 2 12 8 18",key:"1eg1df"}]])},78106:function(e,t,r){"use strict";r.d(t,{Z:function(){return n}});/**
+ * @license lucide-react v0.294.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let n=(0,r(15439).Z)("Key",[["circle",{cx:"7.5",cy:"15.5",r:"5.5",key:"yqb3hr"}],["path",{d:"m21 2-9.6 9.6",key:"1j0ho8"}],["path",{d:"m15.5 7.5 3 3L22 7l-3-3",key:"1rn1fs"}]])},52533:function(e,t,r){"use strict";r.d(t,{Z:function(){return n}});/**
+ * @license lucide-react v0.294.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let n=(0,r(15439).Z)("Webhook",[["path",{d:"M18 16.98h-5.99c-1.1 0-1.95.94-2.48 1.9A4 4 0 0 1 2 17c.01-.7.2-1.4.57-2",key:"q3hayz"}],["path",{d:"m6 17 3.13-5.78c.53-.97.1-2.18-.5-3.1a4 4 0 1 1 6.89-4.06",key:"1go1hn"}],["path",{d:"m12 6 3.13 5.73C15.66 12.7 16.9 13 18 13a4 4 0 0 1 0 8",key:"qlwsc0"}]])},43774:function(e,t,r){"use strict";r.d(t,{Z:function(){return n}});/**
+ * @license lucide-react v0.294.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let n=(0,r(15439).Z)("Zap",[["polygon",{points:"13 2 3 14 12 14 11 22 21 10 12 10 13 2",key:"45s27k"}]])},15557:function(e,t,r){Promise.resolve().then(r.bind(r,13718))},13718:function(e,t,r){"use strict";r.r(t),r.d(t,{default:function(){return p}});var n=r(94519),s=r(97191),i=r.n(s),o=r(95399),a=r(15439);/**
+ * @license lucide-react v0.294.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let c=(0,a.Z)("LayoutDashboard",[["rect",{width:"7",height:"9",x:"3",y:"3",rx:"1",key:"10lvy0"}],["rect",{width:"7",height:"5",x:"14",y:"3",rx:"1",key:"16une8"}],["rect",{width:"7",height:"9",x:"14",y:"12",rx:"1",key:"1hutg5"}],["rect",{width:"7",height:"5",x:"3",y:"16",rx:"1",key:"ldoo1y"}]]);var l=r(78106),d=r(52533),h=r(43774);/**
+ * @license lucide-react v0.294.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let u=(0,a.Z)("BookOpen",[["path",{d:"M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z",key:"vv98re"}],["path",{d:"M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z",key:"1cyq3y"}]]);var f=r(73180);let x=[{title:"Console",items:[{name:"Dashboard",href:"/developers",icon:c},{name:"Cl\xe9s API",href:"/developers/api-keys",icon:l.Z},{name:"Webhooks",href:"/developers/webhooks",icon:d.Z}]},{title:"Documentation",items:[{name:"Introduction",href:"/developers/docs",icon:h.Z},{name:"Authentification",href:"/developers/docs/getting-started/authentication",icon:function(e){let{size:t,color:r}=e;return(0,n.jsx)("svg",{xmlns:"http://www.w3.org/2000/svg",width:t,height:t,viewBox:"0 0 24 24",fill:"none",stroke:r||"currentColor",strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round",children:(0,n.jsx)("path",{d:"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"})})}},{name:"Design API",href:"/developers/docs/api-reference/design",icon:u}]},{title:"SDKs",items:[{name:"JavaScript",href:"/developers/docs/sdk/javascript",icon:f.Z}]}];function p(e){let{children:t}=e,r=(0,o.usePathname)();return(0,n.jsxs)("div",{className:"min-h-screen bg-white flex",children:[(0,n.jsx)("aside",{className:"w-80 border-r border-gray-100 h-screen sticky top-0 bg-gray-50/50 hidden lg:block",children:(0,n.jsxs)("div",{className:"p-8",children:[(0,n.jsxs)(i(),{href:"/developers",className:"flex items-center gap-3 mb-12",children:[(0,n.jsx)("div",{className:"bg-indigo-600 w-10 h-10 rounded-xl items-center justify-center flex",children:(0,n.jsx)(h.Z,{size:20,color:"white",fill:"white"})}),(0,n.jsxs)("span",{className:"font-black text-xl text-gray-900 tracking-tighter",children:["ZAKSOFT ",(0,n.jsx)("span",{className:"text-indigo-600",children:"API"})]})]}),(0,n.jsx)("nav",{className:"space-y-10",children:x.map(e=>(0,n.jsxs)("div",{children:[(0,n.jsx)("h4",{className:"text-[10px] font-black text-gray-400 uppercase tracking-[3px] mb-6 px-4",children:e.title}),(0,n.jsx)("div",{className:"space-y-2",children:e.items.map(e=>{let t=r===e.href;return(0,n.jsxs)(i(),{href:e.href,className:"flex items-center gap-4 px-4 py-3 rounded-2xl transition-all font-bold text-sm ".concat(t?"bg-white shadow-sm border border-gray-100 text-indigo-600":"text-gray-500 hover:text-gray-900"),children:[(0,n.jsx)(e.icon,{size:18}),(0,n.jsx)("span",{children:e.name})]},e.name)})})]},e.title))})]})}),(0,n.jsxs)("main",{className:"flex-1 overflow-y-auto",children:[(0,n.jsxs)("header",{className:"h-20 border-b border-gray-50 flex items-center justify-end px-12 gap-8",children:[(0,n.jsx)(i(),{href:"/",className:"text-gray-400 font-bold text-sm hover:text-gray-900 transition-colors",children:"Retour au Studio"}),(0,n.jsx)("div",{className:"w-10 h-10 bg-gray-900 rounded-xl items-center justify-center flex",children:(0,n.jsx)("span",{className:"text-white font-black text-xs",children:"ZK"})})]}),(0,n.jsx)("div",{className:"max-w-4xl mx-auto px-12 pb-24",children:t})]})]})}},60336:function(e,t,r){"use strict";var n=r(45978),s=Symbol.for("react.element"),i=Symbol.for("react.fragment"),o=Object.prototype.hasOwnProperty,a=n.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentOwner,c={key:!0,ref:!0,__self:!0,__source:!0};function l(e,t,r){var n,i={},l=null,d=null;for(n in void 0!==r&&(l=""+r),void 0!==t.key&&(l=""+t.key),void 0!==t.ref&&(d=t.ref),t)o.call(t,n)&&!c.hasOwnProperty(n)&&(i[n]=t[n]);if(e&&e.defaultProps)for(n in t=e.defaultProps)void 0===i[n]&&(i[n]=t[n]);return{$$typeof:s,type:e,key:l,ref:d,props:i,_owner:a.current}}t.Fragment=i,t.jsx=l,t.jsxs=l},94519:function(e,t,r){"use strict";e.exports=r(60336)},97191:function(e,t,r){e.exports=r(34561)},95399:function(e,t,r){e.exports=r(21625)}},function(e){e.O(0,[561,638,269,744],function(){return e(e.s=15557)}),_N_E=e.O()}]);

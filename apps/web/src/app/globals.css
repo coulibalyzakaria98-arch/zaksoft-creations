@@ -2,93 +2,60 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Styles de base */
-body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: #f3f4f6; /* Couleur de fond gris clair */
-  color: #1f2937;     /* Couleur de texte gris foncé */
+@layer base {
+  :root {
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 4%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 4%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 24 95% 53%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 10%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 15%;
+    --muted-foreground: 0 0% 65%;
+    --accent: 24 95% 53%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 15%;
+    --input: 0 0% 15%;
+    --ring: 24 95% 53%;
+    --radius: 0.75rem;
+  }
 }
 
-/* Animations de fond */
-@keyframes twinkle {
-  0%, 100% { opacity: 0; transform: scale(0.5); }
-  50% { opacity: 1; transform: scale(1); }
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
-}
-
-@keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animate-twinkle {
-  animation: twinkle 3s ease-in-out infinite;
-}
-
-.animate-float {
-  animation: float 6s ease-in-out infinite;
-}
-
-.animate-gradient {
-  background-size: 200% 200%;
-  animation: gradient 3s ease infinite;
-}
-
-/* Masquer la scrollbar par défaut pour une apparence plus propre */
+/* Scrollbar personnalisée */
 ::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  @apply bg-secondary;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c7d2fe; /* Couleur indigo clair pour le pouce */
-  border-radius: 4px;
+  @apply bg-primary/50 rounded-full;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #818cf8; /* Couleur indigo plus foncée au survol */
+  @apply bg-primary;
 }
 
-/* Sidebar Styles (si nécessaire, sinon Tailwind suffit) */
-.sidebar {
-  width: 260px;
-  background: white;
-  height: 100vh;
-  position: fixed;
-  left: 0;
-  top: 0;
-  border-right: 1px solid #e5e7eb;
-  padding: 24px 16px;
-}
-
-/* Main content */
-.main-content {
-  margin-left: 260px;
-  padding: 24px;
-}
-
-/* Cards */
-.card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-/* Bouton pro */
-.btn-pro {
-  background: #4f46e5; /* Couleur indigo */
-  color: white;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: none;
-  cursor: pointer;
+/* Sélection de texte */
+::selection {
+  @apply bg-primary/30 text-white;
 }
