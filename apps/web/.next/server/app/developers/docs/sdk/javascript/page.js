@@ -23,4 +23,4 @@ console.log(image.url);`})]})]})]})}},92927:(e,r,t)=>{t.d(r,{Z:()=>i});var s=t(5
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
- */let s=(0,t(92927).Z)("Code",[["polyline",{points:"16 18 22 12 16 6",key:"z7tu5w"}],["polyline",{points:"8 6 2 12 8 18",key:"1eg1df"}]])}};var r=require("../../../../../webpack-runtime.js");r.C(e);var t=e=>r(r.s=e),s=r.X(0,[816,345,896],()=>t(54339));module.exports=s})();
+ */let s=(0,t(92927).Z)("Code",[["polyline",{points:"16 18 22 12 16 6",key:"z7tu5w"}],["polyline",{points:"8 6 2 12 8 18",key:"1eg1df"}]])}};var r=require("../../../../../webpack-runtime.js");r.C(e);var t=e=>r(r.s=e),s=r.X(0,[816,357,896],()=>t(54339));module.exports=s})();

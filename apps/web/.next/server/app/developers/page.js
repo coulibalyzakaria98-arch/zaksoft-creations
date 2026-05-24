@@ -3,4 +3,4 @@
  *
  * This source code is licensed under the ISC license.
  * See the LICENSE file in the root directory of this source tree.
- */let r=(0,t(88616).Z)("Send",[["path",{d:"m22 2-7 20-4-9-9-4Z",key:"1q3vgg"}],["path",{d:"M22 2 11 13",key:"nzbqef"}]])},69528:(e,s,t)=>{"use strict";t.r(s),t.d(s,{$$typeof:()=>o,__esModule:()=>i,default:()=>a});let r=(0,t(11049).createProxy)(String.raw`C:\Users\HP\Desktop\ZAKSOFT Créations\apps\web\src\app\developers\page.tsx`),{__esModule:i,$$typeof:o}=r,a=r.default}};var s=require("../../webpack-runtime.js");s.C(e);var t=e=>s(s.s=e),r=s.X(0,[816,345,896],()=>t(58162));module.exports=r})();
+ */let r=(0,t(88616).Z)("Send",[["path",{d:"m22 2-7 20-4-9-9-4Z",key:"1q3vgg"}],["path",{d:"M22 2 11 13",key:"nzbqef"}]])},69528:(e,s,t)=>{"use strict";t.r(s),t.d(s,{$$typeof:()=>o,__esModule:()=>i,default:()=>a});let r=(0,t(11049).createProxy)(String.raw`C:\Users\HP\Desktop\ZAKSOFT Créations\apps\web\src\app\developers\page.tsx`),{__esModule:i,$$typeof:o}=r,a=r.default}};var s=require("../../webpack-runtime.js");s.C(e);var t=e=>s(s.s=e),r=s.X(0,[816,357,896],()=>t(58162));module.exports=r})();

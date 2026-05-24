@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
+import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { Sparkles, ArrowRight, Building2 } from 'lucide-react';
 
-export default function SimpleRegisterPage() {
+export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -15,7 +16,6 @@ export default function SimpleRegisterPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      // Assuming register can accept the simple credentials object
       await register({ email, password });
       toast.success('Compte créé avec succès !');
     } catch (error) {
@@ -26,56 +26,72 @@ export default function SimpleRegisterPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-purple-50 flex items-center justify-center p-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
+    <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="max-w-md w-full">
+        {/* Logo */}
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold text-gray-900">Créer un compte</h1>
-          <p className="text-gray-600 mt-2">Commencez à utiliser ZAKSOFT en quelques secondes</p>
+          <div className="flex justify-center mb-4">
+            <div className="relative">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg blur opacity-50" />
+              <Sparkles className="relative w-8 h-8 text-orange-500" />
+            </div>
+          </div>
+          <h1 className="text-2xl font-bold text-white">Créer un compte</h1>
+          <p className="text-gray-400 mt-2">Commencez à utiliser ZAKSOFT en quelques secondes</p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-              required
-            />
+        {/* Formulaire */}
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Adresse email
+              </label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+                placeholder="vous@exemple.com"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Mot de passe
+              </label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 bg-black/50 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition"
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {loading ? 'Création...' : 'Créer un compte'}
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </form>
+
+          <div className="mt-6 text-center">
+            <Link href="/auth/login" className="text-orange-500 hover:text-orange-400 text-sm transition">
+              Déjà inscrit ? Se connecter
+            </Link>
+            <div className="mt-4 flex items-center justify-center gap-2">
+              <Building2 className="w-4 h-4 text-gray-500" />
+              <Link href="/auth/register/business" className="text-gray-400 hover:text-gray-300 text-sm transition">
+                Vous êtes une entreprise ? Inscription B2B
+              </Link>
+            </div>
           </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Mot de passe</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
-          >
-            {loading ? 'Création...' : 'Créer un compte'}
-          </button>
-        </form>
-
-        <p className="text-center text-sm text-gray-600 mt-6">
-          Déjà inscrit ?{' '}
-          <Link href="/auth/login" className="text-indigo-600 hover:underline">
-            Se connecter
-          </Link>
-        </p>
-
-        <div className="mt-4 text-center">
-          <Link href="/auth/register/business" className="text-sm text-gray-500 hover:text-gray-700">
-            Vous êtes une entreprise ? → Inscription B2B
-          </Link>
         </div>
       </div>
     </div>
