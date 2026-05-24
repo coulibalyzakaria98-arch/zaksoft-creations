@@ -12,9 +12,15 @@ const swagger_ui_express_1 = __importDefault(require("swagger-ui-express"));
 const js_yaml_1 = __importDefault(require("js-yaml"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
+const health_1 = require("@zaksoft/health");
+const logging_1 = __importDefault(require("@zaksoft/logging"));
 const app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json((0, health_1.healthCheck)('api-portal', '1.0.0'));
+});
 // ============ SWAGGER DOCS ============
 const openApiSpec = js_yaml_1.default.load(fs_1.default.readFileSync(path_1.default.join(__dirname, 'swagger/openapi.yaml'), 'utf8'));
 app.use('/api-docs', swagger_ui_express_1.default.serve, swagger_ui_express_1.default.setup(openApiSpec));
@@ -29,6 +35,7 @@ app.post('/developer/api-keys', authenticate, async (req, res) => {
         res.json(key);
     }
     catch (error) {
+        logging_1.default.error('Error creating api-key', { error: error.message });
         res.status(500).json({ error: error.message });
     }
 });
@@ -37,6 +44,7 @@ app.get('/developer/api-keys', authenticate, async (req, res) => {
         res.json(await key_manager_1.apiKeyManager.getUserApiKeys(req.user.id));
     }
     catch (error) {
+        logging_1.default.error('Error getting api-keys', { error: error.message });
         res.status(500).json({ error: error.message });
     }
 });
@@ -48,4 +56,4 @@ app.post('/v1/design/generate', key_middleware_1.apiKeyAuth, rate_limiter_1.rate
     res.status(202).json({ jobId: `job_${Math.random().toString(36).slice(2)}`, status: 'pending' });
 });
 const PORT = process.env.API_PORTAL_PORT || 3008;
-app.listen(PORT, () => console.log(`API Portal & Swagger running on ${PORT}`));
+app.listen(PORT, () => logging_1.default.info('API Portal & Swagger running', { port: PORT }));

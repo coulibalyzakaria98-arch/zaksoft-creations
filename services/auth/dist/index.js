@@ -11,10 +11,12 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const helmet_1 = __importDefault(require("helmet"));
 const zod_1 = require("zod");
-const rate_limit_1 = require("./middleware/rate-limit");
-const validation_1 = require("./middleware/validation");
+const rate_limit_js_1 = require("./middleware/rate-limit.js");
+const validation_js_1 = require("./middleware/validation.js");
 const health_1 = require("@zaksoft/health");
 const logging_1 = __importDefault(require("@zaksoft/logging"));
+// Debug log
+console.log('--- Starting Auth Service Initialization ---');
 // Charger les variables d'environnement
 dotenv_1.default.config();
 logging_1.default.info('--- Auth Service Starting ---');
@@ -29,9 +31,33 @@ if (!JWT_SECRET) {
 }
 logging_1.default.info('Environment variables loaded successfully.');
 app.use((0, helmet_1.default)()); // Apply security headers
-app.use((0, cors_1.default)());
+const allowedOrigins = process.env.CORS_ORIGINS
+    ? process.env.CORS_ORIGINS.split(',').map((origin) => origin.trim()).filter(Boolean)
+    : [
+        'http://localhost:3000',
+        'http://localhost:3001',
+        'https://zaksoft-creations.vercel.app',
+        /\.vercel\.app$/,
+    ];
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin)
+            return callback(null, true);
+        if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        return callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    optionsSuccessStatus: 204,
+    preflightContinue: false,
+};
+app.use((0, cors_1.default)(corsOptions));
+app.options('*', (0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
-app.use(rate_limit_1.authLimiter); // Apply rate limiting
+app.use(rate_limit_js_1.authLimiter); // Apply rate limiting
 // Test database connection
 prisma.$connect()
     .then(() => logging_1.default.info('Successfully connected to the database.'))
@@ -49,7 +75,7 @@ const generateTokens = (user) => {
 // Endpoint d'inscription
 app.post('/auth/register', async (req, res) => {
     try {
-        const validatedData = validation_1.registerSchema.parse(req.body);
+        const validatedData = validation_js_1.registerSchema.parse(req.body);
         const { email, password, firstName, lastName, companyName, companySize, position, industry, website, intendedUse, budget, howDidYouHear, newsletter } = validatedData;
         // Vérifier si l'utilisateur existe déjà
         const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -265,7 +291,7 @@ app.get('/auth/admin/stats', authenticate, isAdmin, async (req, res) => {
 app.get('/health', (req, res) => {
     res.json((0, health_1.healthCheck)('auth', '1.0.0'));
 });
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+const PORT = Number(process.env.PORT) || 3001;
+app.listen(PORT, '0.0.0.0', () => {
     logging_1.default.info(`Auth service running on port ${PORT}`);
 });

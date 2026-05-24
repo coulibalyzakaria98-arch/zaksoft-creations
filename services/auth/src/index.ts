@@ -6,8 +6,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import { z } from 'zod';
-import { authLimiter } from './middleware/rate-limit';
-import { registerSchema } from './middleware/validation';
+import { authLimiter } from './middleware/rate-limit.js';
+import { registerSchema } from './middleware/validation.js';
 import { healthCheck } from '@zaksoft/health';
 import logger from '@zaksoft/logging';
 
@@ -34,20 +34,33 @@ if (!JWT_SECRET) {
 logger.info('Environment variables loaded successfully.');
 
 app.use(helmet()); // Apply security headers
-app.use(cors({
-  origin: [
-    'http://localhost:3000',
-    'http://localhost:3001',
-    'https://zaksoft-creations.vercel.app',
-    /\.vercel\.app$/,  // All Vercel deployments
-  ],
+
+const allowedOrigins = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(',').map((origin) => origin.trim()).filter(Boolean)
+  : [
+      'http://localhost:3000',
+      'http://localhost:3001',
+      'https://zaksoft-creations.vercel.app',
+      /\.vercel\.app$/,
+    ];
+
+const corsOptions = {
+  origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-}));
+  optionsSuccessStatus: 204,
+  preflightContinue: false,
+};
 
-// Handle pre-flight OPTIONS requests
-app.options('*', cors());
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 
 app.use(express.json());
 app.use(authLimiter); // Apply rate limiting
