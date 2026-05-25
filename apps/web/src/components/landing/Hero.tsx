@@ -2,8 +2,8 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
-import Image from 'next/image';
 import { ArrowRight, Play } from 'lucide-react';
+import { DashboardPreview } from './ui/DashboardPreview';
 
 export function Hero() {
   return (
@@ -90,27 +90,7 @@ export function Hero() {
         </motion.div>
 
         {/* Dashboard Preview */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.4 }}
-          className="relative"
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent rounded-2xl" />
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-2">
-            <Image
-              src="https://placehold.co/1200x600/1a1a1a/ffffff?text=ZAKSOFT+AI+Dashboard"
-              alt="ZAKSOFT AI Dashboard Preview"
-              width={1200}
-              height={600}
-              className="w-full h-auto rounded-xl"
-            />
-          </div>
-          
-          {/* Floating elements */}
-          <div className="absolute -top-4 -right-4 w-20 h-20 bg-gradient-to-r from-orange-500 to-pink-500 rounded-full blur-2xl opacity-50" />
-          <div className="absolute -bottom-4 -left-4 w-20 h-20 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur-2xl opacity-50" />
-        </motion.div>
+        <DashboardPreview />
       </div>
     </section>
   );

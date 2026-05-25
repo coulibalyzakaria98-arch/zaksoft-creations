@@ -49,7 +49,7 @@ export function DashboardPreview() {
               ].map((stat, i) => (
                 <div key={i} className="bg-white/5 rounded-xl p-4 border border-white/10 hover:bg-white/10 transition">
                   <div className="flex items-center justify-between mb-2">
-                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${stat.color} flex items-center justify-center`}>
+                    <div className={`w-8 h-8 rounded-lg bg-gradient-to-r ${stat.color} flex items-center justify-center text-white`}>
                       {stat.icon}
                     </div>
                     <span className={`text-xs ${stat.change.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>
@@ -74,9 +74,9 @@ export function DashboardPreview() {
                   { action: 'Vidéo créée', prompt: 'Coucher de soleil cinématique', time: '15 min' },
                   { action: 'Site web publié', prompt: 'Portfolio créatif', time: '1 heure' },
                 ].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition">
+                  <div key={i} className="flex items-center gap-3 p-2 rounded-lg hover:bg-white/5 transition text-left">
                     <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <div className="flex-1 text-left">
+                    <div className="flex-1">
                       <p className="text-white text-sm">{item.action}</p>
                       <p className="text-gray-500 text-xs">{item.prompt}</p>
                     </div>
