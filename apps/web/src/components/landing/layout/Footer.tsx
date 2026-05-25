@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Sparkles, Twitter, Github, Linkedin, Mail, MapPin } from 'lucide-react';
 
 const footerLinks = {
@@ -37,7 +38,13 @@ export function Footer() {
           {/* Brand Column */}
           <div className="col-span-2 lg:col-span-1">
             <Link href="/" className="flex items-center gap-2 mb-6 group">
-              <Sparkles className="w-6 h-6 text-primary group-hover:scale-110 transition-transform" />
+              <Image
+                src="/logo.png"
+                alt="ZAKSOFT AI"
+                width={32}
+                height={32}
+                className="object-contain transition-transform group-hover:scale-110"
+              />
               <span className="font-bold text-xl tracking-tight text-white">
                 ZAKSOFT <span className="text-primary">AI</span>
               </span>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Menu, X, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -39,13 +40,16 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative">
-              <Sparkles className="w-8 h-8 text-primary transition-transform duration-300 group-hover:scale-110" />
-              <motion.div 
-                animate={{ opacity: [0, 1, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="absolute -inset-1 bg-primary/20 blur-sm rounded-full"
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative w-10 h-10">
+              <div className="absolute inset-0 bg-primary/20 rounded-xl blur-lg group-hover:opacity-100 transition duration-500" />
+              <Image
+                src="/logo.png"
+                alt="ZAKSOFT AI"
+                width={40}
+                height={40}
+                className="relative object-contain transition-transform duration-300 group-hover:scale-110"
+                priority
               />
             </div>
             <span className="font-bold text-2xl tracking-tight text-white">
