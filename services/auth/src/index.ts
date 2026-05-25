@@ -35,22 +35,45 @@ logger.info('Environment variables loaded successfully.');
 
 app.use(helmet()); // Apply security headers
 
-const allowedOrigins = process.env.CORS_ORIGINS
-  ? process.env.CORS_ORIGINS.split(',').map((origin) => origin.trim()).filter(Boolean)
-  : [
-      'http://localhost:3000',
-      'http://localhost:3001',
-      'https://zaksoft-creations.vercel.app',
-      /\.vercel\.app$/,
-    ];
+const corsOriginRaw = process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001,https://zaksoft-creations.vercel.app,https://*.vercel.app';
+
+const allowedOrigins: Array<string | RegExp> = corsOriginRaw
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+  .map((origin) => {
+    if (origin === '*') {
+      return origin;
+    }
+    if (origin.startsWith('/') && origin.endsWith('/')) {
+      return new RegExp(origin.slice(1, -1));
+    }
+    if (origin.includes('*')) {
+      const escaped = origin
+        .split('*')
+        .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        .join('.*');
+      return new RegExp(`^${escaped}$`);
+    }
+    return origin;
+  });
 
 const corsOptions = {
   origin: function (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) {
     if (!origin) return callback(null, true);
-    if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+
+    const originIsAllowed = allowedOrigins.some((allowedOrigin) => {
+      if (allowedOrigin === '*') return true;
+      if (typeof allowedOrigin === 'string') return allowedOrigin === origin;
+      return allowedOrigin.test(origin);
+    });
+
+    if (originIsAllowed) {
       return callback(null, true);
     }
-    return callback(new Error('Not allowed by CORS'));
+
+    logger.warn(`CORS blocked origin: ${origin}`);
+    return callback(new Error(`Origin ${origin} not allowed by CORS`));
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
