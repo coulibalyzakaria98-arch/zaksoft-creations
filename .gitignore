@@ -4,7 +4,7 @@
 /out-tsc
 
 # Ignore Next.js files
-/.next/
+.next/
 /next.config.js
 
 # Node modules
@@ -69,5 +69,6 @@ postgres.yaml
 # vercel.json is removed/cleared as per previous instructions
 .vercel
 .env*.local
-\n# Next.js build output\n.next/
-\n# npm pack files\n*.pack
+
+# npm pack files
+*.pack
