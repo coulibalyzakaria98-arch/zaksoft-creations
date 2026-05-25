@@ -11,8 +11,8 @@ const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const helmet_1 = __importDefault(require("helmet"));
 const zod_1 = require("zod");
-const rate_limit_js_1 = require("./middleware/rate-limit.js");
-const validation_js_1 = require("./middleware/validation.js");
+// import { authLimiter } from './middleware/rate-limit';
+const validation_1 = require("./middleware/validation");
 const health_1 = require("@zaksoft/health");
 const logging_1 = __importDefault(require("@zaksoft/logging"));
 // Debug log
@@ -57,7 +57,7 @@ const corsOptions = {
 app.use((0, cors_1.default)(corsOptions));
 app.options('*', (0, cors_1.default)(corsOptions));
 app.use(express_1.default.json());
-app.use(rate_limit_js_1.authLimiter); // Apply rate limiting
+// app.use(authLimiter); // Apply rate limiting
 // Test database connection
 prisma.$connect()
     .then(() => logging_1.default.info('Successfully connected to the database.'))
@@ -75,7 +75,7 @@ const generateTokens = (user) => {
 // Endpoint d'inscription
 app.post('/auth/register', async (req, res) => {
     try {
-        const validatedData = validation_js_1.registerSchema.parse(req.body);
+        const validatedData = validation_1.registerSchema.parse(req.body);
         const { email, password, firstName, lastName, companyName, companySize, position, industry, website, intendedUse, budget, howDidYouHear, newsletter } = validatedData;
         // Vérifier si l'utilisateur existe déjà
         const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -291,7 +291,8 @@ app.get('/auth/admin/stats', authenticate, isAdmin, async (req, res) => {
 app.get('/health', (req, res) => {
     res.json((0, health_1.healthCheck)('auth', '1.0.0'));
 });
-const PORT = Number(process.env.PORT) || 3001;
+const PORT = Number(process.env.PORT) || 10000;
 app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Auth service running on port ${PORT}`);
     logging_1.default.info(`Auth service running on port ${PORT}`);
 });

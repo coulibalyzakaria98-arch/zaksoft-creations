@@ -9,7 +9,7 @@ import { z } from 'zod';
 // import { authLimiter } from './middleware/rate-limit';
 import { registerSchema } from './middleware/validation';
 import { healthCheck } from '@zaksoft/health';
-import { logger } from '@zaksoft/logging';
+import logger from '@zaksoft/logging';
 
 // Debug log
 console.log('--- Starting Auth Service Initialization ---');
