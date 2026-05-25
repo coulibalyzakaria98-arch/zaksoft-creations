@@ -17,9 +17,9 @@ export function Footer() {
               </span>
             </div>
             <p className="text-gray-400 text-sm">
-              La première plateforme africaine de création et d'automatisation par IA.
+              La première plateforme africaine de création et d&apos;automatisation par IA.
             </p>
-            <p className="text-gray-500 text-xs mt-2">Made in Côte d'Ivoire 🇨🇮</p>
+            <p className="text-gray-500 text-xs mt-2">Made in Côte d&apos;Ivoire 🇨🇮</p>
           </div>
 
           {/* Product */}

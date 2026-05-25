@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const partners = [
   { name: 'Stripe', logo: 'https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg' },
@@ -28,12 +29,14 @@ export function TrustedBy() {
           </p>
           <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 grayscale opacity-30 hover:grayscale-0 hover:opacity-100 transition-all duration-500">
             {partners.map((partner) => (
-              <img
-                key={partner.name}
-                src={partner.logo}
-                alt={partner.name}
-                className="h-6 md:h-8 object-contain invert"
-              />
+              <div key={partner.name} className="relative h-6 md:h-8 w-24 md:w-32 invert">
+                <Image
+                  src={partner.logo}
+                  alt={partner.name}
+                  fill
+                  className="object-contain"
+                />
+              </div>
             ))}
           </div>
         </div>

@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, Play } from 'lucide-react';
 
 export function Hero() {
@@ -42,7 +43,7 @@ export function Hero() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-orange-500" />
           </span>
-          <span className="text-sm text-gray-300">Powered by AI — Made in Côte d'Ivoire 🇨🇮</span>
+          <span className="text-sm text-gray-300">Powered by AI — Made in Côte d&apos;Ivoire 🇨🇮</span>
         </motion.div>
 
         {/* Main Headline */}
@@ -65,7 +66,7 @@ export function Hero() {
           transition={{ duration: 0.5, delay: 0.2 }}
           className="text-xl text-gray-400 max-w-2xl mx-auto mb-10"
         >
-          La première plateforme africaine de création et d'automatisation par IA.
+          La première plateforme africaine de création et d&apos;automatisation par IA.
           Générez des images, vidéos, sites web et boostez votre business.
         </motion.p>
 
@@ -97,10 +98,12 @@ export function Hero() {
         >
           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent rounded-2xl" />
           <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-2">
-            <img
+            <Image
               src="https://placehold.co/1200x600/1a1a1a/ffffff?text=ZAKSOFT+AI+Dashboard"
               alt="ZAKSOFT AI Dashboard Preview"
-              className="w-full rounded-xl"
+              width={1200}
+              height={600}
+              className="w-full h-auto rounded-xl"
             />
           </div>
           

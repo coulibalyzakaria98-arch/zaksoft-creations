@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { SectionHeader } from './ui/SectionHeader';
 import { GlassCard } from './ui/GlassCard';
 import { Star, Quote } from 'lucide-react';
@@ -67,10 +68,12 @@ export function Testimonials() {
                 </p>
                 
                 <div className="flex items-center gap-4 pt-6 border-t border-white/5">
-                  <img
+                  <Image
                     src={testimonial.avatar}
                     alt={testimonial.name}
-                    className="w-12 h-12 rounded-full border border-primary/30"
+                    width={48}
+                    height={48}
+                    className="rounded-full border border-primary/30"
                   />
                   <div>
                     <h4 className="font-bold text-white">{testimonial.name}</h4>

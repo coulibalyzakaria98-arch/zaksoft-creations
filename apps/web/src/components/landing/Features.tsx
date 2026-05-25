@@ -76,7 +76,7 @@ export function Features() {
             Tout ce dont vous avez besoin
           </h2>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Une suite complète d'outils IA pour booster votre créativité et votre business
+            Une suite complète d&apos;outils IA pour booster votre créativité et votre business
           </p>
         </motion.div>
 

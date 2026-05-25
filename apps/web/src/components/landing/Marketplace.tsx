@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 import { SectionHeader } from './ui/SectionHeader';
 import { GlassCard } from './ui/GlassCard';
 import { Button } from '@/components/ui/button';
@@ -85,10 +86,11 @@ export function Marketplace() {
             >
               <GlassCard className="p-0 group h-full flex flex-col">
                 <div className="relative aspect-square overflow-hidden rounded-t-xl">
-                  <img
+                  <Image
                     src={product.image}
                     alt={product.title}
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                   <div className="absolute top-3 left-3 flex gap-2">
                     <Badge className="bg-black/60 backdrop-blur-md border-white/10 text-[10px] uppercase tracking-wider">
