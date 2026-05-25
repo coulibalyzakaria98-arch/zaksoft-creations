@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
-import { Menu, X, Sparkles } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -36,12 +37,19 @@ export function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg blur opacity-50 group-hover:opacity-75 transition" />
-              <Sparkles className="relative w-6 h-6 text-orange-500" />
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative w-10 h-10">
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-500/20 to-pink-500/20 rounded-xl blur-lg group-hover:opacity-100 transition duration-500" />
+              <Image
+                src="/logo.png"
+                alt="ZAKSOFT AI"
+                width={40}
+                height={40}
+                className="relative object-contain transition-transform duration-300 group-hover:scale-110"
+                priority
+              />
             </div>
-            <span className="font-bold text-xl text-white">
+            <span className="font-bold text-xl text-white tracking-tight">
               ZAKSOFT<span className="text-orange-500">AI</span>
             </span>
           </Link>

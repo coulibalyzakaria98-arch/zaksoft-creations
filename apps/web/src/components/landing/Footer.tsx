@@ -1,7 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { Sparkles, Twitter, Linkedin, Github, Mail } from 'lucide-react';
+import Image from 'next/image';
+import { Twitter, Linkedin, Github, Mail } from 'lucide-react';
 
 export function Footer() {
   return (
@@ -10,12 +11,18 @@ export function Footer() {
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
-              <Sparkles className="w-6 h-6 text-orange-500" />
+            <Link href="/" className="flex items-center gap-2 mb-4 group">
+              <Image
+                src="/logo.png"
+                alt="ZAKSOFT AI"
+                width={32}
+                height={32}
+                className="object-contain transition-transform group-hover:scale-110"
+              />
               <span className="font-bold text-xl text-white">
                 ZAKSOFT<span className="text-orange-500">AI</span>
               </span>
-            </div>
+            </Link>
             <p className="text-gray-400 text-sm">
               La première plateforme africaine de création et d&apos;automatisation par IA.
             </p>

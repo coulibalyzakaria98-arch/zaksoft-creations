@@ -1,10 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
-import { Sparkles, ArrowRight } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -31,10 +32,17 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg blur opacity-50" />
-              <Sparkles className="relative w-8 h-8 text-orange-500" />
-            </div>
+            <Link href="/" className="group relative">
+              <div className="absolute inset-0 bg-orange-500/20 rounded-xl blur-lg group-hover:opacity-100 transition duration-500" />
+              <Image
+                src="/logo.png"
+                alt="ZAKSOFT AI"
+                width={64}
+                height={64}
+                className="relative object-contain transition-transform duration-300 group-hover:scale-110"
+                priority
+              />
+            </Link>
           </div>
           <h1 className="text-2xl font-bold text-white">Connexion</h1>
           <p className="text-gray-400 mt-2">Accédez à votre espace créatif IA</p>

@@ -15,6 +15,11 @@ export const metadata = {
   title: 'ZAKSOFT AI - Création et Automatisation par IA',
   description: "La première plateforme africaine de création et d'automatisation par IA. Générez des images, vidéos, sites web et boostez votre business.",
   keywords: "IA, intelligence artificielle, création de contenu, vidéo IA, design IA, marketplace, API, Afrique, Côte d'Ivoire",
+  icons: {
+    icon: '/logo.png',
+    shortcut: '/logo.png',
+    apple: '/logo.png',
+  },
   authors: [{ name: 'Zakaria Coulibaly' }],
   creator: 'Zakaria Coulibaly',
   publisher: 'ZAKSOFT AI',
