@@ -1,0 +1,123 @@
+Questions principales de l’interview
+1) Comment est née votre passion pour le développement informatique ? Y a-t-il eu un projet ou un mentor qui vous a marqué ici, à San Pedro ?
+
+Ma passion pour l’informatique est née grâce à ma curiosité pour les ordinateurs et les nouvelles technologies. Très tôt, je voulais comprendre comment fonctionnaient les logiciels, les réseaux et les systèmes numériques. Avec le temps, cette curiosité est devenue une véritable passion.
+
+À San Pedro, plusieurs expériences et rencontres m’ont motivé à continuer, notamment les projets communautaires et les initiatives numériques locales. J’ai compris que la technologie pouvait avoir un impact réel sur la vie des jeunes et des entreprises.
+
+2) Quel a été votre parcours de formation ? Avez-vous étudié dans la région ou appris en autodidacte ?
+
+J’ai suivi une formation en informatique et réseaux télécommunications tout en développant beaucoup de compétences en autodidacte. Je passe énormément de temps à apprendre grâce aux plateformes en ligne, aux documentations techniques et à la pratique.
+
+Dans le numérique, il faut constamment apprendre et évoluer avec les nouvelles technologies. C’est un domaine où la curiosité et la pratique sont très importantes.
+
+3) Sur quels types de projets ou de technologies travaillez-vous actuellement ?
+
+Actuellement, je travaille sur plusieurs projets liés au développement web, à l’intelligence artificielle, à la cybersécurité et à la communication digitale à travers ZAKSOFT.
+
+Je développe notamment des sites web modernes, des solutions numériques pour les entreprises, des projets liés à l’IA ainsi que des contenus visuels et digitaux.
+
+4) Selon votre expérience, les recruteurs et les chefs d’entreprise à San Pedro sont-ils ouverts et sensibilisés à l’accueil de profils tech en situation de handicap ?
+
+Les mentalités évoluent progressivement, mais il reste encore beaucoup de sensibilisation à faire. Certaines entreprises commencent à comprendre que les compétences et le talent ne dépendent pas d’une situation physique.
+
+Le numérique offre aujourd’hui beaucoup d’opportunités accessibles à tous, et je pense qu’il faut davantage encourager l’inclusion professionnelle et donner leur chance aux jeunes talents.
+
+5) Quel message adresseriez-vous à un jeune habitant de San Pedro, passionné de tech et en situation de handicap, qui hésite encore à se lancer ?
+
+Je lui dirais de croire en lui et de ne jamais laisser sa situation limiter ses rêves. Aujourd’hui, grâce au numérique, il est possible d’apprendre, de créer et de travailler même avec peu de moyens au départ.
+
+Le plus important, c’est la détermination, la discipline et la persévérance. Chaque compétence acquise est une victoire.
+
+6) L’appel aux décideurs : Si vous aviez un message à faire passer aux autorités locales ou aux chefs d’entreprise pour améliorer l’inclusion dans le milieu professionnel, quel serait-il ?
+
+Je demanderais davantage d’investissements dans la formation numérique, l’accessibilité et l’accompagnement des jeunes, notamment ceux en situation de handicap.
+
+L’inclusion doit être une réalité concrète à travers des formations adaptées, des stages accessibles et des opportunités professionnelles équitables.
+
+Sur votre parcours et votre personnalité
+7) Qui est réellement Coulibaly Zakaria en dehors du monde de la technologie ?
+
+Je suis une personne passionnée, curieuse et très engagée dans la communauté. J’aime apprendre, partager mes connaissances et participer à des projets qui ont un impact positif autour de moi.
+
+Je suis également très attaché au bénévolat, au développement des jeunes et à la promotion du numérique dans ma région.
+
+8) Y a-t-il un moment où vous avez failli abandonner ? Qu’est-ce qui vous a poussé à continuer ?
+
+Oui, il y a eu des moments difficiles où le manque de moyens, les obstacles et certaines difficultés personnelles auraient pu me décourager.
+
+Mais ma passion pour la technologie, mes ambitions et l’envie de construire quelque chose d’utile m’ont poussé à continuer. Je crois beaucoup au travail et à la persévérance.
+
+9) Quelle est aujourd’hui votre plus grande source de motivation ?
+
+Ma plus grande motivation est de voir que la technologie peut réellement changer des vies et créer des opportunités pour les jeunes africains.
+
+Je suis aussi motivé par l’envie de représenter positivement San Pedro et de montrer qu’on peut réaliser de grandes choses en partant de notre région.
+
+10) Comment arrivez-vous à gérer vos projets professionnels, le bénévolat et votre présence active sur les réseaux sociaux ?
+
+C’est surtout une question d’organisation, de discipline et de passion. J’essaie de bien planifier mes activités et de rester concentré sur mes objectifs.
+
+Le bénévolat m’a appris la gestion du temps, le travail d’équipe et le sens des responsabilités.
+
+Sur ZAKSOFT et votre vision
+11) Vous êtes le fondateur de ZAKSOFT. Quel impact souhaitez-vous avoir à travers cette entreprise à San Pedro et en Côte d’Ivoire ?
+
+Je souhaite que ZAKSOFT devienne une référence dans les solutions numériques et technologiques en Côte d’Ivoire.
+
+Mon objectif est d’aider les entreprises, les jeunes et les organisations à évoluer grâce à la technologie, tout en créant des opportunités dans le numérique pour la jeunesse locale.
+
+12) Quel est le projet dont vous êtes le plus fier aujourd’hui ?
+
+Je suis fier du parcours que j’ai construit jusqu’à présent, notamment la création de ZAKSOFT, mes projets technologiques et mon engagement communautaire.
+
+Je suis également fier d’avoir pu représenter la jeunesse de San Pedro dans plusieurs initiatives liées à la technologie et au volontariat.
+
+Sur le volontariat et la CAN23
+13) Vous avez participé à l’organisation de la 2023 Africa Cup of Nations en tant que volontaire. Qu’est-ce que cette expérience vous a apporté ?
+
+Cette expérience m’a énormément apporté humainement et professionnellement. J’ai appris la discipline, le travail en équipe, la gestion de la pression et le sens de l’organisation.
+
+La CAN23 m’a aussi permis de rencontrer des personnes inspirantes et de développer davantage mon esprit de leadership et de service à la communauté.
+
+14) Quelles sont les 3 expériences qui ont le plus marqué votre vie jusqu’à aujourd’hui ?
+
+Mon expérience comme volontaire à la CAN23, ma participation au bootcamp IA en Guinée et la création de ZAKSOFT.
+
+Ces trois expériences ont renforcé ma vision, ma confiance en moi et mon ambition dans le domaine du numérique et de l’innovation.
+
+Sur l’intelligence artificielle et l’avenir
+15) Vous avez participé à un bootcamp IA en Guinée. Qu’avez-vous retenu de cette expérience ?
+
+Le bootcamp IA a été une expérience très enrichissante. J’y ai découvert de nouvelles approches autour de l’intelligence artificielle, de l’innovation et de la collaboration entre jeunes africains passionnés du numérique.
+
+Cette expérience a renforcé mon intérêt pour l’IA et ma volonté de développer des projets innovants adaptés aux réalités africaines.
+
+16) Quels projets liés à l’intelligence artificielle aimeriez-vous développer dans le futur ?
+
+J’aimerais développer des solutions intelligentes capables d’aider les entreprises, l’éducation et les jeunes entrepreneurs africains.
+
+Je souhaite également travailler sur des outils d’automatisation, des assistants intelligents et des solutions numériques adaptées aux besoins locaux.
+
+17) Que manque-t-il encore à San Pedro pour devenir un véritable hub technologique ?
+
+Il manque surtout davantage de centres de formation spécialisés, d’accompagnement pour les jeunes porteurs de projets, d’investissements dans le numérique et d’espaces d’innovation.
+
+San Pedro possède beaucoup de talents, mais il faut créer un environnement capable de soutenir ces jeunes talents.
+
+18) Quel conseil donneriez-vous à un jeune qui veut commencer dans le développement web, la cybersécurité ou l’intelligence artificielle ?
+
+Je lui conseillerais de commencer avec les moyens qu’il a déjà, d’apprendre régulièrement et surtout de pratiquer.
+
+Aujourd’hui, Internet offre énormément de ressources gratuites. Le plus important est d’être patient, discipliné et passionné.
+
+Mot de la fin
+19) Quel est votre plus grand rêve ?
+
+Mon plus grand rêve est de devenir un acteur majeur du numérique et de l’innovation en Afrique tout en aidant les jeunes à croire en leurs capacités.
+
+Je veux contribuer au développement technologique de ma région et créer des projets qui auront un impact positif durable.
+
+20) Si vous deviez résumer votre parcours en une phrase, quelle serait-elle ?
+
+“Transformer les défis en opportunités grâce à la technologie, au travail et à la persévérance.”
