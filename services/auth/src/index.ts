@@ -6,10 +6,10 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import { z } from 'zod';
-// import { authLimiter } from './middleware/rate-limit.js';
-import { registerSchema } from './middleware/validation.js';
+// import { authLimiter } from './middleware/rate-limit';
+import { registerSchema } from './middleware/validation';
 import { healthCheck } from '@zaksoft/health';
-import logger from '@zaksoft/logging';
+import { logger } from '@zaksoft/logging';
 
 // Debug log
 console.log('--- Starting Auth Service Initialization ---');
