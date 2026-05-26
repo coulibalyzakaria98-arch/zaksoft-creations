@@ -17,7 +17,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      await register(email, password);
+      await register({ email, password });
       toast.success('Inscription réussie !');
     } catch (error) {
       toast.error('Erreur lors de l\'inscription');
