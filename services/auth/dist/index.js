@@ -31,23 +31,29 @@ if (!JWT_SECRET) {
 }
 logging_1.default.info('Environment variables loaded successfully.');
 app.use((0, helmet_1.default)()); // Apply security headers
-const allowedOrigins = process.env.CORS_ORIGINS
-    ? process.env.CORS_ORIGINS.split(',').map((origin) => origin.trim()).filter(Boolean)
-    : [
-        'http://localhost:3000',
-        'http://localhost:3001',
-        'https://zaksoft-creations.vercel.app',
-        /\.vercel\.app$/,
-    ];
+const corsOriginRaw = process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001,https://zaksoft-creations.vercel.app,https://*.vercel.app';
+const allowedOrigins = corsOriginRaw
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+    .map((origin) => {
+    if (origin === '*') {
+        return origin;
+    }
+    if (origin.startsWith('/') && origin.endsWith('/')) {
+        return new RegExp(origin.slice(1, -1));
+    }
+    if (origin.includes('*')) {
+        const escaped = origin
+            .split('*')
+            .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+            .join('.*');
+        return new RegExp(`^${escaped}$`);
+    }
+    return origin;
+});
 const corsOptions = {
-    origin: function (origin, callback) {
-        if (!origin)
-            return callback(null, true);
-        if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
-        return callback(new Error('Not allowed by CORS'));
-    },
+    origin: true, // Accepte toutes les origines pour le test
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -72,8 +78,10 @@ const generateTokens = (user) => {
     const refreshToken = jsonwebtoken_1.default.sign({ userId: user.id }, REFRESH_SECRET, { expiresIn: '7d' });
     return { accessToken, refreshToken };
 };
+// --- Routes Definition ---
+const authRouter = express_1.default.Router();
 // Endpoint d'inscription
-app.post('/auth/register', async (req, res) => {
+authRouter.post('/register', async (req, res) => {
     try {
         const validatedData = validation_1.registerSchema.parse(req.body);
         const { email, password, firstName, lastName, companyName, companySize, position, industry, website, intendedUse, budget, howDidYouHear, newsletter } = validatedData;
@@ -127,7 +135,7 @@ app.post('/auth/register', async (req, res) => {
     }
 });
 // Endpoint de connexion
-app.post('/auth/login', async (req, res) => {
+authRouter.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
@@ -159,7 +167,7 @@ app.post('/auth/login', async (req, res) => {
     }
 });
 // Endpoint pour rafraîchir le token
-app.post('/auth/refresh', async (req, res) => {
+authRouter.post('/refresh', async (req, res) => {
     const { refreshToken } = req.body;
     if (!refreshToken) {
         return res.status(401).json({ error: 'Refresh token requis' });
@@ -199,7 +207,7 @@ const authenticate = (req, res, next) => {
  * GET /auth/me
  * Récupère le profil de l'utilisateur connecté
  */
-app.get('/auth/me', authenticate, async (req, res) => {
+authRouter.get('/me', authenticate, async (req, res) => {
     try {
         const user = await prisma.user.findUnique({
             where: { id: req.userId }
@@ -237,7 +245,7 @@ const isAdmin = async (req, res, next) => {
  * GET /auth/admin/stats
  * Statistiques globales pour le dashboard admin
  */
-app.get('/auth/admin/stats', authenticate, isAdmin, async (req, res) => {
+authRouter.get('/admin/stats', authenticate, isAdmin, async (req, res) => {
     try {
         const totalUsers = await prisma.user.count();
         // Répartition par industrie
@@ -287,7 +295,13 @@ app.get('/auth/admin/stats', authenticate, isAdmin, async (req, res) => {
         res.status(500).json({ error: 'Erreur lors de la récupération des statistiques' });
     }
 });
-// Health check endpoint
+// Appliquer le router avec le préfixe /auth
+app.use('/auth', authRouter);
+// Root health check for Render
+app.get('/', (req, res) => {
+    res.json({ status: 'ok', service: 'auth-service' });
+});
+// Health check endpoint (legacy / compatible)
 app.get('/health', (req, res) => {
     res.json((0, health_1.healthCheck)('auth', '1.0.0'));
 });

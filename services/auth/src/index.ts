@@ -99,8 +99,11 @@ const generateTokens = (user: { id: string; tier: string }) => {
   return { accessToken, refreshToken };
 };
 
+// --- Routes Definition ---
+const authRouter = express.Router();
+
 // Endpoint d'inscription
-app.post('/auth/register', async (req, res) => {
+authRouter.post('/register', async (req, res) => {
   try {
     const validatedData = registerSchema.parse(req.body);
     const { 
@@ -163,7 +166,7 @@ app.post('/auth/register', async (req, res) => {
 });
 
 // Endpoint de connexion
-app.post('/auth/login', async (req, res) => {
+authRouter.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     
@@ -200,7 +203,7 @@ app.post('/auth/login', async (req, res) => {
 });
 
 // Endpoint pour rafraîchir le token
-app.post('/auth/refresh', async (req, res) => {
+authRouter.post('/refresh', async (req, res) => {
   const { refreshToken } = req.body;
   
   if (!refreshToken) {
@@ -244,7 +247,7 @@ const authenticate = (req: any, res: any, next: any) => {
  * GET /auth/me
  * Récupère le profil de l'utilisateur connecté
  */
-app.get('/auth/me', authenticate, async (req: any, res) => {
+authRouter.get('/me', authenticate, async (req: any, res) => {
   try {
     const user = await prisma.user.findUnique({
       where: { id: req.userId }
@@ -284,7 +287,7 @@ const isAdmin = async (req: any, res: any, next: any) => {
  * GET /auth/admin/stats
  * Statistiques globales pour le dashboard admin
  */
-app.get('/auth/admin/stats', authenticate, isAdmin, async (req, res) => {
+authRouter.get('/admin/stats', authenticate, isAdmin, async (req, res) => {
   try {
     const totalUsers = await prisma.user.count();
     
@@ -340,7 +343,15 @@ app.get('/auth/admin/stats', authenticate, isAdmin, async (req, res) => {
   }
 });
 
-// Health check endpoint
+// Appliquer le router avec le préfixe /auth
+app.use('/auth', authRouter);
+
+// Root health check for Render
+app.get('/', (req, res) => {
+  res.json({ status: 'ok', service: 'auth-service' });
+});
+
+// Health check endpoint (legacy / compatible)
 app.get('/health', (req, res) => {
   res.json(healthCheck('auth', '1.0.0'));
 });
