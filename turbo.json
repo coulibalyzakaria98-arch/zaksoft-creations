@@ -10,7 +10,8 @@
       "dependsOn": []
     },
     "type-check": {
-      "dependsOn": []
+      "dependsOn": [],
+      "outputs": []
     },
     "dev": {
       "cache": false
