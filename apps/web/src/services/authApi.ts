@@ -2,7 +2,8 @@
 import axios from 'axios';
 
 // Use the environment variable for the Auth API URL, default to localhost:3001
-const AUTH_API_URL = process.env.NEXT_PUBLIC_AUTH_API_URL || 'http://localhost:3001';
+// Prefer the generic NEXT_PUBLIC_API_URL if set, fallback to NEXT_PUBLIC_AUTH_API_URL for backward compatibility.
+const AUTH_API_URL = process.env.NEXT_PUBLIC_API_URL || process.env.NEXT_PUBLIC_AUTH_API_URL || 'http://localhost:3001';
 
 export interface User {
   id: string;
