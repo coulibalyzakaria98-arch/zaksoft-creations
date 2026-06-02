@@ -174,17 +174,23 @@ authRouter.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email et mot de passe requis' });
     }
 
+    logger.info('Login attempt', { email });
+
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
+      logger.warn('Login failed - user not found', { email });
       return res.status(401).json({ error: 'Identifiants invalides' });
     }
     
     const valid = await bcrypt.compare(password, user.passwordHash);
     if (!valid) {
+      logger.warn('Login failed - invalid password', { email });
       return res.status(401).json({ error: 'Identifiants invalides' });
     }
     
     const { accessToken, refreshToken } = generateTokens(user);
+    
+    logger.info('Login successful', { email, userId: user.id });
     
     res.json({ 
       accessToken, 
@@ -196,8 +202,12 @@ authRouter.post('/login', async (req, res) => {
         credits: user.credits 
       } 
     });
-  } catch (error) {
-    logger.error('Erreur connexion:', { error });
+  } catch (error: any) {
+    logger.error('Erreur connexion:', { 
+      error: error?.message || String(error),
+      stack: error?.stack,
+      timestamp: new Date().toISOString()
+    });
     res.status(500).json({ error: 'Erreur interne du serveur' });
   }
 });
