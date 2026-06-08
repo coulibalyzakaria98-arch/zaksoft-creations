@@ -75,7 +75,7 @@ const voiceOptions = [
 ];
 
 export default function VideoPage() {
-  const { user, refreshUser } = useAuth();
+  const { user } = useAuth();
   const [prompt, setPrompt] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [duration, setDuration] = useState('medium');
