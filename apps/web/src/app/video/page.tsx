@@ -143,7 +143,6 @@ export default function VideoPage() {
       setVideos(prev => [newVideo, ...prev]);
       setCurrentVideo(newVideo);
       setGenerating(false);
-      refreshUser();
       toast.success('Vidéo générée avec succès !');
     }, 5000);
   };
