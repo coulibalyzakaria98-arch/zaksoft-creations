@@ -41,7 +41,7 @@ const sizes = [
 ];
 
 export default function DesignPage() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [prompt, setPrompt] = useState('');
   const [negativePrompt, setNegativePrompt] = useState('');
   const [selectedStyle, setSelectedStyle] = useState('');
@@ -94,7 +94,7 @@ export default function DesignPage() {
       };
       setGeneratedImages(prev => [newImage, ...prev]);
       setGenerating(false);
-      // refreshUser(); // Assuming this was intended to be available
+      refreshUser();
       toast.success('Image générée avec succès !');
     }, 3000);
   };
