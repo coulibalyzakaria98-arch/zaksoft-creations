@@ -40,7 +40,7 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-      router.push('/');
+      router.push('/dashboard');
     } catch (err) {
       console.error('Login failed:', err);
       setErrors({ general: 'Impossible de se connecter. Vérifiez vos identifiants et réessayez.' });

@@ -4,6 +4,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import * as authApi from '@/services/authApi';
 import { useRouter } from 'next/navigation';
+import Cookies from 'js-cookie';
 
 interface User {
   id: string;
@@ -40,10 +41,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const login = async (email: string, password: string) => {
     try {
-      const { accessToken, user } = await authApi.login(email, password) as any;
+      const response = await authApi.login(email, password);
+      const { token, user } = response;
       setUser(user);
       localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', accessToken);
+      localStorage.setItem('token', token);
+      
+      // Set cookie for middleware
+      Cookies.set('token', token, { expires: 7 });
+      
       router.push('/dashboard');
     } catch (error) {
       console.error('Login failed', error);
@@ -57,6 +63,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(user);
       localStorage.setItem('user', JSON.stringify(user));
       localStorage.setItem('token', accessToken);
+      
+      // Set cookie for middleware
+      Cookies.set('token', accessToken, { expires: 7 });
+      
       router.push('/dashboard');
     } catch (error) {
       console.error('Registration failed', error);
@@ -68,6 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(null);
     localStorage.removeItem('user');
     localStorage.removeItem('token');
+    Cookies.remove('token');
     router.push('/auth/login');
   };
 
