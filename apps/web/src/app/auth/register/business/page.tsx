@@ -6,10 +6,12 @@ import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { Building2, Briefcase, Users, ArrowRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function BusinessRegisterPage() {
   const { register } = useAuth();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -33,6 +35,7 @@ export default function BusinessRegisterPage() {
     try {
       await register(formData);
       toast.success('Compte professionnel créé avec succès !');
+      router.push('/dashboard');
     } catch (error) {
       toast.error('Erreur lors de la création du compte');
     } finally {
