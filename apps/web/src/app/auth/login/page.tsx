@@ -6,12 +6,14 @@ import { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
 import { ArrowRight } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -19,6 +21,7 @@ export default function LoginPage() {
     try {
       await login(email, password);
       toast.success('Connexion réussie !');
+      router.push('/dashboard');
     } catch (error) {
       toast.error('Email ou mot de passe incorrect');
     } finally {

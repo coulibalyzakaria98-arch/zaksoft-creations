@@ -25,10 +25,17 @@ const prisma = new PrismaClient();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET || 'fallback-refresh-secret';
+const DATABASE_URL = process.env.DATABASE_URL;
 
 if (!JWT_SECRET) {
   logger.error('FATAL ERROR: JWT_SECRET is not defined in environment variables.');
   process.exit(1);
+}
+
+if (!DATABASE_URL) {
+  logger.error('FATAL ERROR: DATABASE_URL is not defined in environment variables.');
+  // On ne quitte pas forcément ici pour permettre au health check de répondre si besoin, 
+  // mais les requêtes DB échoueront.
 }
 
 logger.info('Environment variables loaded successfully.');
@@ -274,6 +281,7 @@ authRouter.get('/me', authenticate, async (req: any, res) => {
       credits: user.credits
     });
   } catch (error) {
+    logger.error('Erreur /me:', { error });
     res.status(500).json({ error: 'Erreur lors de la récupération du profil' });
   }
 });
@@ -289,6 +297,7 @@ const isAdmin = async (req: any, res: any, next: any) => {
     }
     next();
   } catch (error) {
+    logger.error('Erreur isAdmin:', { error });
     res.status(500).json({ error: 'Erreur lors de la vérification des droits' });
   }
 };

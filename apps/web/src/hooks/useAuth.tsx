@@ -42,13 +42,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       const response = await authApi.login(email, password);
-      const { token, user } = response;
+      const { accessToken, user } = response;
       setUser(user);
       localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('token', token);
+      localStorage.setItem('token', accessToken);
       
-      // Set cookie for middleware
-      Cookies.set('token', token, { expires: 7 });
+      // Set cookie for middleware with explicit path and sameSite
+      Cookies.set('token', accessToken, { 
+        expires: 7,
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax'
+      });
       
       router.push('/dashboard');
     } catch (error) {
@@ -65,7 +70,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       localStorage.setItem('token', accessToken);
       
       // Set cookie for middleware
-      Cookies.set('token', accessToken, { expires: 7 });
+      Cookies.set('token', accessToken, { 
+        expires: 7,
+        path: '/',
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax'
+      });
       
       router.push('/dashboard');
     } catch (error) {

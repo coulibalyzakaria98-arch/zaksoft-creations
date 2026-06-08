@@ -4,12 +4,14 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const { register } = useAuth();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,6 +19,7 @@ export default function RegisterPage() {
     try {
       await register({ email, password });
       toast.success('Inscription réussie !');
+      router.push('/dashboard');
     } catch (error) {
       toast.error("Erreur lors de l'inscription");
     } finally {

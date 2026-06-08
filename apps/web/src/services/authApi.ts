@@ -18,7 +18,7 @@ export async function register(data: any): Promise<{ accessToken: string; refres
   return response.data;
 }
 
-export async function login(email: string, password: string): Promise<{ token: string; user: User }> {
+export async function login(email: string, password: string): Promise<{ accessToken: string; refreshToken: string; user: User }> {
   const response = await axios.post(`${AUTH_API_URL}/auth/login`, { email, password });
   return response.data;
 }
