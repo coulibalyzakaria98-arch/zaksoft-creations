@@ -41,7 +41,7 @@ const sizes = [
 ];
 
 export default function DesignPage() {
-  const { user, refreshUser } = useAuth();
+  const { user } = useAuth();
   const [prompt, setPrompt] = useState('');
   const [negativePrompt, setNegativePrompt] = useState('');
   const [selectedStyle, setSelectedStyle] = useState('');
