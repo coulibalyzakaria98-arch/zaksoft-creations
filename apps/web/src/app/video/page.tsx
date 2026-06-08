@@ -75,7 +75,7 @@ const voiceOptions = [
 ];
 
 export default function VideoPage() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [prompt, setPrompt] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [duration, setDuration] = useState('medium');
@@ -143,6 +143,7 @@ export default function VideoPage() {
       setVideos(prev => [newVideo, ...prev]);
       setCurrentVideo(newVideo);
       setGenerating(false);
+      refreshUser();
       toast.success('Vidéo générée avec succès !');
     }, 5000);
   };
