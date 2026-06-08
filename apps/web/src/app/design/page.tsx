@@ -94,7 +94,6 @@ export default function DesignPage() {
       };
       setGeneratedImages(prev => [newImage, ...prev]);
       setGenerating(false);
-      refreshUser();
       toast.success('Image générée avec succès !');
     }, 3000);
   };
