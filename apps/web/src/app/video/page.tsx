@@ -9,7 +9,7 @@ import {
   Clock, Zap, Settings, Music, Volume2, Type,
   ChevronDown, Plus, Save, Eye, Calendar, TrendingUp,
   Play, Pause, SkipForward, SkipBack, VolumeX, Volume1,
-  Fullscreen, Minimize, Edit, Layers, Wand2
+  Fullscreen, Minimize, Edit, Layers, Wand2, Heart
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
