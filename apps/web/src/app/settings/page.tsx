@@ -1,52 +1,89 @@
+// apps/web/src/app/settings/page.tsx
 'use client';
 
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { Bell, Shield, User, Globe, Moon, Mail } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { PageSkeleton } from '@/components/ui/skeletons/PageSkeleton';
 
 export default function SettingsPage() {
-  const { user, isLoading } = useAuth();
-
-  if (isLoading) {
-    return <PageSkeleton header cards={0} />;
-  }
+  const { user } = useAuth();
+  const [notifications, setNotifications] = useState(true);
+  const [darkMode, setDarkMode] = useState(true);
 
   return (
-    <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">Paramètres</h1>
-      
-      <div className="bg-white rounded-xl shadow-sm p-6 space-y-6">
-        {/* Profil */}
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Profil</h2>
-          <div className="space-y-3">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Email</label>
-              <p className="text-gray-900 mt-1">{user?.email}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">Plan</label>
-              <p className="text-gray-900 mt-1 capitalize">{user?.tier || 'Gratuit'}</p>
+    <div className="p-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-4xl mx-auto"
+      >
+        <h1 className="text-3xl font-bold text-white mb-2">Paramètres</h1>
+        <p className="text-gray-400 mb-8">Personnalisez votre expérience</p>
+
+        <div className="space-y-6">
+          {/* Profil */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+              <User className="w-5 h-5 text-orange-500" />
+              Profil
+            </h2>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-400 text-sm mb-1">Email</label>
+                <input
+                  type="email"
+                  value={user?.email || ''}
+                  readOnly
+                  className="w-full px-4 py-2 bg-black/50 border border-white/10 rounded-lg text-white opacity-70"
+                />
+              </div>
+              <div>
+                <label className="block text-gray-400 text-sm mb-1">Nom d'utilisateur</label>
+                <input
+                  type="text"
+                  value={user?.email?.split('@')[0] || ''}
+                  className="w-full px-4 py-2 bg-black/50 border border-white/10 rounded-lg text-white"
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Notifications */}
-        <div>
-          <h2 className="text-lg font-semibold mb-4">Notifications</h2>
-          <label className="flex items-center justify-between">
-            <span className="text-gray-700">Notifications email</span>
-            <input type="checkbox" className="w-4 h-4 text-indigo-600" />
-          </label>
-        </div>
+          {/* Préférences */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+              <Bell className="w-5 h-5 text-orange-500" />
+              Notifications
+            </h2>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-300">Notifications push</span>
+              <button
+                onClick={() => setNotifications(!notifications)}
+                className={`w-12 h-6 rounded-full transition ${
+                  notifications ? 'bg-orange-500' : 'bg-gray-600'
+                }`}
+              >
+                <div
+                  className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                    notifications ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
 
-        {/* Danger Zone */}
-        <div className="border-t pt-6">
-          <h2 className="text-lg font-semibold text-red-600 mb-4">Zone dangereuse</h2>
-          <button className="bg-red-50 text-red-600 px-4 py-2 rounded-lg text-sm hover:bg-red-100">
-            Supprimer mon compte
-          </button>
+          {/* Sécurité */}
+          <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+            <h2 className="text-white font-semibold mb-4 flex items-center gap-2">
+              <Shield className="w-5 h-5 text-orange-500" />
+              Sécurité
+            </h2>
+            <button className="px-4 py-2 bg-white/10 rounded-lg text-white hover:bg-white/20 transition">
+              Changer le mot de passe
+            </button>
+          </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

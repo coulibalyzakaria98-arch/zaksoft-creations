@@ -1,96 +1,78 @@
+// apps/web/src/app/design/page.tsx
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { Sparkles, Image as ImageIcon, Download } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-import { FormSkeleton } from '@/components/ui/skeletons/FormSkeleton';
-import { CardSkeleton } from '@/components/ui/skeletons/CardSkeleton';
-import { generateImage, getImageStatus } from '@/services/designApi';
 
 export default function DesignPage() {
   const [prompt, setPrompt] = useState('');
   const [generating, setGenerating] = useState(false);
-  const [images, setImages] = useState<string[]>([]);
-  const { isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <FormSkeleton />
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <CardSkeleton key={i} />
-          ))}
-        </div>
-      </div>
-    );
-  }
+  const { user } = useAuth();
 
   const handleGenerate = async () => {
+    if (!prompt) return;
     setGenerating(true);
-    try {
-      const { jobId } = await generateImage(prompt);
-      // Polling logic
-      const interval = setInterval(async () => {
-        const status = await getImageStatus(jobId);
-        const url = status.url;
-        if (status.status === 'completed' && url) {
-          setImages(prev => [url, ...prev]);
-          setGenerating(false);
-          clearInterval(interval);
-        } else if (status.status === 'failed') {
-          setGenerating(false);
-          clearInterval(interval);
-        }
-      }, 2000);
-    } catch (error) {
-      console.error('Generation failed:', error);
-      setGenerating(false);
-    }
+    // Logique de génération...
+    setTimeout(() => setGenerating(false), 2000);
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      {/* Formulaire */}
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-lg font-semibold mb-4">🎨 Génération d&apos;image</h2>
-        <textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Décrivez l&apos;image que vous souhaitez créer..."
-          className="w-full h-32 p-3 border rounded-lg mb-4"
-        />
-        <button
-          onClick={handleGenerate}
-          disabled={generating}
-          className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 disabled:opacity-50"
-        >
-          {generating ? 'Génération...' : <>Générer l{String.fromCharCode(39)}image</>}
-        </button>
-      </div>
+    <div className="p-8">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-4xl mx-auto"
+      >
+        <h1 className="text-3xl font-bold text-white mb-2">Création d'image IA</h1>
+        <p className="text-gray-400 mb-8">Générez des images uniques avec notre intelligence artificielle</p>
 
-      {/* Galerie */}
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold">Vos créations</h2>
-        {images.length === 0 ? (
-          <div className="bg-gray-50 rounded-xl p-8 text-center text-gray-500">
-            Aucune image générée pour le moment
+        <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+          <div className="mb-6">
+            <label className="block text-white font-medium mb-2">Description de l'image</label>
+            <textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Ex: Un paysage futuriste avec des néons bleus et violets, style cyberpunk, 4K"
+              className="w-full h-32 px-4 py-3 bg-black/50 border border-white/10 rounded-xl text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            />
           </div>
-        ) : (
-          images.map((url, i) => (
-            <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <Image 
-                src={url} 
-                alt={`Génération ${i + 1}`} 
-                width={800} 
-                height={400} 
-                className="w-full h-64 object-cover" 
-                unoptimized
-              />
-            </div>
-          ))
-        )}
-      </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+            {['512x512', '1024x1024', '1024x768', '768x1024'].map((size) => (
+              <button
+                key={size}
+                className="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-white text-sm hover:bg-white/10 transition"
+              >
+                {size}
+              </button>
+            ))}
+          </div>
+
+          <button
+            onClick={handleGenerate}
+            disabled={generating || !prompt}
+            className="w-full py-3 bg-gradient-to-r from-orange-500 to-pink-500 text-white rounded-xl font-semibold hover:shadow-lg transition disabled:opacity-50 flex items-center justify-center gap-2"
+          >
+            {generating ? (
+              <>Génération en cours...</>
+            ) : (
+              <>
+                <Sparkles className="w-5 h-5" />
+                Générer l'image
+              </>
+            )}
+          </button>
+        </div>
+
+        {/* Crédits restants */}
+        <div className="mt-6 text-center">
+          <p className="text-gray-500 text-sm">
+            Il vous reste <span className="text-orange-500 font-semibold">{user?.credits || 0}</span> crédits
+          </p>
+        </div>
+      </motion.div>
     </div>
   );
 }
