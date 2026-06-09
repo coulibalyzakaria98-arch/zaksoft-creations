@@ -1,6 +1,6 @@
 import express from 'express';
 import Stripe from 'stripe';
-import { PrismaClient, Tier } from '@prisma/client';
+import { PrismaClient, Tier, CreditType } from '@zaksoft/database';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { authenticate, AuthRequest } from './middleware/auth';
@@ -9,8 +9,6 @@ dotenv.config();
 
 const app = express();
 const prisma = new PrismaClient();
-
-// ... rest of imports and config ...
 
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
@@ -25,18 +23,59 @@ const stripe = new Stripe(STRIPE_SECRET_KEY || 'dummy_key', {
 
 app.use(cors());
 
-// Configuration des produits (coût en centimes)
+// Configuration des produits (priceId venant de Stripe Dashboard)
 const PRODUCTS = {
   basic: { credits: 100, priceId: process.env.STRIPE_BASIC_PRICE_ID },
   pro: { credits: 500, priceId: process.env.STRIPE_PRO_PRICE_ID },
   enterprise: { credits: 5000, priceId: process.env.STRIPE_ENTERPRISE_PRICE_ID }
 };
 
-// ... existing code ...
+/**
+ * POST /billing/create-checkout
+ * Crée une session de paiement Stripe
+ */
+app.post('/billing/create-checkout', authenticate, async (req: AuthRequest, res) => {
+  try {
+    const { tier } = req.body;
+    const userId = req.user?.userId;
+
+    if (!tier || !['basic', 'pro', 'enterprise'].includes(tier)) {
+      return res.status(400).json({ error: 'Tier invalide' });
+    }
+
+    const product = PRODUCTS[tier as keyof typeof PRODUCTS];
+    if (!product.priceId) {
+      return res.status(500).json({ error: `Price ID non configuré pour le tier ${tier}` });
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price: product.priceId,
+          quantity: 1,
+        },
+      ],
+      mode: 'subscription',
+      success_url: `${process.env.FRONTEND_URL}/dashboard/billing?success=true&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.FRONTEND_URL}/dashboard/billing?canceled=true`,
+      client_reference_id: userId,
+      metadata: {
+        userId: userId || '',
+        tier
+      }
+    });
+
+    res.json({ url: session.url, sessionId: session.id });
+  } catch (error) {
+    console.error('Stripe Error:', error);
+    res.status(500).json({ error: 'Erreur lors de la création de la session de paiement' });
+  }
+});
 
 /**
  * POST /billing/webhook
- * Traitement des notifications asynchrones de Stripe (Paiements, Abonnements)
+ * Traitement des notifications asynchrones de Stripe
  */
 app.post('/billing/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'] as string;
@@ -62,22 +101,19 @@ app.post('/billing/webhook', express.raw({ type: 'application/json' }), async (r
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
         const userId = session.client_reference_id;
-        const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
-        const priceId = lineItems.data[0]?.price?.id;
+        const tier = session.metadata?.tier as Tier;
         
-        let tier: Tier = Tier.free;
-        let credits = 0;
-        
-        if (priceId === PRODUCTS.basic.priceId) { tier = Tier.basic; credits = 100; }
-        else if (priceId === PRODUCTS.pro.priceId) { tier = Tier.pro; credits = 500; }
-        else if (priceId === PRODUCTS.enterprise.priceId) { tier = Tier.enterprise; credits = 5000; }
+        let creditsToAdd = 0;
+        if (tier === Tier.basic) creditsToAdd = 100;
+        else if (tier === Tier.pro) creditsToAdd = 500;
+        else if (tier === Tier.enterprise) creditsToAdd = 5000;
         
         if (userId) {
           await prisma.user.update({
             where: { id: userId },
             data: {
               tier,
-              credits: { increment: credits },
+              credits: { increment: creditsToAdd },
               stripeCustomerId: session.customer as string,
               stripeSubscriptionId: session.subscription as string
             }
@@ -86,19 +122,20 @@ app.post('/billing/webhook', express.raw({ type: 'application/json' }), async (r
           await prisma.creditTransaction.create({
             data: {
               userId,
-              amount: credits,
-              operation: 'purchase',
-              metadata: { sessionId: session.id } as any
+              amount: creditsToAdd,
+              type: CreditType.PURCHASE,
+              referenceId: session.id,
+              description: `Achat abonnement ${tier}`
             }
           });
-          console.log(`[Billing] User ${userId} upgradé vers ${tier} (+${credits} credits)`);
+          console.log(`[Billing] User ${userId} upgradé vers ${tier} (+${creditsToAdd} credits)`);
         }
         break;
       }
       
       case 'invoice.payment_succeeded': {
         const invoice = event.data.object as Stripe.Invoice;
-        if (invoice.billing_reason === 'subscription_create') break; // Géré par checkout.session.completed
+        if (invoice.billing_reason === 'subscription_create') break;
 
         const customerId = invoice.customer as string;
         const user = await prisma.user.findFirst({ where: { stripeCustomerId: customerId } });
@@ -114,8 +151,9 @@ app.post('/billing/webhook', express.raw({ type: 'application/json' }), async (r
             data: {
               userId: user.id,
               amount: monthlyCredits,
-              operation: 'monthly_renewal',
-              metadata: { invoiceId: invoice.id } as any
+              type: CreditType.SUBSCRIPTION,
+              referenceId: invoice.id,
+              description: `Renouvellement mensuel ${user.tier}`
             }
           });
           console.log(`[Billing] Renouvellement mensuel pour user ${user.id} (+${monthlyCredits})`);

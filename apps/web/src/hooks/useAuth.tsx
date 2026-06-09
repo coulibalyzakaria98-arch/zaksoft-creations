@@ -21,6 +21,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (data: any) => Promise<void>;
   logout: () => void;
+  refreshCredits: () => Promise<void>;
   credits: number;
 }
 
@@ -38,6 +39,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
     setIsLoading(false);
   }, []);
+
+  const refreshCredits = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) return;
+      const response = await authApi.getMe(token);
+      setUser(response);
+      localStorage.setItem('user', JSON.stringify(response));
+    } catch (error) {
+      console.error('Failed to refresh credits', error);
+    }
+  };
 
   const login = async (email: string, password: string) => {
     try {
@@ -93,7 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout, credits: user?.credits || 0 }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout, refreshCredits, credits: user?.credits || 0 }}>
       {children}
     </AuthContext.Provider>
   );

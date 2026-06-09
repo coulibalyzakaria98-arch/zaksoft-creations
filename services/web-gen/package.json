@@ -9,7 +9,7 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@prisma/client": "5.11.0",
+    "@zaksoft/database": "workspace:*",
     "@zaksoft/health": "workspace:^",
     "@zaksoft/logging": "workspace:^",
     "@zaksoft/storage": "workspace:^",

@@ -1,12 +1,23 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // output: 'standalone', // Commented out to ensure default .next output for Vercel
   reactStrictMode: true,
   swcMinify: true,
-  // output: 'standalone', // Commented out to ensure default .next output for Vercel
-  
-  // Skip static generation for pages that require AuthProvider during build
-  // or handle client-side rendering explicitly.
 };
 
-module.exports = nextConfig;
+const { withSentryConfig } = require("@sentry/nextjs");
+
+module.exports = withSentryConfig(
+  nextConfig,
+  {
+    silent: true,
+    org: process.env.SENTRY_ORG,
+    project: process.env.SENTRY_PROJECT,
+  },
+  {
+    widenClientFileUpload: true,
+    transpileClientSDK: true,
+    tunnelRoute: "/monitoring",
+    hideSourceMaps: true,
+    disableLogger: true,
+  }
+);

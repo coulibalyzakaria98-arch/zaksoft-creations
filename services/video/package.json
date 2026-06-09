@@ -9,6 +9,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@sentry/node": "^10.56.0",
+    "@zaksoft/database": "workspace:*",
     "@zaksoft/health": "workspace:^",
     "@zaksoft/logging": "workspace:^",
     "@zaksoft/storage": "workspace:^",

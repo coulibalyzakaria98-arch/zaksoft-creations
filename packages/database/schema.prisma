@@ -1,0 +1,229 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// UTILISATEURS & CRÉDITS
+// ============================================
+
+model User {
+  id                   String   @id @default(cuid())
+  email                String   @unique
+  passwordHash         String?  @map("password_hash")
+  firstName            String?  @map("first_name")
+  lastName             String?  @map("last_name")
+  companyName          String?  @map("company_name")
+  companySize          String?  @map("company_size")
+  position             String?
+  industry             String?
+  role                 String   @default("user")
+  tier                 Tier     @default(free)
+  credits              Int      @default(10)
+  stripeCustomerId     String?  @unique @map("stripe_customer_id")
+  stripeSubscriptionId String?  @map("stripe_subscription_id")
+  howDidYouHear        String?  @map("how_did_you_hear")
+  website              String?
+  intendedUse          String?  @map("intended_use")
+  budget               String?
+  newsletter           Boolean  @default(false)
+  createdAt            DateTime @default(now()) @map("created_at")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+  
+  // Relations
+  images               Image[]
+  videos               Video[]
+  websites             Website[]
+  jobs                 Job[]
+  creditTransactions   CreditTransaction[]
+  
+  @@map("users")
+}
+
+enum Tier {
+  free
+  basic
+  pro
+  enterprise
+}
+
+model CreditTransaction {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  amount      Int       // Positif = ajout, Négatif = dépense
+  type        CreditType
+  referenceId String?   @map("reference_id") // jobId ou invoiceId
+  description String?
+  metadata    Json?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+  @@index([createdAt])
+  @@map("credit_transactions")
+}
+
+enum CreditType {
+  PURCHASE    // Achat de crédits
+  SUBSCRIPTION // Abonnement mensuel
+  GENERATION   // Dépense pour génération
+  REFUND       // Remboursement
+  BONUS        // Bonus gratuit
+}
+
+// ============================================
+// GÉNÉRATIONS IA
+// ============================================
+
+model Image {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  jobId       String    @unique @map("job_id")
+  prompt      String    @db.Text
+  negativePrompt String? @map("negative_prompt") @db.Text
+  resolution  String    // "1024x1024"
+  imageUrl    String    @map("image_url")
+  storageKey  String    @map("storage_key") // Clé S3/R2
+  sizeBytes   Int?      @map("size_bytes")
+  status      ImageStatus @default(COMPLETED)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job         Job?      @relation(fields: [jobId], references: [id])
+  
+  @@index([userId])
+  @@index([createdAt])
+  @@map("images")
+}
+
+enum ImageStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Video {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  jobId       String    @unique @map("job_id")
+  prompt      String    @db.Text
+  duration    Int       // secondes
+  aspectRatio String    @map("aspect_ratio") // "16:9", "9:16", "1:1"
+  videoUrl    String    @map("video_url")
+  storageKey  String    @map("storage_key")
+  sizeBytes   Int?      @map("size_bytes")
+  hasWatermark Boolean  @default(false) @map("has_watermark")
+  status      VideoStatus @default(COMPLETED)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job         Job?      @relation(fields: [jobId], references: [id])
+  
+  @@index([userId])
+  @@index([createdAt])
+  @@map("videos")
+}
+
+enum VideoStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+model Website {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  jobId       String    @unique @map("job_id")
+  description String    @db.Text
+  template    String    // "portfolio", "ecommerce", "blog", "landing"
+  framework   String    // "tailwind", "bootstrap", "custom"
+  code        String    @db.Text  // HTML/CSS/JS généré
+  previewUrl  String?   @map("preview_url")
+  deployedUrl String?   @map("deployed_url")
+  status      WebsiteStatus @default(COMPLETED)
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job         Job?      @relation(fields: [jobId], references: [id])
+  
+  @@index([userId])
+  @@index([createdAt])
+  @@map("websites")
+}
+
+enum WebsiteStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// ============================================
+// FILE D'ATTENTE (JOBS)
+// ============================================
+
+model Job {
+  id          String    @id @default(cuid())
+  type        JobType
+  userId      String    @map("user_id")
+  status      JobStatus @default(PENDING)
+  progress    Int       @default(0)
+  input       Json?     // Prompt, paramètres
+  output      Json?     // Résultat (URLs, etc.)
+  error       String?   @db.Text
+  creditsCost Int       @map("credits_cost") // Coût en crédits
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  completedAt DateTime? @map("completed_at")
+  
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  image       Image?
+  video       Video?
+  website     Website?
+  
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+  @@map("jobs")
+}
+
+enum JobType {
+  IMAGE
+  VIDEO
+  WEBSITE
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+// ============================================
+// STOCKAGE & FICHIERS
+// ============================================
+
+model StorageFile {
+  id          String    @id @default(cuid())
+  userId      String    @map("user_id")
+  key         String    @unique // S3/R2 key
+  bucket      String
+  url         String
+  mimeType    String    @map("mime_type")
+  size        Int
+  entityType  String    @map("entity_type") // "image", "video"
+  entityId    String    @map("entity_id") // imageId ou videoId
+  createdAt   DateTime  @default(now()) @map("created_at")
+  
+  @@index([userId])
+  @@index([entityType, entityId])
+  @@map("storage_files")
+}

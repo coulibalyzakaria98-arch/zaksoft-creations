@@ -1,0 +1,84 @@
+services:
+  # --- Web Services ---
+  
+  - type: web
+    name: zaksoft-auth-backend
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: pnpm install && pnpm build
+    startCommand: cd services/auth && pnpm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - fromDatabase:
+          name: zaksoft-auth-db
+          property: connectionString
+        key: DATABASE_URL
+
+  - type: web
+    name: zaksoft-billing-service
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: pnpm install && pnpm build
+    startCommand: cd services/billing && pnpm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - fromDatabase:
+          name: zaksoft-auth-db
+          property: connectionString
+        key: DATABASE_URL
+
+  # --- Background Workers ---
+
+  - type: worker
+    name: zaksoft-design-worker
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: pnpm install && pnpm build
+    startCommand: cd services/design && pnpm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - fromDatabase:
+          name: zaksoft-auth-db
+          property: connectionString
+        key: DATABASE_URL
+
+  - type: worker
+    name: zaksoft-video-worker
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: pnpm install && pnpm build
+    startCommand: cd services/video && pnpm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - fromDatabase:
+          name: zaksoft-auth-db
+          property: connectionString
+        key: DATABASE_URL
+
+  - type: worker
+    name: zaksoft-webgen-worker
+    env: node
+    region: frankfurt
+    plan: free
+    buildCommand: pnpm install && pnpm build
+    startCommand: cd services/web-gen && pnpm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - fromDatabase:
+          name: zaksoft-auth-db
+          property: connectionString
+        key: DATABASE_URL
+
+databases:
+  - name: zaksoft-auth-db
+    region: frankfurt
+    plan: free
