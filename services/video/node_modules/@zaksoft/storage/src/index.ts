@@ -1,5 +1,6 @@
-import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 import { Upload } from "@aws-sdk/lib-storage";
+import { getSignedUrl as s3GetSignedUrl } from "@aws-sdk/s3-request-presigner";
 import dotenv from "dotenv";
 import { Readable } from "stream";
 
@@ -31,7 +32,7 @@ export class StorageService {
     this.client = new S3Client({
       region,
       endpoint,
-      forcePathStyle: !!endpoint, // Required for Minio
+      forcePathStyle: !!endpoint, // Required for Cloudflare R2 / Minio
       credentials: {
         accessKeyId: accessKeyId || "",
         secretAccessKey: secretAccessKey || "",
@@ -58,18 +59,30 @@ export class StorageService {
           Key: key,
           Body: body,
           ContentType: contentType,
-          ACL: "public-read", // Assuming public access for generated content
+          // ACL: "public-read", // ACLs are often disabled on modern buckets
         },
       });
 
       await upload.done();
       
-      const baseUrl = process.env.S3_PUBLIC_URL || (process.env.S3_ENDPOINT ? `${process.env.S3_ENDPOINT}/${this.bucket}` : `https://${this.bucket}.s3.amazonaws.com`);
+      const baseUrl = process.env.S3_PUBLIC_URL || (process.env.S3_ENDPOINT ? `${process.env.S3_ENDPOINT}/${this.bucket}` : `https://${this.bucket}.s3.${this.client.config.region}.amazonaws.com`);
       return `${baseUrl}/${key}`;
     } catch (error) {
       console.error("Error uploading to S3:", error);
       throw error;
     }
+  }
+
+  /**
+   * Generates a signed URL for temporary access to a private object
+   */
+  async getSignedUrl(key: string, expiresIn: number = 3600): Promise<string> {
+    const command = new GetObjectCommand({
+      Bucket: this.bucket,
+      Key: key,
+    });
+
+    return await s3GetSignedUrl(this.client, command, { expiresIn });
   }
 
   /**

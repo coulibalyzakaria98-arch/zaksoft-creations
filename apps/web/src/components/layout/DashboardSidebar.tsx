@@ -9,6 +9,7 @@ import {
   Video, 
   Globe, 
   ShoppingBag, 
+  Library,
   BarChart3, 
   CreditCard, 
   Settings,
@@ -19,13 +20,14 @@ import { useAuth } from '@/hooks/useAuth';
 
 const menuItems = [
   { name: 'Accueil', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Créer Image', href: '/design', icon: Image },
-  { name: 'Créer Vidéo', href: '/video', icon: Video },
-  { name: 'Créer Site', href: '/web', icon: Globe },
-  { name: 'Marketplace', href: '/marketplace', icon: ShoppingBag },
-  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
-  { name: 'Facturation', href: '/billing', icon: CreditCard },
-  { name: 'Paramètres', href: '/settings', icon: Settings },
+  { name: 'Créer Image', href: '/dashboard/image/new', icon: Image },
+  { name: 'Créer Vidéo', href: '/dashboard/video/new', icon: Video },
+  { name: 'Créer Site', href: '/dashboard/website/new', icon: Globe },
+  { name: 'Mon historique', href: '/dashboard/history', icon: Library },
+  { name: 'Marketplace', href: '/dashboard/marketplace', icon: ShoppingBag },
+  { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+  { name: 'Facturation', href: '/dashboard/billing', icon: CreditCard },
+  { name: 'Paramètres', href: '/dashboard/settings', icon: Settings },
 ];
 
 export function DashboardSidebar() {
