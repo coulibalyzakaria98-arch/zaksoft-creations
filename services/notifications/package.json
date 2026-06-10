@@ -4,9 +4,9 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "tsc",
+    "build": "prisma generate --schema=./prisma/schema.prisma && tsc",
     "start": "ts-node src/index.ts",
-    "type-check": "tsc --noEmit"
+    "type-check": "prisma generate --schema=./prisma/schema.prisma && tsc --noEmit"
   },
   "dependencies": {
     "express": "^4.18.2",
@@ -25,6 +25,7 @@
     "@types/apn": "^2.1.5",
     "typescript": "^5.3.3",
     "nodemon": "^3.0.2",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "prisma": "5.11.0"
   }
 }

@@ -1,31 +1,42 @@
-# Ignore build output
-/dist
+# Ignore build output - both root and nested
+dist
+dist/
+**/dist
+**/dist/
 /out
 /out-tsc
 
 # Ignore Next.js files
+.next
 .next/
+**/.next
+**/.next/
 /next.config.js
 
 # Node modules
 /node_modules
+**/node_modules/
+node_modules/
+
+# Prisma generated clients (NOT schema.prisma)
+**/generated-client/
+**/src/generated/
+**/prisma/generated/
 
 # Vercel deploy output
 /.vercel/
 
 # pnpm
-/pnpm-lock.yaml
+# /pnpm-lock.yaml  <- DO NOT IGNORE: pnpm-lock.yaml MUST be committed
 # If you are using the pnpm store, you might want to ignore it too.
 # However, it's generally recommended to let pnpm manage the store.
 # /.pnpm-store
 
 # Turbo cache and logs
 .turbo/
-**/ .turbo/
-# Turbo daemon logs
 .turbo/daemon/
-# Turbo cookies
 .turbo/cookies/
+.env.turbo
 
 # Environment variables
 .env

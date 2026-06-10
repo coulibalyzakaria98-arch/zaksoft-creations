@@ -6,9 +6,10 @@
     "dev": "nodemon src/index.ts",
     "build": "tsc",
     "start": "ts-node src/index.ts",
-    "type-check": "prisma generate --schema=./prisma/schema.prisma && tsc --noEmit"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
+    "@zaksoft/database": "workspace:*",
     "@prisma/client": "5.11.0",
     "@sentry/node": "^10.56.0",
     "cors": "^2.8.5",

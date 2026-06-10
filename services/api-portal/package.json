@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "tsc",
+    "build": "prisma generate --schema=./prisma/schema.prisma && tsc",
     "start": "ts-node src/index.ts",
     "pretype-check": "prisma generate --schema=./prisma/schema.prisma --no-engine",
     "type-check": "prisma generate --schema=./prisma/schema.prisma && tsc --noEmit",
