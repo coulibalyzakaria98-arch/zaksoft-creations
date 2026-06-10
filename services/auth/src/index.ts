@@ -66,7 +66,7 @@ const allowedOrigins: Array<string | RegExp> = corsOriginRaw
   });
 
 const corsOptions = {
-  origin: true, // Accepte toutes les origines pour le test
+  origin: allowedOrigins,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
@@ -83,7 +83,7 @@ app.use(express.json());
 // Test database connection
 prisma.$connect()
   .then(() => logger.info('Successfully connected to the database.'))
-  .catch((err) => {
+  .catch((err: any) => {
     logger.error('FAILED to connect to the database:', err);
   });
 
@@ -351,9 +351,9 @@ authRouter.get('/admin/stats', authenticate, isAdmin, async (req, res) => {
 
     res.json({
       totalUsers,
-      industryStats: industryStats.map(s => ({ name: s.industry || 'Non spécifié', value: s._count._all })),
-      sourceStats: sourceStats.map(s => ({ name: s.howDidYouHear || 'Non spécifié', value: s._count._all })),
-      companySizeStats: companySizeStats.map(s => ({ name: s.companySize || 'Non spécifié', value: s._count._all })),
+      industryStats: industryStats.map((s: any) => ({ name: s.industry || 'Non spécifié', value: s._count._all })),
+      sourceStats: sourceStats.map((s: any) => ({ name: s.howDidYouHear || 'Non spécifié', value: s._count._all })),
+      companySizeStats: companySizeStats.map((s: any) => ({ name: s.companySize || 'Non spécifié', value: s._count._all })),
       recentRegistrations
     });
   } catch (error) {

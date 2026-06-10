@@ -1,6 +1,6 @@
 import { Worker } from 'bullmq';
 import IORedis from 'ioredis';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/client';
 
 const prisma = new PrismaClient();
 const connection = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379');

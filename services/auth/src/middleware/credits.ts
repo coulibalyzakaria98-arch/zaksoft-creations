@@ -96,7 +96,7 @@ export async function deductCreditsAfterSuccess(req: AuthRequest, res: Response,
               metadata: { body: req.body } as any
             }
           });
-        }).catch(err => {
+        }).catch((err: any) => {
           console.error("Failed to deduct credits after success:", err);
         });
       }

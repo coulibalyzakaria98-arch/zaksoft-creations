@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/client';
 import { activityFeed } from '../dashboard/activityFeed';
 
 const prisma = new PrismaClient();

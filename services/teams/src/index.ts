@@ -1,7 +1,7 @@
 import express from 'express';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from './generated/client';
 import cors from 'cors';
 import { createServer } from 'http';
 import { teamManager } from './services/teamManager';

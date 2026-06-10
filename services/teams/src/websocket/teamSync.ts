@@ -2,7 +2,7 @@ import { Server } from 'socket.io';
 import { Server as HttpServer } from 'http';
 import jwt from 'jsonwebtoken';
 import { activityEmitter } from '../dashboard/activityFeed';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/client';
 
 const prisma = new PrismaClient();
 let io: Server;

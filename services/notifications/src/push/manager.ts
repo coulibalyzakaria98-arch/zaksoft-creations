@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../generated/client';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 

@@ -18,6 +18,10 @@ export declare class StorageService {
      */
     uploadFile(body: Buffer | Uint8Array | string | Readable, key: string, contentType?: string): Promise<string>;
     /**
+     * Generates a signed URL for temporary access to a private object
+     */
+    getSignedUrl(key: string, expiresIn?: number): Promise<string>;
+    /**
      * Helper to get the public URL for a key
      */
     getPublicUrl(key: string): string;
