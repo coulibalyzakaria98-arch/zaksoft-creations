@@ -23,7 +23,7 @@ const menuItems = [
   { name: 'Marketplace', href: '/marketplace', icon: ShoppingBag },
   { name: 'Équipe', href: '/teams', icon: Users },
   { name: 'Facturation', href: '/billing', icon: CreditCard },
-  { name: 'Paramètres', href: '/settings', icon: Settings },
+  { name: 'Paramètres', href: '/dashboard/settings', icon: Settings },
 ];
 
 export function Sidebar() {

@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.activityFeed = exports.ActivityFeed = exports.activityEmitter = void 0;
-const client_1 = require("@prisma/client");
+const client_1 = require("../generated/client");
 const events_1 = require("events");
 const prisma = new client_1.PrismaClient();
 exports.activityEmitter = new events_1.EventEmitter();

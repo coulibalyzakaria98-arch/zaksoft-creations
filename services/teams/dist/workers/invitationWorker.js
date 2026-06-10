@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.invitationWorker = void 0;
 const bullmq_1 = require("bullmq");
 const ioredis_1 = __importDefault(require("ioredis"));
-const client_1 = require("@prisma/client");
+const client_1 = require("../generated/client");
 const prisma = new client_1.PrismaClient();
 const connection = new ioredis_1.default(process.env.REDIS_URL || 'redis://localhost:6379');
 exports.invitationWorker = new bullmq_1.Worker('team-invitations', async (job) => {

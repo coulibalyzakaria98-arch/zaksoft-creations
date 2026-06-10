@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.storageService = exports.StorageService = void 0;
 const client_s3_1 = require("@aws-sdk/client-s3");
 const lib_storage_1 = require("@aws-sdk/lib-storage");
+const s3_request_presigner_1 = require("@aws-sdk/s3-request-presigner");
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 class StorageService {
@@ -21,7 +22,7 @@ class StorageService {
         this.client = new client_s3_1.S3Client({
             region,
             endpoint,
-            forcePathStyle: !!endpoint, // Required for Minio
+            forcePathStyle: !!endpoint, // Required for Cloudflare R2 / Minio
             credentials: {
                 accessKeyId: accessKeyId || "",
                 secretAccessKey: secretAccessKey || "",
@@ -43,17 +44,27 @@ class StorageService {
                     Key: key,
                     Body: body,
                     ContentType: contentType,
-                    ACL: "public-read", // Assuming public access for generated content
+                    // ACL: "public-read", // ACLs are often disabled on modern buckets
                 },
             });
             await upload.done();
-            const baseUrl = process.env.S3_PUBLIC_URL || (process.env.S3_ENDPOINT ? `${process.env.S3_ENDPOINT}/${this.bucket}` : `https://${this.bucket}.s3.amazonaws.com`);
+            const baseUrl = process.env.S3_PUBLIC_URL || (process.env.S3_ENDPOINT ? `${process.env.S3_ENDPOINT}/${this.bucket}` : `https://${this.bucket}.s3.${this.client.config.region}.amazonaws.com`);
             return `${baseUrl}/${key}`;
         }
         catch (error) {
             console.error("Error uploading to S3:", error);
             throw error;
         }
+    }
+    /**
+     * Generates a signed URL for temporary access to a private object
+     */
+    async getSignedUrl(key, expiresIn = 3600) {
+        const command = new client_s3_1.GetObjectCommand({
+            Bucket: this.bucket,
+            Key: key,
+        });
+        return await (0, s3_request_presigner_1.getSignedUrl)(this.client, command, { expiresIn });
     }
     /**
      * Helper to get the public URL for a key

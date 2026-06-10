@@ -44,7 +44,30 @@ const webGenQueue = new Queue('web-generation', {
 // Initialiser les métriques BullMQ
 setupBullMQMetrics(webGenQueue);
 
-app.use(cors());
+const corsOriginRaw = process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001,https://zaksoft-creations.vercel.app,https://*.vercel.app';
+
+const allowedOrigins: Array<string | RegExp> = corsOriginRaw
+  .split(',')
+  .map((origin) => origin.trim())
+  .filter(Boolean)
+  .map((origin) => {
+    if (origin === '*') {
+      return origin;
+    }
+    if (origin.startsWith('/') && origin.endsWith('/')) {
+      return new RegExp(origin.slice(1, -1));
+    }
+    if (origin.includes('*')) {
+      const escaped = origin
+        .split('*')
+        .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        .join('.*');
+      return new RegExp(`^${escaped}$`);
+    }
+    return origin;
+  });
+
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 
 // Health check

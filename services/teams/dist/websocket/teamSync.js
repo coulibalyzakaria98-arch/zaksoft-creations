@@ -7,7 +7,7 @@ exports.initializeWebSocket = initializeWebSocket;
 const socket_io_1 = require("socket.io");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const activityFeed_1 = require("../dashboard/activityFeed");
-const client_1 = require("@prisma/client");
+const client_1 = require("../generated/client");
 const prisma = new client_1.PrismaClient();
 let io;
 function initializeWebSocket(server) {

@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.teamManager = exports.TeamManager = void 0;
-const client_1 = require("@prisma/client");
+const client_1 = require("../generated/client");
 const slugify_1 = __importDefault(require("slugify"));
 const prisma = new client_1.PrismaClient();
 class TeamManager {

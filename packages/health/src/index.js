@@ -1,0 +1,14 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.healthCheck = healthCheck;
+function healthCheck(service, version) {
+    if (version === void 0) { version = '1.0.0'; }
+    return {
+        service: service,
+        version: version,
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+    };
+}

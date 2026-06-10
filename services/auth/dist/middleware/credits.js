@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.requireCredits = requireCredits;
 exports.deductCreditsAfterSuccess = deductCreditsAfterSuccess;
-const client_1 = require("@prisma/client");
+const client_1 = require("../generated/client");
 const prisma = new client_1.PrismaClient();
 const CREDITS_COST = {
     'image:512': 1,
@@ -83,7 +83,7 @@ async function deductCreditsAfterSuccess(req, res, next) {
                             metadata: { body: req.body }
                         }
                     });
-                }).catch(err => {
+                }).catch((err) => {
                     console.error("Failed to deduct credits after success:", err);
                 });
             }

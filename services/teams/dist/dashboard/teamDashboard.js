@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.teamDashboard = exports.TeamDashboard = void 0;
-const client_1 = require("@prisma/client");
+const client_1 = require("../generated/client");
 const prisma = new client_1.PrismaClient();
 class TeamDashboard {
     async getTeamStats(teamId) {

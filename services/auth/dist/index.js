@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const client_1 = require("@prisma/client");
+const client_1 = require("./generated/client");
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const helmet_1 = __importDefault(require("helmet"));
@@ -25,9 +25,15 @@ const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET || 'fallback-refresh-secret';
+const DATABASE_URL = process.env.DATABASE_URL;
 if (!JWT_SECRET) {
     logging_1.default.error('FATAL ERROR: JWT_SECRET is not defined in environment variables.');
     process.exit(1);
+}
+if (!DATABASE_URL) {
+    logging_1.default.error('FATAL ERROR: DATABASE_URL is not defined in environment variables.');
+    // On ne quitte pas forcément ici pour permettre au health check de répondre si besoin, 
+    // mais les requêtes DB échoueront.
 }
 logging_1.default.info('Environment variables loaded successfully.');
 app.use((0, helmet_1.default)()); // Apply security headers
@@ -53,7 +59,7 @@ const allowedOrigins = corsOriginRaw
     return origin;
 });
 const corsOptions = {
-    origin: true, // Accepte toutes les origines pour le test
+    origin: allowedOrigins,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -141,15 +147,19 @@ authRouter.post('/login', async (req, res) => {
         if (!email || !password) {
             return res.status(400).json({ error: 'Email et mot de passe requis' });
         }
+        logging_1.default.info('Login attempt', { email });
         const user = await prisma.user.findUnique({ where: { email } });
         if (!user) {
+            logging_1.default.warn('Login failed - user not found', { email });
             return res.status(401).json({ error: 'Identifiants invalides' });
         }
         const valid = await bcrypt_1.default.compare(password, user.passwordHash);
         if (!valid) {
+            logging_1.default.warn('Login failed - invalid password', { email });
             return res.status(401).json({ error: 'Identifiants invalides' });
         }
         const { accessToken, refreshToken } = generateTokens(user);
+        logging_1.default.info('Login successful', { email, userId: user.id });
         res.json({
             accessToken,
             refreshToken,
@@ -162,7 +172,11 @@ authRouter.post('/login', async (req, res) => {
         });
     }
     catch (error) {
-        logging_1.default.error('Erreur connexion:', { error });
+        logging_1.default.error('Erreur connexion:', {
+            error: error?.message || String(error),
+            stack: error?.stack,
+            timestamp: new Date().toISOString()
+        });
         res.status(500).json({ error: 'Erreur interne du serveur' });
     }
 });
@@ -223,6 +237,7 @@ authRouter.get('/me', authenticate, async (req, res) => {
         });
     }
     catch (error) {
+        logging_1.default.error('Erreur /me:', { error });
         res.status(500).json({ error: 'Erreur lors de la récupération du profil' });
     }
 });
@@ -238,6 +253,7 @@ const isAdmin = async (req, res, next) => {
         next();
     }
     catch (error) {
+        logging_1.default.error('Erreur isAdmin:', { error });
         res.status(500).json({ error: 'Erreur lors de la vérification des droits' });
     }
 };
@@ -284,9 +300,9 @@ authRouter.get('/admin/stats', authenticate, isAdmin, async (req, res) => {
         });
         res.json({
             totalUsers,
-            industryStats: industryStats.map(s => ({ name: s.industry || 'Non spécifié', value: s._count._all })),
-            sourceStats: sourceStats.map(s => ({ name: s.howDidYouHear || 'Non spécifié', value: s._count._all })),
-            companySizeStats: companySizeStats.map(s => ({ name: s.companySize || 'Non spécifié', value: s._count._all })),
+            industryStats: industryStats.map((s) => ({ name: s.industry || 'Non spécifié', value: s._count._all })),
+            sourceStats: sourceStats.map((s) => ({ name: s.howDidYouHear || 'Non spécifié', value: s._count._all })),
+            companySizeStats: companySizeStats.map((s) => ({ name: s.companySize || 'Non spécifié', value: s._count._all })),
             recentRegistrations
         });
     }

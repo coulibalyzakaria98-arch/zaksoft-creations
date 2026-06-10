@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const bullmq_1 = require("bullmq");
 const ioredis_1 = __importDefault(require("ioredis"));
-const client_1 = require("@prisma/client");
+const client_1 = require("./generated/client");
 const cors_1 = __importDefault(require("cors"));
 const http_1 = require("http");
 const teamManager_1 = require("./services/teamManager");
@@ -16,6 +16,8 @@ const teamDashboard_1 = require("./dashboard/teamDashboard");
 const activityFeed_1 = require("./dashboard/activityFeed");
 const commentSystem_1 = require("./collaboration/commentSystem");
 const teamSync_1 = require("./websocket/teamSync");
+const health_1 = require("@zaksoft/health");
+const logging_1 = __importDefault(require("@zaksoft/logging"));
 const app = (0, express_1.default)();
 const httpServer = (0, http_1.createServer)(app);
 const prisma = new client_1.PrismaClient();
@@ -24,6 +26,10 @@ const invitationQueue = new bullmq_1.Queue('team-invitations', { connection: red
 (0, teamSync_1.initializeWebSocket)(httpServer);
 app.use((0, cors_1.default)());
 app.use(express_1.default.json());
+// Health check endpoint
+app.get('/health', (req, res) => {
+    res.json((0, health_1.healthCheck)('teams', '1.0.0'));
+});
 const authenticate = (req, res, next) => {
     req.user = { id: req.headers['x-user-id'] || 'user_1' };
     next();
@@ -36,6 +42,7 @@ app.post('/teams', async (req, res) => {
         res.json(team);
     }
     catch (error) {
+        logging_1.default.error('Error creating team', { error: error.message });
         res.status(500).json({ error: error.message });
     }
 });
@@ -44,6 +51,7 @@ app.get('/teams', async (req, res) => {
         res.json(await teamManager_1.teamManager.getUserTeams(req.user.id));
     }
     catch (error) {
+        logging_1.default.error('Error getting teams', { error: error.message });
         res.status(500).json({ error: error.message });
     }
 });
@@ -52,6 +60,7 @@ app.get('/teams/:teamId', teamAuth_1.teamAuth, async (req, res) => {
         res.json(await teamManager_1.teamManager.getTeamWithMembers(req.params.teamId));
     }
     catch (error) {
+        logging_1.default.error('Error getting team details', { error: error.message, teamId: req.params.teamId });
         res.status(500).json({ error: error.message });
     }
 });
@@ -61,6 +70,7 @@ app.get('/teams/:teamId/dashboard/stats', teamAuth_1.teamAuth, async (req, res) 
         res.json(await teamDashboard_1.teamDashboard.getTeamStats(req.params.teamId));
     }
     catch (error) {
+        logging_1.default.error('Error getting stats', { error: error.message, teamId: req.params.teamId });
         res.status(500).json({ error: error.message });
     }
 });
@@ -69,6 +79,7 @@ app.get('/teams/:teamId/activity', teamAuth_1.teamAuth, async (req, res) => {
         res.json(await activityFeed_1.activityFeed.getTeamActivityFeed(req.params.teamId, Number(req.query.limit || 50)));
     }
     catch (error) {
+        logging_1.default.error('Error getting activity', { error: error.message, teamId: req.params.teamId });
         res.status(500).json({ error: error.message });
     }
 });
@@ -78,6 +89,7 @@ app.get('/projects/:projectId/comments', async (req, res) => {
         res.json(await commentSystem_1.commentSystem.getComments(req.params.projectId, req.user.id));
     }
     catch (error) {
+        logging_1.default.error('Error getting comments', { error: error.message, projectId: req.params.projectId });
         res.status(500).json({ error: error.message });
     }
 });
@@ -86,6 +98,7 @@ app.post('/projects/:projectId/comments', async (req, res) => {
         res.json(await commentSystem_1.commentSystem.addComment(req.params.projectId, req.user.id, req.body.content, req.body.parentId));
     }
     catch (error) {
+        logging_1.default.error('Error adding comment', { error: error.message, projectId: req.params.projectId });
         res.status(500).json({ error: error.message });
     }
 });
@@ -97,8 +110,9 @@ app.post('/teams/:teamId/invitations', teamAuth_1.teamAuth, (0, teamAuth_1.requi
         res.json(invitation);
     }
     catch (error) {
+        logging_1.default.error('Error creating invitation', { error: error.message, teamId: req.params.teamId });
         res.status(500).json({ error: error.message });
     }
 });
 const PORT = process.env.TEAMS_SERVICE_PORT || 3007;
-httpServer.listen(PORT, () => console.log(`Teams service (with WS) on ${PORT}`));
+httpServer.listen(PORT, () => logging_1.default.info('Teams service started', { port: PORT }));

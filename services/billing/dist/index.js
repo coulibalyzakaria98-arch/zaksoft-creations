@@ -5,13 +5,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const stripe_1 = __importDefault(require("stripe"));
-const client_1 = require("@prisma/client");
+const database_1 = require("@zaksoft/database");
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const auth_1 = require("./middleware/auth");
 dotenv_1.default.config();
 const app = (0, express_1.default)();
-const prisma = new client_1.PrismaClient();
-// ... rest of imports and config ...
+const prisma = new database_1.PrismaClient();
 const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY;
 const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET;
 if (!STRIPE_SECRET_KEY) {
@@ -21,16 +21,54 @@ const stripe = new stripe_1.default(STRIPE_SECRET_KEY || 'dummy_key', {
     apiVersion: '2023-10-16'
 });
 app.use((0, cors_1.default)());
-// Configuration des produits (coût en centimes)
+// Configuration des produits (priceId venant de Stripe Dashboard)
 const PRODUCTS = {
     basic: { credits: 100, priceId: process.env.STRIPE_BASIC_PRICE_ID },
     pro: { credits: 500, priceId: process.env.STRIPE_PRO_PRICE_ID },
     enterprise: { credits: 5000, priceId: process.env.STRIPE_ENTERPRISE_PRICE_ID }
 };
-// ... existing code ...
+/**
+ * POST /billing/create-checkout
+ * Crée une session de paiement Stripe
+ */
+app.post('/billing/create-checkout', auth_1.authenticate, async (req, res) => {
+    try {
+        const { tier } = req.body;
+        const userId = req.user?.userId;
+        if (!tier || !['basic', 'pro', 'enterprise'].includes(tier)) {
+            return res.status(400).json({ error: 'Tier invalide' });
+        }
+        const product = PRODUCTS[tier];
+        if (!product.priceId) {
+            return res.status(500).json({ error: `Price ID non configuré pour le tier ${tier}` });
+        }
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [
+                {
+                    price: product.priceId,
+                    quantity: 1,
+                },
+            ],
+            mode: 'subscription',
+            success_url: `${process.env.FRONTEND_URL}/dashboard/billing?success=true&session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.FRONTEND_URL}/dashboard/billing?canceled=true`,
+            client_reference_id: userId,
+            metadata: {
+                userId: userId || '',
+                tier
+            }
+        });
+        res.json({ url: session.url, sessionId: session.id });
+    }
+    catch (error) {
+        console.error('Stripe Error:', error);
+        res.status(500).json({ error: 'Erreur lors de la création de la session de paiement' });
+    }
+});
 /**
  * POST /billing/webhook
- * Traitement des notifications asynchrones de Stripe (Paiements, Abonnements)
+ * Traitement des notifications asynchrones de Stripe
  */
 app.post('/billing/webhook', express_1.default.raw({ type: 'application/json' }), async (req, res) => {
     const sig = req.headers['stripe-signature'];
@@ -52,28 +90,20 @@ app.post('/billing/webhook', express_1.default.raw({ type: 'application/json' })
             case 'checkout.session.completed': {
                 const session = event.data.object;
                 const userId = session.client_reference_id;
-                const lineItems = await stripe.checkout.sessions.listLineItems(session.id);
-                const priceId = lineItems.data[0]?.price?.id;
-                let tier = client_1.Tier.free;
-                let credits = 0;
-                if (priceId === PRODUCTS.basic.priceId) {
-                    tier = client_1.Tier.basic;
-                    credits = 100;
-                }
-                else if (priceId === PRODUCTS.pro.priceId) {
-                    tier = client_1.Tier.pro;
-                    credits = 500;
-                }
-                else if (priceId === PRODUCTS.enterprise.priceId) {
-                    tier = client_1.Tier.enterprise;
-                    credits = 5000;
-                }
+                const tier = session.metadata?.tier;
+                let creditsToAdd = 0;
+                if (tier === database_1.Tier.basic)
+                    creditsToAdd = 100;
+                else if (tier === database_1.Tier.pro)
+                    creditsToAdd = 500;
+                else if (tier === database_1.Tier.enterprise)
+                    creditsToAdd = 5000;
                 if (userId) {
                     await prisma.user.update({
                         where: { id: userId },
                         data: {
                             tier,
-                            credits: { increment: credits },
+                            credits: { increment: creditsToAdd },
                             stripeCustomerId: session.customer,
                             stripeSubscriptionId: session.subscription
                         }
@@ -81,23 +111,24 @@ app.post('/billing/webhook', express_1.default.raw({ type: 'application/json' })
                     await prisma.creditTransaction.create({
                         data: {
                             userId,
-                            amount: credits,
-                            operation: 'purchase',
-                            metadata: { sessionId: session.id }
+                            amount: creditsToAdd,
+                            type: database_1.CreditType.PURCHASE,
+                            referenceId: session.id,
+                            description: `Achat abonnement ${tier}`
                         }
                     });
-                    console.log(`[Billing] User ${userId} upgradé vers ${tier} (+${credits} credits)`);
+                    console.log(`[Billing] User ${userId} upgradé vers ${tier} (+${creditsToAdd} credits)`);
                 }
                 break;
             }
             case 'invoice.payment_succeeded': {
                 const invoice = event.data.object;
                 if (invoice.billing_reason === 'subscription_create')
-                    break; // Géré par checkout.session.completed
+                    break;
                 const customerId = invoice.customer;
                 const user = await prisma.user.findFirst({ where: { stripeCustomerId: customerId } });
                 if (user) {
-                    const monthlyCredits = user.tier === client_1.Tier.basic ? 100 : user.tier === client_1.Tier.pro ? 500 : 5000;
+                    const monthlyCredits = user.tier === database_1.Tier.basic ? 100 : user.tier === database_1.Tier.pro ? 500 : 5000;
                     await prisma.user.update({
                         where: { id: user.id },
                         data: { credits: { increment: monthlyCredits } }
@@ -106,8 +137,9 @@ app.post('/billing/webhook', express_1.default.raw({ type: 'application/json' })
                         data: {
                             userId: user.id,
                             amount: monthlyCredits,
-                            operation: 'monthly_renewal',
-                            metadata: { invoiceId: invoice.id }
+                            type: database_1.CreditType.SUBSCRIPTION,
+                            referenceId: invoice.id,
+                            description: `Renouvellement mensuel ${user.tier}`
                         }
                     });
                     console.log(`[Billing] Renouvellement mensuel pour user ${user.id} (+${monthlyCredits})`);
@@ -118,7 +150,7 @@ app.post('/billing/webhook', express_1.default.raw({ type: 'application/json' })
                 const subscription = event.data.object;
                 await prisma.user.updateMany({
                     where: { stripeSubscriptionId: subscription.id },
-                    data: { tier: client_1.Tier.free }
+                    data: { tier: database_1.Tier.free }
                 });
                 console.log(`[Billing] Abonnement supprimé : ${subscription.id}`);
                 break;

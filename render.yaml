@@ -15,6 +15,8 @@ services:
           name: zaksoft-auth-db
           property: connectionString
         key: DATABASE_URL
+      - key: CORS_ORIGINS
+        value: https://zaksoft-creations.vercel.app
 
   - type: web
     name: zaksoft-billing-service
@@ -31,10 +33,10 @@ services:
           property: connectionString
         key: DATABASE_URL
 
-  # --- Background Workers ---
+  # --- API Services (formerly workers) ---
 
-  - type: worker
-    name: zaksoft-design-worker
+  - type: web
+    name: zaksoft-design-service
     env: node
     region: frankfurt
     plan: free
@@ -47,9 +49,11 @@ services:
           name: zaksoft-auth-db
           property: connectionString
         key: DATABASE_URL
+      - key: CORS_ORIGINS
+        value: https://zaksoft-creations.vercel.app
 
-  - type: worker
-    name: zaksoft-video-worker
+  - type: web
+    name: zaksoft-video-service
     env: node
     region: frankfurt
     plan: free
@@ -62,9 +66,11 @@ services:
           name: zaksoft-auth-db
           property: connectionString
         key: DATABASE_URL
+      - key: CORS_ORIGINS
+        value: https://zaksoft-creations.vercel.app
 
-  - type: worker
-    name: zaksoft-webgen-worker
+  - type: web
+    name: zaksoft-webgen-service
     env: node
     region: frankfurt
     plan: free
@@ -77,6 +83,8 @@ services:
           name: zaksoft-auth-db
           property: connectionString
         key: DATABASE_URL
+      - key: CORS_ORIGINS
+        value: https://zaksoft-creations.vercel.app
 
 databases:
   - name: zaksoft-auth-db

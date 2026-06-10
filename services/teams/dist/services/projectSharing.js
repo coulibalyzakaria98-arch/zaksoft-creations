@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.projectSharing = exports.ProjectSharing = void 0;
-const client_1 = require("@prisma/client");
+const client_1 = require("../generated/client");
 const prisma = new client_1.PrismaClient();
 class ProjectSharing {
     async shareProject(projectId, sharerId, targetUserId, permission) {

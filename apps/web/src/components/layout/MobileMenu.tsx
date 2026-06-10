@@ -13,7 +13,7 @@ const menuItems = [
   { name: 'Marketplace', href: '/marketplace' },
   { name: 'Équipe', href: '/teams' },
   { name: 'Facturation', href: '/billing' },
-  { name: 'Paramètres', href: '/settings' },
+  { name: 'Paramètres', href: '/dashboard/settings' },
 ];
 
 export function MobileMenu() {

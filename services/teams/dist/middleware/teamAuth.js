@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.teamAuth = teamAuth;
 exports.requireTeamRole = requireTeamRole;
-const client_1 = require("@prisma/client");
+const client_1 = require("../generated/client");
 const prisma = new client_1.PrismaClient();
 async function teamAuth(req, res, next) {
     const teamId = req.params.teamId || req.body.teamId;

@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "./generated-client"
 }
 
 datasource db {
@@ -138,24 +139,85 @@ enum VideoStatus {
 }
 
 model Website {
-  id          String    @id @default(cuid())
-  userId      String    @map("user_id")
-  jobId       String    @unique @map("job_id")
-  description String    @db.Text
-  template    String    // "portfolio", "ecommerce", "blog", "landing"
-  framework   String    // "tailwind", "bootstrap", "custom"
-  code        String    @db.Text  // HTML/CSS/JS généré
-  previewUrl  String?   @map("preview_url")
-  deployedUrl String?   @map("deployed_url")
-  status      WebsiteStatus @default(COMPLETED)
-  createdAt   DateTime  @default(now()) @map("created_at")
+  id             String   @id @default(cuid())
+  userId         String   @map("user_id")
+  jobId          String?  @unique @map("job_id")
+  description    String?  @db.Text
+  template       String?  // "portfolio", "ecommerce", "blog", "landing"
+  framework      String?  // "tailwind", "bootstrap", "custom"
+  code           String?  @db.Text  // HTML/CSS/JS généré
+  generatedHtml  String?  @map("generated_html")
+  templateConfig Json?    @map("template_config")
+  previewUrl     String?  @map("preview_url")
+  deployedUrl    String?  @map("deployed_url")
+  deployUrl      String?  @map("deploy_url")
+  status         WebsiteStatus @default(COMPLETED)
+  lastDeployedAt DateTime? @map("last_deployed_at")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
   
-  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  job         Job?      @relation(fields: [jobId], references: [id])
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  job            Job?      @relation(fields: [jobId], references: [id])
+  deployments    Deployment[]
+  customDomains  CustomDomain[]
   
   @@index([userId])
   @@index([createdAt])
   @@map("websites")
+}
+
+model Deployment {
+  id            String         @id @default(cuid())
+  websiteId     String         @map("website_id")
+  website       Website        @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  platform      String?        @default("VERCEL")
+  environment   String?        @default("PRODUCTION")
+  status        String         @default("PENDING")
+  url           String?
+  previewUrl    String?        @map("preview_url")
+  branch        String?
+  commitHash    String?        @map("commit_hash")
+  logs          Json?
+  metadata      Json?
+  startedAt     DateTime?      @map("started_at")
+  completedAt   DateTime?      @map("completed_at")
+  error         String?
+  createdAt     DateTime       @default(now()) @map("created_at")
+  updatedAt     DateTime       @updatedAt @map("updated_at")
+  
+  checks        UptimeCheck[]
+  
+  @@index([websiteId])
+  @@index([status])
+  @@map("deployments")
+}
+
+model UptimeCheck {
+  id            String   @id @default(cuid())
+  deploymentId  String   @map("deployment_id")
+  deployment    Deployment @relation(fields: [deploymentId], references: [id], onDelete: Cascade)
+  status        Boolean
+  responseTime  Int      @map("response_time")
+  timestamp     DateTime @default(now())
+  
+  @@index([deploymentId, timestamp])
+  @@map("uptime_checks")
+}
+
+model CustomDomain {
+  id            String   @id @default(cuid())
+  websiteId     String   @map("website_id")
+  website       Website  @relation(fields: [websiteId], references: [id], onDelete: Cascade)
+  domain        String   @unique
+  verified      Boolean  @default(false)
+  sslEnabled    Boolean  @default(false) @map("ssl_enabled")
+  sslIssuedAt   DateTime? @map("ssl_issued_at")
+  sslExpiresAt  DateTime? @map("ssl_expires_at")
+  verificationToken String? @map("verification_token")
+  createdAt     DateTime @default(now()) @map("created_at")
+  
+  @@index([domain])
+  @@map("custom_domains")
 }
 
 enum WebsiteStatus {

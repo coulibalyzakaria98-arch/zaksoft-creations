@@ -1,27 +1,34 @@
-"use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
-Object.defineProperty(exports, "__esModule", { value: true });
-const express_1 = __importDefault(require("express"));
-const bullmq_1 = require("bullmq");
-const ioredis_1 = __importDefault(require("ioredis"));
-const cors_1 = __importDefault(require("cors"));
-const dotenv_1 = __importDefault(require("dotenv"));
-const metrics_1 = require("./metrics");
-const auth_1 = require("./middleware/auth");
+import * as Sentry from "@sentry/node";
+import express from 'express';
+import { Queue } from 'bullmq';
+import IORedis from 'ioredis';
+import cors from 'cors';
+import dotenv from 'dotenv';
 // Charger les variables d'environnement
-dotenv_1.default.config();
-const app = (0, express_1.default)();
+dotenv.config();
+Sentry.init({
+    dsn: process.env.SENTRY_DSN,
+    tracesSampleRate: 1.0,
+    environment: process.env.NODE_ENV || 'development',
+});
+import { metricsApp, setupBullMQMetrics } from './metrics';
+import { authenticate } from './middleware/auth';
+import { healthCheck } from '@zaksoft/health';
+import logger from '@zaksoft/logging';
+import { PrismaClient } from '@zaksoft/database';
+const prisma = new PrismaClient();
+const app = express();
+// The request handler must be the first middleware on the app
+Sentry.setupExpressErrorHandler(app);
 const port = process.env.PORT || 3003;
 // Configuration Redis
 const redisOptions = {
     maxRetriesPerRequest: null,
     enableReadyCheck: false
 };
-const redis = new ioredis_1.default(process.env.REDIS_URL || 'redis://localhost:6379', redisOptions);
+const redis = new IORedis(process.env.REDIS_URL || 'redis://localhost:6379', redisOptions);
 // File d'attente BullMQ
-const imageQueue = new bullmq_1.Queue('image-generation', {
+const imageQueue = new Queue('image-generation', {
     connection: redis,
     defaultJobOptions: {
         attempts: 3,
@@ -33,15 +40,15 @@ const imageQueue = new bullmq_1.Queue('image-generation', {
     }
 });
 // Initialiser les métriques BullMQ
-(0, metrics_1.setupBullMQMetrics)(imageQueue);
-app.use((0, cors_1.default)());
-app.use(express_1.default.json());
+setupBullMQMetrics(imageQueue);
+app.use(cors());
+app.use(express.json());
 // Health check (avant auth)
 app.get('/health', (req, res) => {
-    res.json({ status: 'ok', service: 'design' });
+    res.json(healthCheck('design', '1.0.0'));
 });
 // Monter les métriques (avant auth pour le monitoring)
-app.use(metrics_1.metricsApp);
+app.use(metricsApp);
 // Normaliser les requêtes Vercel sous /_/design pour que l'Express route correctement
 app.use((req, res, next) => {
     if (req.url.startsWith('/_/design')) {
@@ -50,7 +57,8 @@ app.use((req, res, next) => {
     next();
 });
 // Appliquer l'authentification sur les routes de génération
-app.use('/image', auth_1.authenticate);
+app.use('/image', authenticate);
+const CREDITS_COST = 1;
 /**
  * POST /image/generate
  * Déclenche une génération d'image via IA
@@ -62,21 +70,46 @@ app.post('/image/generate', async (req, res) => {
         if (!prompt) {
             return res.status(400).json({ error: 'Le prompt est requis' });
         }
-        const job = await imageQueue.add('generate', {
+        if (!userId) {
+            return res.status(401).json({ error: 'Utilisateur non identifié' });
+        }
+        // 1. Vérifier les crédits
+        const user = await prisma.user.findUnique({
+            where: { id: userId },
+            select: { credits: true }
+        });
+        if (!user || user.credits < CREDITS_COST) {
+            return res.status(402).json({ error: 'Crédits insuffisants' });
+        }
+        // 2. Créer le job en base
+        const dbJob = await prisma.job.create({
+            data: {
+                type: 'IMAGE',
+                userId,
+                status: 'PENDING',
+                input: { prompt, options },
+                creditsCost: CREDITS_COST,
+            }
+        });
+        // 3. Ajouter à la file BullMQ
+        await imageQueue.add('generate', {
+            jobId: dbJob.id,
             prompt,
             options,
             userId,
             timestamp: new Date().toISOString()
+        }, {
+            jobId: dbJob.id // Use same ID for tracking
         });
         res.status(202).json({
-            jobId: job.id,
+            jobId: dbJob.id,
             status: 'queued',
             message: 'Demande de génération enregistrée'
         });
     }
     catch (error) {
-        console.error('Erreur génération image:', error);
-        res.status(500).json({ error: 'Erreur lors de la mise en file d\'attente du job' });
+        logger.error('Erreur génération image:', { error });
+        res.status(500).json({ error: 'Erreur lors du traitement de la demande' });
     }
 });
 /**
@@ -86,26 +119,43 @@ app.post('/image/generate', async (req, res) => {
 app.get('/image/status/:jobId', async (req, res) => {
     try {
         const { jobId } = req.params;
-        const job = await imageQueue.getJob(jobId);
-        if (!job) {
+        // Priorité à la base de données pour le statut final
+        const dbJob = await prisma.job.findUnique({
+            where: { id: jobId },
+            include: { image: true }
+        });
+        if (!dbJob) {
             return res.status(404).json({ error: 'Job non trouvé' });
         }
-        const state = await job.getState();
-        const result = job.returnvalue;
-        const progress = job.progress;
+        if (dbJob.status === 'COMPLETED') {
+            return res.json({
+                id: dbJob.id,
+                status: 'completed',
+                progress: 100,
+                url: dbJob.image?.imageUrl || null
+            });
+        }
+        if (dbJob.status === 'FAILED') {
+            return res.json({
+                id: dbJob.id,
+                status: 'failed',
+                error: dbJob.error
+            });
+        }
+        // Si pas terminé, on peut checker BullMQ pour la progression temps réel
+        const bullJob = await imageQueue.getJob(jobId);
         res.json({
-            id: job.id,
-            status: state,
-            progress,
-            url: result?.url || null,
-            error: state === 'failed' ? job.failedReason : null
+            id: dbJob.id,
+            status: dbJob.status.toLowerCase(),
+            progress: bullJob?.progress || dbJob.progress,
+            url: null
         });
     }
     catch (error) {
-        console.error('Erreur récupération statut:', error);
+        logger.error('Erreur récupération statut:', { error });
         res.status(500).json({ error: 'Erreur lors de la récupération du statut' });
     }
 });
 app.listen(port, () => {
-    console.log(`Design service running on port ${port}`);
+    logger.info('Design service started', { port });
 });

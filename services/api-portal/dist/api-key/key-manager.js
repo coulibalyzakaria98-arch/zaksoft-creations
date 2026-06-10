@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.apiKeyManager = exports.ApiKeyManager = void 0;
-const client_1 = require("@prisma/client");
+const client_1 = require("../generated/client");
 const crypto_1 = require("crypto");
 const prisma = new client_1.PrismaClient();
 class ApiKeyManager {
