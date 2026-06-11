@@ -1,4 +1,3 @@
-// apps/web/src/components/layout/DashboardSidebar.tsx
 'use client';
 
 import Link from 'next/link';
@@ -9,7 +8,6 @@ import {
   Video, 
   Globe, 
   ShoppingBag, 
-  Library,
   BarChart3, 
   CreditCard, 
   Settings,
@@ -20,14 +18,13 @@ import { useAuth } from '@/hooks/useAuth';
 
 const menuItems = [
   { name: 'Accueil', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Créer Image', href: '/dashboard/image/new', icon: Image },
-  { name: 'Créer Vidéo', href: '/dashboard/video/new', icon: Video },
-  { name: 'Créer Site', href: '/dashboard/website/new', icon: Globe },
-  { name: 'Mon historique', href: '/dashboard/history', icon: Library },
-  { name: 'Marketplace', href: '/dashboard/marketplace', icon: ShoppingBag },
-  { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
-  { name: 'Facturation', href: '/dashboard/billing', icon: CreditCard },
-  { name: 'Paramètres', href: '/dashboard/settings', icon: Settings },
+  { name: 'Créer Image', href: '/design', icon: Image },
+  { name: 'Créer Vidéo', href: '/video', icon: Video },
+  { name: 'Créer Site', href: '/web', icon: Globe },
+  { name: 'Marketplace', href: '/marketplace', icon: ShoppingBag },
+  { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+  { name: 'Facturation', href: '/billing', icon: CreditCard },
+  { name: 'Paramètres', href: '/settings', icon: Settings },
 ];
 
 export function DashboardSidebar() {
@@ -72,7 +69,7 @@ export function DashboardSidebar() {
       {/* Footer avec déconnexion */}
       <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10">
         <div className="mb-4 p-3 bg-white/5 rounded-xl">
-          <p className="text-xs text-gray-400 truncate">{user?.email}</p>
+          <p className="text-xs text-gray-400">{user?.email}</p>
           <div className="flex items-center gap-2 mt-2">
             <div className="w-2 h-2 bg-green-500 rounded-full" />
             <span className="text-xs text-gray-400">Connecté</span>

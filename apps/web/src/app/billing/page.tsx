@@ -1,4 +1,3 @@
-// apps/web/src/app/billing/page.tsx
 'use client';
 
 import { motion } from 'framer-motion';

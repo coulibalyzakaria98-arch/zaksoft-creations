@@ -1,4 +1,3 @@
-// apps/web/src/app/analytics/page.tsx
 'use client';
 
 import { motion } from 'framer-motion';

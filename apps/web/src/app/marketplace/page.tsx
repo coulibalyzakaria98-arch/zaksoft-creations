@@ -1,4 +1,3 @@
-// apps/web/src/app/marketplace/page.tsx
 'use client';
 
 import { motion } from 'framer-motion';
