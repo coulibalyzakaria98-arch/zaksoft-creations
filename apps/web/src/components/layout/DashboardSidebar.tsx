@@ -36,9 +36,11 @@ export function DashboardSidebar() {
       {/* Logo */}
       <div className="p-6 border-b border-white/10">
         <Link href="/dashboard" className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-r from-orange-500 to-pink-500 rounded-lg flex items-center justify-center">
-            <Sparkles className="w-4 h-4 text-white" />
-          </div>
+          <img 
+            src="/logo.png" 
+            alt="ZAKSOFT AI Logo" 
+            className="w-8 h-8 rounded-lg"
+          />
           <span className="font-bold text-xl text-white">
             ZAKSOFT<span className="text-orange-500">AI</span>
           </span>
