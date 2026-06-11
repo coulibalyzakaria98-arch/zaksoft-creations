@@ -1,92 +1,68 @@
+# render.yaml - Déploiement complet (API + Workers)
 services:
-  # --- Web Services ---
-  
+  # Auth Backend
   - type: web
     name: zaksoft-auth-backend
-    env: node
-    region: frankfurt
-    plan: free
-    buildCommand: pnpm install && pnpm build
-    startCommand: cd services/auth && pnpm start
+    runtime: node
+    rootDir: services/auth
+    buildCommand: npm install && npm run build
+    startCommand: npm start
     envVars:
-      - key: NODE_ENV
-        value: production
-      - fromDatabase:
+      - key: PORT
+        value: 3001
+      - key: DATABASE_URL
+        fromDatabase:
           name: zaksoft-auth-db
           property: connectionString
-        key: DATABASE_URL
-      - key: CORS_ORIGINS
-        value: https://zaksoft-creations.vercel.app
+      - key: JWT_SECRET
+        generateValue: true
 
-  - type: web
-    name: zaksoft-billing-service
-    env: node
-    region: frankfurt
-    plan: free
-    buildCommand: pnpm install && pnpm build
-    startCommand: cd services/billing && pnpm start
+  # Design Worker (Images)
+  - type: worker
+    name: zaksoft-design-worker
+    runtime: node
+    rootDir: services/design
+    buildCommand: npm install && npm run build
+    startCommand: node dist/worker.js
     envVars:
-      - key: NODE_ENV
-        value: production
-      - fromDatabase:
+      - key: REPLICATE_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
           name: zaksoft-auth-db
           property: connectionString
-        key: DATABASE_URL
 
-  # --- API Services (formerly workers) ---
-
-  - type: web
-    name: zaksoft-design-service
-    env: node
-    region: frankfurt
-    plan: free
-    buildCommand: pnpm install && pnpm build
-    startCommand: cd services/design && pnpm run start
+  # Video Worker
+  - type: worker
+    name: zaksoft-video-worker
+    runtime: node
+    rootDir: services/video
+    buildCommand: npm install && npm run build
+    startCommand: node dist/worker.js
     envVars:
-      - key: NODE_ENV
-        value: production
-      - fromDatabase:
+      - key: RUNWAY_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
           name: zaksoft-auth-db
           property: connectionString
-        key: DATABASE_URL
-      - key: CORS_ORIGINS
-        value: https://zaksoft-creations.vercel.app
 
-  - type: web
-    name: zaksoft-video-service
-    env: node
-    region: frankfurt
-    plan: free
-    buildCommand: pnpm install && pnpm build
-    startCommand: cd services/video && pnpm run start
+  # WebGen Worker (Sites)
+  - type: worker
+    name: zaksoft-webgen-worker
+    runtime: node
+    rootDir: services/web-gen
+    buildCommand: npm install && npm run build
+    startCommand: node dist/worker.js
     envVars:
-      - key: NODE_ENV
-        value: production
-      - fromDatabase:
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
           name: zaksoft-auth-db
           property: connectionString
-        key: DATABASE_URL
-      - key: CORS_ORIGINS
-        value: https://zaksoft-creations.vercel.app
 
-  - type: web
-    name: zaksoft-webgen-service
-    env: node
-    region: frankfurt
-    plan: free
-    buildCommand: pnpm install && pnpm build
-    startCommand: cd services/web-gen && pnpm run start
-    envVars:
-      - key: NODE_ENV
-        value: production
-      - fromDatabase:
-          name: zaksoft-auth-db
-          property: connectionString
-        key: DATABASE_URL
-      - key: CORS_ORIGINS
-        value: https://zaksoft-creations.vercel.app
-
-databases:
-  - name: zaksoft-auth-db
-    region: frankfurt
+  # PostgreSQL Database
+  - type: postgres
+    name: zaksoft-auth-db
     plan: free
