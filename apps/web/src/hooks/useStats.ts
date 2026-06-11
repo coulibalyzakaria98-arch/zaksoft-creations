@@ -6,6 +6,7 @@ interface Stats {
   images: number;
   videos: number;
   websites: number;
+  purchases: number;
   totalGenerations: number;
 }
 
@@ -25,6 +26,7 @@ export function useStats() {
           images: 12,
           videos: 3,
           websites: 1,
+          purchases: 0,
           totalGenerations: 16,
         });
       } finally {
