@@ -1,15 +1,13 @@
-// apps/web/src/app/video/page.tsx
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Video, Sparkles, Upload, Download, Trash2, Copy, 
-  Star, Share2, Mic, Subtitles, Scissors, Film, 
-  Clock, Zap, Settings, Music, Volume2, Type,
-  ChevronDown, Plus, Save, Eye, Calendar, TrendingUp,
-  Play, Pause, SkipForward, SkipBack, VolumeX, Volume1,
-  Fullscreen, Minimize, Edit, Layers, Wand2, Heart
+  Video, Sparkles, Download, Trash2, Copy, 
+  Star, Share2, Mic, Subtitles, Film, 
+  Settings, Music, Volume2, 
+  ChevronDown, Play, Pause, VolumeX,
+  Fullscreen, Eye, Heart
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
@@ -75,7 +73,7 @@ const voiceOptions = [
 ];
 
 export default function VideoPage() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [prompt, setPrompt] = useState('');
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [duration, setDuration] = useState('medium');
@@ -143,6 +141,7 @@ export default function VideoPage() {
       setVideos(prev => [newVideo, ...prev]);
       setCurrentVideo(newVideo);
       setGenerating(false);
+      refreshUser();
       toast.success('Vidéo générée avec succès !');
     }, 5000);
   };
