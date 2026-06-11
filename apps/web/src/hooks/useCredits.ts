@@ -1,6 +1,7 @@
 // apps/web/src/hooks/useCredits.ts
 import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
+import { useAuth } from '@/hooks/useAuth';
 
 interface CreditsData {
   credits: number;
@@ -18,23 +19,13 @@ export function useCredits() {
   });
   const [loading, setLoading] = useState(true);
 
+  const { refreshUser } = useAuth();
+  
   const refreshCredits = useCallback(async () => {
-    try {
-      const response = await axios.get('/api/v1/users/me/credits');
-      setData(response.data);
-    } catch (error) {
-      console.error('Erreur chargement crédits:', error);
-      // Données mock en attendant le backend
-      setData({
-        credits: 10,
-        usedCredits: 45,
-        limit: 100,
-        plan: 'free',
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    await refreshUser();
+    // Re-fetch data if needed from API, but user state is now updated via refreshUser
+    setLoading(false);
+  }, [refreshUser]);
 
   useEffect(() => {
     refreshCredits();

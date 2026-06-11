@@ -21,7 +21,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (data: any) => Promise<void>;
   logout: () => void;
-  refreshCredits: () => Promise<void>;
+  refreshUser: () => Promise<void>;
   credits: number;
 }
 
@@ -40,7 +40,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setIsLoading(false);
   }, []);
 
-  const refreshCredits = async () => {
+  const refreshUser = async () => {
     try {
       const token = localStorage.getItem('token');
       if (!token) return;
@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(response);
       localStorage.setItem('user', JSON.stringify(response));
     } catch (error) {
-      console.error('Failed to refresh credits', error);
+      console.error('Failed to refresh user', error);
     }
   };
 
@@ -106,7 +106,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, login, register, logout, refreshCredits, credits: user?.credits || 0 }}>
+    <AuthContext.Provider value={{ user, isLoading, login, register, logout, refreshUser, credits: user?.credits || 0 }}>
       {children}
     </AuthContext.Provider>
   );
