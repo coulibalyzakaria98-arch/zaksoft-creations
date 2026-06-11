@@ -1,4 +1,3 @@
-// apps/web/src/app/design/page.tsx
 'use client';
 
 import { useState, useRef, useCallback } from 'react';
@@ -41,7 +40,7 @@ const sizes = [
 ];
 
 export default function DesignPage() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const [prompt, setPrompt] = useState('');
   const [negativePrompt, setNegativePrompt] = useState('');
   const [selectedStyle, setSelectedStyle] = useState('');
@@ -94,6 +93,7 @@ export default function DesignPage() {
       };
       setGeneratedImages(prev => [newImage, ...prev]);
       setGenerating(false);
+      refreshUser();
       toast.success('Image générée avec succès !');
     }, 3000);
   };
