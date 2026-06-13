@@ -92,7 +92,6 @@ export async function deductCreditsAfterSuccess(req: AuthRequest, res: Response,
             data: {
               userId,
               amount: -cost,
-              type: 'GENERATION', 
               metadata: { body: req.body, path: req.path } as any
             }
           });
