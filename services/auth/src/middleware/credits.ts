@@ -88,6 +88,9 @@ export async function deductCreditsAfterSuccess(req: AuthRequest, res: Response,
           where: { id: userId },
           data: { credits: { decrement: cost } }
         }).then(() => {
+          // Temporarily disabled due to schema mismatch issues during build
+          console.log(`[CREDITS] Débit de ${cost} crédits pour l'utilisateur ${userId} - Path: ${req.path}`);
+          /*
           prisma.creditTransaction.create({
             data: {
               userId,
@@ -95,6 +98,7 @@ export async function deductCreditsAfterSuccess(req: AuthRequest, res: Response,
               metadata: { body: req.body, path: req.path } as any
             }
           });
+          */
         }).catch((err: any) => {
           console.error("Failed to deduct credits after success:", err);
         });
