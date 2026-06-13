@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@zaksoft/database';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
