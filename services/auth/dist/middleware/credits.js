@@ -2,8 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.requireCredits = requireCredits;
 exports.deductCreditsAfterSuccess = deductCreditsAfterSuccess;
-const client_1 = require("../generated/client");
-const prisma = new client_1.PrismaClient();
+const database_1 = require("@zaksoft/database");
+const prisma = new database_1.PrismaClient();
 const CREDITS_COST = {
     'image:512': 1,
     'image:1024': 2,
@@ -79,8 +79,8 @@ async function deductCreditsAfterSuccess(req, res, next) {
                         data: {
                             userId,
                             amount: -cost,
-                            operation: req.path,
-                            metadata: { body: req.body }
+                            type: 'GENERATION', // Match CreditType enum
+                            metadata: { body: req.body, path: req.path }
                         }
                     });
                 }).catch((err) => {

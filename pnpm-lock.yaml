@@ -375,6 +375,9 @@ importers:
       '@types/helmet':
         specifier: ^4.0.0
         version: 4.0.0
+      '@zaksoft/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@zaksoft/health':
         specifier: workspace:*
         version: link:../../packages/health

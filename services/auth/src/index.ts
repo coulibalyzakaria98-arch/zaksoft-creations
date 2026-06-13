@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { PrismaClient } from './generated/client';
+import { PrismaClient } from '@zaksoft/database';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
@@ -184,8 +184,8 @@ authRouter.post('/login', async (req, res) => {
     logger.info('Login attempt', { email });
 
     const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
-      logger.warn('Login failed - user not found', { email });
+    if (!user || !user.passwordHash) {
+      logger.warn('Login failed - user not found or no password hash', { email });
       return res.status(401).json({ error: 'Identifiants invalides' });
     }
     

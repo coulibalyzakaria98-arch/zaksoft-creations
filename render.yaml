@@ -4,9 +4,8 @@ services:
   - type: web
     name: zaksoft-auth-backend
     runtime: node
-    rootDir: services/auth
-    buildCommand: npm install && npm run build
-    startCommand: npm start
+    buildCommand: pnpm install && pnpm --filter @zaksoft/database build && pnpm --filter @zaksoft/database db:push && pnpm --filter @zaksoft/auth build
+    startCommand: pnpm --filter @zaksoft/auth start
     envVars:
       - key: PORT
         value: 3001
@@ -17,14 +16,15 @@ services:
       - key: JWT_SECRET
         generateValue: true
 
-  # Design Worker (Images)
-  - type: worker
-    name: zaksoft-design-worker
+  # Design Backend (Web + Worker)
+  - type: web
+    name: zaksoft-design-backend
     runtime: node
-    rootDir: services/design
-    buildCommand: npm install && npm run build
-    startCommand: node dist/worker.js
+    buildCommand: pnpm install && pnpm --filter @zaksoft/database build && pnpm --filter @zaksoft/design build
+    startCommand: pnpm --filter @zaksoft/design worker
     envVars:
+      - key: PORT
+        value: 3003
       - key: REPLICATE_API_KEY
         sync: false
       - key: DATABASE_URL
@@ -32,14 +32,15 @@ services:
           name: zaksoft-auth-db
           property: connectionString
 
-  # Video Worker
-  - type: worker
-    name: zaksoft-video-worker
+  # Video Backend (Web + Worker)
+  - type: web
+    name: zaksoft-video-backend
     runtime: node
-    rootDir: services/video
-    buildCommand: npm install && npm run build
-    startCommand: node dist/worker.js
+    buildCommand: pnpm install && pnpm --filter @zaksoft/database build && pnpm --filter @zaksoft/video build
+    startCommand: pnpm --filter @zaksoft/video worker
     envVars:
+      - key: PORT
+        value: 3002
       - key: RUNWAY_API_KEY
         sync: false
       - key: DATABASE_URL
@@ -47,14 +48,15 @@ services:
           name: zaksoft-auth-db
           property: connectionString
 
-  # WebGen Worker (Sites)
-  - type: worker
-    name: zaksoft-webgen-worker
+  # WebGen Backend (Web + Worker)
+  - type: web
+    name: zaksoft-webgen-backend
     runtime: node
-    rootDir: services/web-gen
-    buildCommand: npm install && npm run build
-    startCommand: node dist/worker.js
+    buildCommand: pnpm install && pnpm --filter @zaksoft/database build && pnpm --filter @zaksoft/web-gen build
+    startCommand: pnpm --filter @zaksoft/web-gen worker
     envVars:
+      - key: PORT
+        value: 3004
       - key: OPENAI_API_KEY
         sync: false
       - key: DATABASE_URL

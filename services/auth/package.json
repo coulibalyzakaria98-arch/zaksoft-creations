@@ -4,15 +4,16 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "prisma generate --schema=./prisma/schema.prisma && tsc",
+    "build": "tsc",
     "start": "node dist/index.js",
-    "type-check": "prisma generate --schema=./prisma/schema.prisma && tsc --noEmit"
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@prisma/adapter-pg": "5.11.0",
     "@prisma/client": "5.11.0",
     "@sentry/node": "^10.56.0",
     "@types/helmet": "^4.0.0",
+    "@zaksoft/database": "workspace:*",
     "@zaksoft/health": "workspace:*",
     "@zaksoft/logging": "workspace:*",
     "bcrypt": "^5.1.1",

@@ -74,7 +74,28 @@ const videoQueue = new bullmq_1.Queue('video-generation', {
 });
 // Initialiser les métriques BullMQ
 (0, metrics_1.setupBullMQMetrics)(videoQueue);
-app.use((0, cors_1.default)());
+const corsOriginRaw = process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001,https://zaksoft-creations.vercel.app,https://*.vercel.app';
+const allowedOrigins = corsOriginRaw
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+    .map((origin) => {
+    if (origin === '*') {
+        return origin;
+    }
+    if (origin.startsWith('/') && origin.endsWith('/')) {
+        return new RegExp(origin.slice(1, -1));
+    }
+    if (origin.includes('*')) {
+        const escaped = origin
+            .split('*')
+            .map((part) => part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+            .join('.*');
+        return new RegExp(`^${escaped}$`);
+    }
+    return origin;
+});
+app.use((0, cors_1.default)({ origin: allowedOrigins, credentials: true }));
 app.use(express_1.default.json());
 app.get('/health', (req, res) => {
     res.json((0, health_1.healthCheck)('video', '1.0.0'));

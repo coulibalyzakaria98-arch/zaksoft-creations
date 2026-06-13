@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
-const client_1 = require("./generated/client");
+const database_1 = require("@zaksoft/database");
 const cors_1 = __importDefault(require("cors"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const helmet_1 = __importDefault(require("helmet"));
@@ -22,7 +22,7 @@ dotenv_1.default.config();
 logging_1.default.info('--- Auth Service Starting ---');
 logging_1.default.info('Node Version:', { version: process.version });
 const app = (0, express_1.default)();
-const prisma = new client_1.PrismaClient();
+const prisma = new database_1.PrismaClient();
 const JWT_SECRET = process.env.JWT_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_SECRET || 'fallback-refresh-secret';
 const DATABASE_URL = process.env.DATABASE_URL;
@@ -149,8 +149,8 @@ authRouter.post('/login', async (req, res) => {
         }
         logging_1.default.info('Login attempt', { email });
         const user = await prisma.user.findUnique({ where: { email } });
-        if (!user) {
-            logging_1.default.warn('Login failed - user not found', { email });
+        if (!user || !user.passwordHash) {
+            logging_1.default.warn('Login failed - user not found or no password hash', { email });
             return res.status(401).json({ error: 'Identifiants invalides' });
         }
         const valid = await bcrypt_1.default.compare(password, user.passwordHash);
