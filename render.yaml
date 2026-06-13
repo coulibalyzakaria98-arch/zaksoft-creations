@@ -3,9 +3,9 @@ services:
   # Auth Backend
   - type: web
     name: zaksoft-auth-backend
-    runtime: node
-    buildCommand: pnpm install && pnpm --filter @zaksoft/database build && pnpm --filter @zaksoft/database db:push && pnpm --filter @zaksoft/auth build
-    startCommand: pnpm --filter @zaksoft/auth start
+    runtime: docker
+    dockerfilePath: services/auth/Dockerfile
+    dockerContext: .
     envVars:
       - key: PORT
         value: 3001
@@ -19,9 +19,9 @@ services:
   # Design Backend (Web + Worker)
   - type: web
     name: zaksoft-design-backend
-    runtime: node
-    buildCommand: pnpm install && pnpm --filter @zaksoft/database build && pnpm --filter @zaksoft/design build
-    startCommand: pnpm --filter @zaksoft/design worker
+    runtime: docker
+    dockerfilePath: services/design/Dockerfile
+    dockerContext: .
     envVars:
       - key: PORT
         value: 3003
@@ -35,9 +35,9 @@ services:
   # Video Backend (Web + Worker)
   - type: web
     name: zaksoft-video-backend
-    runtime: node
-    buildCommand: pnpm install && pnpm --filter @zaksoft/database build && pnpm --filter @zaksoft/video build
-    startCommand: pnpm --filter @zaksoft/video worker
+    runtime: docker
+    dockerfilePath: services/video/Dockerfile
+    dockerContext: .
     envVars:
       - key: PORT
         value: 3002
@@ -51,9 +51,9 @@ services:
   # WebGen Backend (Web + Worker)
   - type: web
     name: zaksoft-webgen-backend
-    runtime: node
-    buildCommand: pnpm install && pnpm --filter @zaksoft/database build && pnpm --filter @zaksoft/web-gen build
-    startCommand: pnpm --filter @zaksoft/web-gen worker
+    runtime: docker
+    dockerfilePath: services/web-gen/Dockerfile
+    dockerContext: .
     envVars:
       - key: PORT
         value: 3004

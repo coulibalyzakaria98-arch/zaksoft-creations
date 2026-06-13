@@ -54,7 +54,7 @@ build-output.txt
 docker-compose.yml
 docker-compose.dev.yml
 docker-compose.prod.yml
-Dockerfile
+# Dockerfile is no longer ignored
 
 # Kubernetes
 infrastructure/k8s/
