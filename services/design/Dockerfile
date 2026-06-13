@@ -1,39 +1,42 @@
+# ============================================
+# STAGE 1: Builder
+# ============================================
 FROM node:20-slim AS builder
-RUN npm install -g pnpm@8.15.0
+RUN npm install -g pnpm@8.15.0 && \
+    apt-get update && \
+    apt-get install -y python3 make g++ && \
+    rm -rf /var/lib/apt/lists/*
 WORKDIR /app
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY packages/database/package.json ./packages/database/
-COPY packages/health/package.json ./packages/health/
-COPY packages/logging/package.json ./packages/logging/
-COPY packages/storage/package.json ./packages/storage/
-COPY services/design/package.json ./services/design/
+COPY . .
 RUN pnpm install --frozen-lockfile
-COPY packages/database ./packages/database
-COPY packages/health ./packages/health
-COPY packages/logging ./packages/logging
-COPY packages/storage ./packages/storage
-COPY services/design ./services/design
 RUN pnpm --filter @zaksoft/database build
 RUN pnpm --filter @zaksoft/health build
 RUN pnpm --filter @zaksoft/logging build
 RUN pnpm --filter @zaksoft/storage build
 RUN pnpm --filter @zaksoft/design build
 
+# ============================================
+# STAGE 2: Final Image
+# ============================================
 FROM node:20-slim
-WORKDIR /app
 RUN npm install -g pnpm@8.15.0
-COPY pnpm-lock.yaml pnpm-workspace.yaml package.json ./
-COPY packages/database/package.json ./packages/database/
-COPY packages/health/package.json ./packages/health/
-COPY packages/logging/package.json ./packages/logging/
-COPY packages/storage/package.json ./packages/storage/
-COPY services/design/package.json ./services/design/
-RUN pnpm install --prod --frozen-lockfile
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/pnpm-lock.yaml ./pnpm-lock.yaml
+COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=builder /app/packages/database/dist ./packages/database/dist
 COPY --from=builder /app/packages/database/generated-client ./packages/database/generated-client
+COPY --from=builder /app/packages/database/package.json ./packages/database/package.json
 COPY --from=builder /app/packages/health/dist ./packages/health/dist
+COPY --from=builder /app/packages/health/package.json ./packages/health/package.json
 COPY --from=builder /app/packages/logging/dist ./packages/logging/dist
+COPY --from=builder /app/packages/logging/package.json ./packages/logging/package.json
 COPY --from=builder /app/packages/storage/dist ./packages/storage/dist
+COPY --from=builder /app/packages/storage/package.json ./packages/storage/package.json
 COPY --from=builder /app/services/design/dist ./services/design/dist
+COPY --from=builder /app/services/design/package.json ./services/design/package.json
+COPY --from=builder /app/services/design/start.sh ./services/design/start.sh
+RUN chmod +x ./services/design/start.sh
 EXPOSE 3003
-CMD ["node", "services/design/dist/worker.js"]
+CMD ["./services/design/start.sh"]
