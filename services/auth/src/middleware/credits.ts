@@ -1,5 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient, CreditType } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -92,7 +91,7 @@ export async function deductCreditsAfterSuccess(req: AuthRequest, res: Response,
             data: {
               userId,
               amount: -cost,
-              type: 'GENERATION', // Match CreditType enum
+              type: CreditType.GENERATION,
               metadata: { body: req.body, path: req.path } as any
             }
           });
