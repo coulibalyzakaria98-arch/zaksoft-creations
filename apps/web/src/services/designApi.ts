@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const DESIGN_API_URL = process.env.NEXT_PUBLIC_DESIGN_API_URL || 'http://localhost:3004';
+const DESIGN_API_URL = process.env.NEXT_PUBLIC_DESIGN_API_URL || 'http://localhost:3003';
 
 function getAuthHeaders() {
   if (typeof window === 'undefined') return {};

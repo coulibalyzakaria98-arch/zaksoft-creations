@@ -55,26 +55,26 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="container-responsive py-8">
         {/* Header avec bienvenue */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <div className="flex justify-between items-start">
+          <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-white">
+              <h1 className="heading-responsive text-white">
                 Bonjour, <span className="bg-gradient-to-r from-orange-500 to-pink-500 bg-clip-text text-transparent">
                   {user?.email?.split('@')[0] || 'créateur'}
                 </span>
               </h1>
-              <p className="text-gray-400 mt-2">Voici votre activité des 30 derniers jours</p>
+              <p className="text-gray-400 text-sm sm:text-base mt-2">Voici votre activité des 30 derniers jours</p>
             </div>
-            <div className="flex items-center gap-3">
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-2 text-center">
-                <p className="text-xs text-gray-400">Série actuelle</p>
-                <p className="text-xl font-bold text-orange-500">{stats.streakDays} jours</p>
+            <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl px-4 py-3 text-center">
+                <p className="text-xs sm:text-sm text-gray-400">Série actuelle</p>
+                <p className="text-xl sm:text-2xl font-bold text-orange-500">{stats.streakDays} jours</p>
               </div>
               <button
                 onClick={logout}
@@ -91,7 +91,7 @@ export default function DashboardPage() {
           variants={containerVariants}
           initial="hidden"
           animate="visible"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8"
         >
           <motion.div variants={itemVariants} className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6 hover:bg-white/10 transition">
             <div className="flex items-center justify-between mb-4">
@@ -174,24 +174,31 @@ export default function DashboardPage() {
             </div>
 
             {/* Activité récente */}
-            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-6">
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-4 sm:p-6">
               <h2 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
                 <Clock className="w-5 h-5 text-orange-500" />
                 Activité récente
               </h2>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {recentActivities.map((activity, i) => (
-                  <div key={i} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition">
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
-                    <div className="flex-1">
-                      <p className="text-white text-sm font-medium">{activity.action}</p>
-                      <p className="text-gray-500 text-xs">{activity.prompt}</p>
+                  <div key={i} className="flex flex-col gap-3 rounded-xl border border-white/5 bg-black/30 p-3 sm:flex-row sm:items-center sm:justify-between hover:bg-white/5 transition">
+                    <div className="flex items-start gap-3 sm:items-center">
+                      <div className="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center text-sm">
+                        🎨
+                      </div>
+                      <div>
+                        <p className="text-white text-sm font-medium">{activity.action}</p>
+                        <p className="text-gray-500 text-xs sm:text-sm">{activity.prompt}</p>
+                      </div>
                     </div>
-                    <p className="text-gray-500 text-xs">{activity.time}</p>
+                    <div className="flex items-center justify-between gap-4 text-xs text-gray-400 sm:text-sm">
+                      <span>{activity.time}</span>
+                      <span className="text-green-400">✓</span>
+                    </div>
                   </div>
                 ))}
               </div>
-              <Link href="/dashboard/history" className="flex items-center justify-center gap-1 mt-4 text-orange-500 text-sm hover:gap-2 transition">
+              <Link href="/dashboard/history" className="mt-4 inline-flex w-full items-center justify-center gap-1 rounded-xl bg-white/5 py-2 text-orange-500 text-sm hover:bg-white/10 transition sm:w-auto">
                 Voir tout l'historique
                 <ArrowRight className="w-4 h-4" />
               </Link>

@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { generateVideo, getVideoStatus } from '@/services/videoApi';
 
 // Types
 interface VideoProject {
@@ -120,31 +121,63 @@ export default function VideoPage() {
     }
 
     setGenerating(true);
-    
-    // Simulation de génération (à remplacer par appel API réel)
-    setTimeout(() => {
-      const newVideo: VideoProject = {
-        id: Date.now().toString(),
-        title: `Vidéo ${videos.length + 1}`,
-        prompt: prompt,
-        url: `https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4`,
-        thumbnail: `https://picsum.photos/400/300?random=${Date.now()}`,
-        duration: durations.find(d => d.value === duration)?.value === 'film' ? 600 : 30,
-        ratio: ratio,
-        resolution: resolution,
-        voiceover: showVoiceover ? voiceoverText : undefined,
-        subtitles: showSubtitles ? 'auto-generated' : undefined,
-        createdAt: new Date(),
-        isFavorite: false,
-        views: 0,
-        likes: 0,
-      };
-      setVideos(prev => [newVideo, ...prev]);
-      setCurrentVideo(newVideo);
+
+    // Les libellés de durée de l'UI sont convertis en secondes pour le backend.
+    const durationSeconds: Record<string, number> = { short: 10, medium: 30, long: 60, film: 60 };
+    const durationValue = durationSeconds[duration] ?? 30;
+
+    try {
+      const { jobId } = await generateVideo(prompt, {
+        duration: durationValue,
+        aspectRatio: ratio,
+        resolution,
+        addVoiceover: showVoiceover,
+        voiceoverText,
+        addSubtitles: showSubtitles,
+      });
+
+      const poll = setInterval(async () => {
+        try {
+          const status = await getVideoStatus(jobId);
+          if (status.status === 'completed' && status.url) {
+            clearInterval(poll);
+            const newVideo: VideoProject = {
+              id: jobId,
+              title: `Vidéo ${videos.length + 1}`,
+              prompt: prompt,
+              url: status.url,
+              // Vignette de couverture (le backend ne renvoie pas encore de thumbnail).
+              thumbnail: `https://picsum.photos/400/300?random=${videos.length + 1}`,
+              duration: durationValue,
+              ratio: ratio,
+              resolution: resolution,
+              voiceover: showVoiceover ? voiceoverText : undefined,
+              subtitles: showSubtitles ? 'auto-generated' : undefined,
+              createdAt: new Date(),
+              isFavorite: false,
+              views: 0,
+              likes: 0,
+            };
+            setVideos(prev => [newVideo, ...prev]);
+            setCurrentVideo(newVideo);
+            setGenerating(false);
+            refreshUser();
+            toast.success('Vidéo générée avec succès !');
+          } else if (status.status === 'failed') {
+            clearInterval(poll);
+            setGenerating(false);
+            toast.error(status.error || 'La génération vidéo a échoué');
+          }
+        } catch (err) {
+          clearInterval(poll);
+          setGenerating(false);
+          toast.error('Erreur lors du suivi de la génération');
+        }
+      }, 3000);
+    } catch (error) {
       setGenerating(false);
-      refreshUser();
-      toast.success('Vidéo générée avec succès !');
-    }, 5000);
+      toast.error('Erreur lors du lancement de la génération');
+    }
   };
 
   const togglePlay = () => {
@@ -170,22 +203,22 @@ export default function VideoPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="container-responsive py-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-8 sm:mb-10 lg:mb-12"
         >
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+          <h1 className="heading-responsive text-white mb-2">
             Création vidéo IA
           </h1>
-          <p className="text-gray-400">
+          <p className="text-responsive text-gray-400">
             Générez des films, vidéos marketing, tutoriels et contenus professionnels
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
           {/* Panneau de gauche - Formulaire */}
           <div className="lg:col-span-1 space-y-6">
             {/* Templates */}
@@ -194,7 +227,7 @@ export default function VideoPage() {
                 <Film className="w-5 h-5 text-pink-500" />
                 Templates vidéo
               </h2>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {videoTemplates.map((template) => (
                   <button
                     key={template.name}
@@ -237,7 +270,7 @@ export default function VideoPage() {
               {/* Durée */}
               <div className="mb-4">
                 <p className="text-gray-400 text-sm mb-2">Durée</p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                   {durations.map((d) => (
                     <button
                       key={d.value}
@@ -258,7 +291,7 @@ export default function VideoPage() {
               {/* Résolution */}
               <div className="mb-4">
                 <p className="text-gray-400 text-sm mb-2">Résolution</p>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
                   {resolutions.map((res) => (
                     <button
                       key={res.value}
@@ -279,7 +312,7 @@ export default function VideoPage() {
               {/* Format */}
               <div className="mb-4">
                 <p className="text-gray-400 text-sm mb-2">Format d'écran</p>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   {[
                     { label: '16:9', value: '16:9', icon: '📺' },
                     { label: '9:16', value: '9:16', icon: '📱' },

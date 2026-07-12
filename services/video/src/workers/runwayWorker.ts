@@ -55,9 +55,36 @@ const bufferFromResponse = async (source: any): Promise<Buffer> => {
   throw new Error('Unsupported audio response format from ElevenLabs');
 };
 
+// Calcule la taille WxH (dimensions paires, compatibles yuv420p/libx264)
+// à partir du format et de la résolution demandés.
+const computeSize = (aspectRatio?: string, resolution?: string): string => {
+  const base = resolution === '1080p' ? 1080 : 720; // hauteur de référence 16:9
+  const ar = aspectRatio || '16:9';
+  if (ar === '9:16') return `${base}x${Math.round((base * 16) / 9)}`; // vertical
+  if (ar === '1:1') return `${base}x${base}`;
+  return `${Math.round((base * 16) / 9)}x${base}`; // 16:9 par défaut
+};
+
+// Mock intelligent : produit une vraie vidéo H.264 (motif de test FFmpeg) sans
+// dépendre d'une API externe. Permet de valider tout le pipeline de bout en bout
+// (file → worker → S3 → BDD → statut) avant de brancher un moteur payant.
+const generateMockVideo = async (jobId: string, duration: number, size: string): Promise<string> => {
+  const outPath = `/tmp/${jobId}-source.mp4`;
+  await new Promise<void>((resolve, reject) => {
+    ffmpeg()
+      .input(`testsrc2=size=${size}:rate=30`)
+      .inputOptions(['-f', 'lavfi', '-t', String(duration)])
+      .outputOptions(['-c:v', 'libx264', '-pix_fmt', 'yuv420p', '-t', String(duration)])
+      .save(outPath)
+      .on('end', () => resolve())
+      .on('error', (err) => reject(err));
+  });
+  return outPath;
+};
+
 export const videoWorker = new Worker('video-generation', async (job) => {
   return Sentry.withMonitor("video-worker", async () => {
-    const { jobId, prompt, duration, aspectRatio, addVoiceover, voiceoverText, addSubtitles, userId } = job.data;
+    const { jobId, prompt, engine, duration, aspectRatio, resolution, addVoiceover, voiceoverText, addSubtitles, userId } = job.data;
 
     console.log(`🎬 [Job ${jobId}] Génération vidéo pour user ${userId}`);
 
@@ -77,67 +104,83 @@ export const videoWorker = new Worker('video-generation', async (job) => {
         data: { status: 'PROCESSING', progress: 10 },
       });
 
-      // 3. Démarrer la tâche Runway
+      // 3. Obtenir la vidéo source.
+      // Moteur réel Runway si une clé est configurée, sinon mock FFmpeg hors-ligne.
       const ratio = (aspectRatio || '16:9').replace(':', '/');
-      const runDuration = Math.min(duration || 5, 16);
-      
-      const runwayResponse = await axios.post(
-        `${RUNWAY_API}/generate`,
-        {
-          prompt,
-          duration: runDuration,
-          aspect_ratio: ratio,
-          seed: Math.floor(Math.random() * 1000000),
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${RUNWAY_API_KEY}`,
-            'Content-Type': 'application/json'
+      const useRunway = engine === 'runway' && !!RUNWAY_API_KEY;
+      const runDuration = Math.min(duration || 5, useRunway ? 16 : 60);
+      const size = computeSize(aspectRatio, resolution);
+
+      // Entrée FFmpeg : URL distante (Runway) ou chemin local (mock).
+      let videoInput: string;
+
+      if (useRunway) {
+        const runwayResponse = await axios.post(
+          `${RUNWAY_API}/generate`,
+          {
+            prompt,
+            duration: runDuration,
+            aspect_ratio: ratio,
+            seed: Math.floor(Math.random() * 1000000),
+          },
+          {
+            headers: {
+              'Authorization': `Bearer ${RUNWAY_API_KEY}`,
+              'Content-Type': 'application/json'
+            }
           }
-        }
-      );
+        );
 
-      const task = runwayResponse.data;
-      await prisma.job.update({
-        where: { id: jobId },
-        data: { progress: 20 },
-      });
-
-      // 4. Polling Runway
-      let status = 'PENDING';
-      let videoUrl = null;
-      let attempts = 0;
-      const maxAttempts = 60;
-      
-      while (status !== 'SUCCEEDED' && status !== 'FAILED' && attempts < maxAttempts) {
-        await new Promise(resolve => setTimeout(resolve, 3000));
-        attempts++;
-        
-        const progress = Math.min(20 + Math.floor((attempts / maxAttempts) * 70), 90);
+        const task = runwayResponse.data;
         await prisma.job.update({
           where: { id: jobId },
-          data: { progress },
+          data: { progress: 20 },
         });
-        
-        const { data: statusData } = await axios.get(`${RUNWAY_API}/tasks/${task.id}`, {
-          headers: { 'Authorization': `Bearer ${RUNWAY_API_KEY}` },
-        });
-        
-        status = statusData.status;
-        if (statusData.output?.video_url) {
-          videoUrl = statusData.output.video_url;
-        }
-      }
 
-      if (status !== 'SUCCEEDED' || !videoUrl) {
-        throw new Error('La génération vidéo a échoué ou a expiré');
+        // Polling Runway
+        let status = 'PENDING';
+        let runwayVideoUrl: string | null = null;
+        let attempts = 0;
+        const maxAttempts = 60;
+
+        while (status !== 'SUCCEEDED' && status !== 'FAILED' && attempts < maxAttempts) {
+          await new Promise(resolve => setTimeout(resolve, 3000));
+          attempts++;
+
+          const progress = Math.min(20 + Math.floor((attempts / maxAttempts) * 70), 90);
+          await prisma.job.update({
+            where: { id: jobId },
+            data: { progress },
+          });
+
+          const { data: statusData } = await axios.get(`${RUNWAY_API}/tasks/${task.id}`, {
+            headers: { 'Authorization': `Bearer ${RUNWAY_API_KEY}` },
+          });
+
+          status = statusData.status;
+          if (statusData.output?.video_url) {
+            runwayVideoUrl = statusData.output.video_url;
+          }
+        }
+
+        if (status !== 'SUCCEEDED' || !runwayVideoUrl) {
+          throw new Error('La génération vidéo a échoué ou a expiré');
+        }
+        videoInput = runwayVideoUrl;
+      } else {
+        console.log(`🧪 [Job ${jobId}] Moteur mock : vidéo de test FFmpeg (${size}, ${runDuration}s)`);
+        videoInput = await generateMockVideo(jobId, runDuration, size);
+        await prisma.job.update({
+          where: { id: jobId },
+          data: { progress: 60 },
+        });
       }
 
       let audioBuffer: Buffer | null = null;
       let audioTempPath: string | null = null;
       let subtitles: string | null = null;
 
-      if (addVoiceover && voiceoverText) {
+      if (addVoiceover && voiceoverText && process.env.ELEVENLABS_API_KEY) {
         const audioResponse = await elevenlabs.generate({
           text: voiceoverText,
           voice: 'fr-FR-Neural2-D'
@@ -148,7 +191,7 @@ export const videoWorker = new Worker('video-generation', async (job) => {
         await writeFile(audioTempPath, audioBuffer);
       }
 
-      if (addSubtitles && audioTempPath) {
+      if (addSubtitles && audioTempPath && process.env.OPENAI_API_KEY) {
         const transcription = await openai.audio.transcriptions.create({
           file: createReadStream(audioTempPath),
           response_format: 'srt',
@@ -161,7 +204,7 @@ export const videoWorker = new Worker('video-generation', async (job) => {
 
       // Mixage Audio/Vidéo avec FFmpeg
       await new Promise<void>((resolve, reject) => {
-        const command = ffmpeg(videoUrl);
+        const command = ffmpeg(videoInput);
 
         if (audioBuffer) {
           const audioStream = Readable.from(audioBuffer);

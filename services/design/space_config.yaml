@@ -1,0 +1,7 @@
+# services/design/space_config.yaml
+title: ZAKSOFT Design Worker
+emoji: 🎨
+colorFrom: purple
+colorTo: pink
+sdk: docker
+app_port: 3002

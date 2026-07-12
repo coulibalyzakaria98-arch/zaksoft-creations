@@ -1,0 +1,29 @@
+FROM node:20-slim
+
+# Installer pnpm
+RUN npm install -g pnpm@8.15.0
+
+WORKDIR /app
+
+# Copier les fichiers de configuration
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY packages/ ./packages/
+COPY services/design/ ./services/design/
+
+# Installer les dépendances
+RUN pnpm install --frozen-lockfile
+
+# Générer le client Prisma
+RUN pnpm --filter @zaksoft/database build
+
+# Construire le worker
+RUN pnpm --filter @zaksoft/design build
+
+# Variables d'environnement par défaut
+ENV PORT=3002
+ENV NODE_ENV=production
+
+EXPOSE 3002
+
+# Démarrer le worker
+CMD ["pnpm", "--filter", "@zaksoft/design", "start"]

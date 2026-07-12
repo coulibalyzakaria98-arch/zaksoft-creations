@@ -118,13 +118,16 @@ app.post('/video/generate', async (req: AuthRequest, res) => {
     });
 
     // 3. Ajouter à la file BullMQ
-    await videoQueue.add('generate', { 
+    // On aplatit `options` au niveau racine du job : le worker déstructure
+    // duration/aspectRatio/addVoiceover/voiceoverText/addSubtitles à la racine
+    // de job.data (cf. runwayWorker.ts), pas dans un sous-objet `options`.
+    await videoQueue.add('generate', {
       jobId: dbJob.id,
-      prompt, 
+      prompt,
       imageUrl,
       engine: engine || 'runway',
-      options,
-      userId 
+      ...(options || {}),
+      userId
     }, {
       jobId: dbJob.id
     });

@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { generateWebsite } from '@/services/website-service';
 
 // Types
 interface WebsiteTemplate {
@@ -87,27 +88,34 @@ export default function WebPage() {
     }
 
     setGenerating(true);
-    
-    setTimeout(() => {
-      const generatedCode = `<!DOCTYPE html><html><head><meta charset="UTF-8"><title>${projectName || 'Site généré'}</title></head><body><h1>${projectName || 'Site généré'}</h1><p>${description}</p></body></html>`;
-      
+
+    try {
+      const { code, previewUrl } = await generateWebsite({
+        description: description || projectName,
+        template: selectedTemplate,
+        framework: selectedFramework,
+      });
+
       const newSite: GeneratedWebsite = {
         id: Date.now().toString(),
         title: projectName || `Site ${currentTemplate?.name}`,
         description: description || `Site généré avec le template ${currentTemplate?.name}`,
         template: selectedTemplate,
         framework: selectedFramework,
-        code: generatedCode,
-        previewUrl: `data:text/html;charset=utf-8,${encodeURIComponent(generatedCode)}`,
+        code,
+        previewUrl,
         createdAt: new Date(),
       };
-      
+
       setSites(prev => [newSite, ...prev]);
       setGeneratedSite(newSite);
-      setGenerating(false);
       refreshUser();
       toast.success('Site web généré avec succès !');
-    }, 3000);
+    } catch (error: any) {
+      toast.error(error?.message || 'La génération du site a échoué');
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const getPreviewScale = () => {
@@ -119,21 +127,21 @@ export default function WebPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-7xl mx-auto">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">Générateur de sites Web</h1>
-          <p className="text-gray-400">Générez des sites professionnels avec l'IA</p>
+    <div className="min-h-screen bg-black text-white">
+      <div className="container-responsive py-8">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-8 sm:mb-10 lg:mb-12">
+          <h1 className="heading-responsive text-white mb-2">Générateur de sites Web</h1>
+          <p className="text-responsive text-gray-400">Générez des sites professionnels avec l'IA</p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
           <div className="lg:col-span-1 space-y-6">
             {/* Templates */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6">
               <h2 className="font-semibold mb-4 flex items-center gap-2"><Layout className="w-5 h-5 text-purple-500" />Templates</h2>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
                 {websiteTemplates.map((t) => (
-                  <button key={t.id} onClick={() => setSelectedTemplate(t.id)} className={`p-3 rounded-xl text-center ${selectedTemplate === t.id ? 'bg-gradient-to-r ' + t.color : 'bg-white/5'}`}>
+                  <button key={t.id} onClick={() => setSelectedTemplate(t.id)} className={`p-3 rounded-xl text-center transition ${selectedTemplate === t.id ? 'bg-gradient-to-r ' + t.color + ' text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'}`}>
                     <div className="text-2xl">{t.icon}</div>
                     <p className="text-xs">{t.name}</p>
                   </button>
@@ -142,11 +150,11 @@ export default function WebPage() {
             </div>
 
             {/* Frameworks */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6">
               <h2 className="font-semibold mb-4">Framework CSS</h2>
               <div className="space-y-2">
                 {frameworks.map((f) => (
-                  <button key={f.id} onClick={() => setSelectedFramework(f.id)} className={`w-full p-3 rounded-xl text-left ${selectedFramework === f.id ? 'bg-gradient-to-r ' + f.color : 'bg-white/5'}`}>
+                  <button key={f.id} onClick={() => setSelectedFramework(f.id)} className={`w-full p-3 rounded-xl text-left transition ${selectedFramework === f.id ? 'bg-gradient-to-r ' + f.color + ' text-white' : 'bg-white/10 text-gray-300 hover:bg-white/20'}`}>
                     {f.name}
                   </button>
                 ))}
@@ -154,10 +162,10 @@ export default function WebPage() {
             </div>
 
             {/* Description */}
-            <div className="bg-white/5 border border-white/10 rounded-2xl p-6">
-              <input type="text" value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Nom du projet" className="w-full px-4 py-2 bg-black rounded-xl mb-3 border border-white/10" />
-              <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Décrivez le contenu..." className="w-full h-32 px-4 py-3 bg-black rounded-xl border border-white/10" />
-              <button onClick={handleGenerate} disabled={generating} className="w-full mt-4 py-3 bg-purple-600 rounded-xl font-bold">
+            <div className="bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-6">
+              <input type="text" value={projectName} onChange={(e) => setProjectName(e.target.value)} placeholder="Nom du projet" className="w-full px-4 py-3 bg-black rounded-xl mb-3 border border-white/10 text-sm sm:text-base" />
+              <textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="Décrivez le contenu..." className="w-full h-32 px-4 py-3 bg-black rounded-xl border border-white/10 text-sm sm:text-base" />
+              <button onClick={handleGenerate} disabled={generating} className="w-full mt-4 py-3 bg-purple-600 rounded-xl font-bold text-sm sm:text-base">
                 {generating ? 'Génération...' : `Générer (${getCreditsCost()} cr)`}
               </button>
             </div>
@@ -167,13 +175,15 @@ export default function WebPage() {
           <div className="lg:col-span-2">
             {generatedSite && (
               <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden p-4">
-                <div className="flex gap-2 mb-4">
-                  <button onClick={() => setPreviewMode('mobile')} className="p-2 bg-white/10 rounded"><Smartphone className="w-4 h-4"/></button>
-                  <button onClick={() => setPreviewMode('tablet')} className="p-2 bg-white/10 rounded"><Tablet className="w-4 h-4"/></button>
-                  <button onClick={() => setPreviewMode('desktop')} className="p-2 bg-white/10 rounded"><Monitor className="w-4 h-4"/></button>
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <button onClick={() => setPreviewMode('mobile')} className={`p-2 rounded-lg transition ${previewMode === 'mobile' ? 'bg-purple-600 text-white' : 'bg-white/10 text-gray-200'}`}><Smartphone className="w-4 h-4"/></button>
+                  <button onClick={() => setPreviewMode('tablet')} className={`p-2 rounded-lg transition ${previewMode === 'tablet' ? 'bg-purple-600 text-white' : 'bg-white/10 text-gray-200'}`}><Tablet className="w-4 h-4"/></button>
+                  <button onClick={() => setPreviewMode('desktop')} className={`p-2 rounded-lg transition ${previewMode === 'desktop' ? 'bg-purple-600 text-white' : 'bg-white/10 text-gray-200'}`}><Monitor className="w-4 h-4"/></button>
                 </div>
-                <div className={`${getPreviewScale()} mx-auto h-[500px] bg-white rounded-lg`}>
-                  <iframe src={generatedSite.previewUrl} className="w-full h-full border-0" title="Aperçu"/>
+                <div className="w-full rounded-lg bg-white overflow-hidden">
+                  <div className="w-full h-64 sm:h-80 md:h-96 bg-white rounded-lg overflow-hidden">
+                    <iframe src={generatedSite.previewUrl} className="w-full h-full border-0" title="Aperçu" />
+                  </div>
                 </div>
               </div>
             )}

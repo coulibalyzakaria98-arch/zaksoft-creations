@@ -67,8 +67,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       {/* Main content */}
       <div className="lg:pl-64">
         {/* Top bar */}
-        <div className="sticky top-0 z-40 bg-white border-b border-gray-200 px-4 py-3 lg:px-6">
-          <div className="flex items-center justify-between">
+        <div className="sticky top-0 z-40 bg-white border-b border-gray-200">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
             <button
               className="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100"
               onClick={() => setSidebarOpen(true)}
@@ -97,7 +97,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         {/* Page content */}
-        <main className="p-6">
+        <main className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
           {children}
         </main>
       </div>

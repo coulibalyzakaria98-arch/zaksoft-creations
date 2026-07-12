@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { toast } from 'sonner';
+import { generateImage } from '@/services/image-service';
 
 // Types
 interface GeneratedImage {
@@ -80,22 +81,30 @@ export default function DesignPage() {
     }
 
     setGenerating(true);
-    
-    // Simulation de génération (à remplacer par appel API réel)
-    setTimeout(() => {
+
+    // Le backend attend une résolution WxH ; '4k' n'est pas exploitable tel quel.
+    const resolutionMap: Record<string, string> = { '4k': '2048x2048' };
+    const resolution = resolutionMap[selectedSize] || selectedSize;
+    const fullPrompt = selectedStyle ? `${prompt}, ${selectedStyle} style` : prompt;
+
+    try {
+      const url = await generateImage({ prompt: fullPrompt, resolution });
       const newImage: GeneratedImage = {
         id: Date.now().toString(),
-        url: `https://picsum.photos/1024/1024?random=${Date.now()}`,
+        url,
         prompt: prompt,
         createdAt: new Date(),
         size: selectedSize,
         isFavorite: false,
       };
       setGeneratedImages(prev => [newImage, ...prev]);
-      setGenerating(false);
       refreshUser();
       toast.success('Image générée avec succès !');
-    }, 3000);
+    } catch (error: any) {
+      toast.error(error?.message || "La génération d'image a échoué");
+    } finally {
+      setGenerating(false);
+    }
   };
 
   // Toggle favori
@@ -136,22 +145,22 @@ export default function DesignPage() {
 
   return (
     <div className="min-h-screen bg-black">
-      <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="container-responsive py-8">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+          <h1 className="heading-responsive text-white mb-2">
             Création d'image IA
           </h1>
-          <p className="text-gray-400">
+          <p className="text-responsive text-gray-400">
             Générez des images uniques avec notre intelligence artificielle
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid-responsive gap-8">
           {/* Panneau de gauche - Formulaire */}
           <div className="lg:col-span-1 space-y-6">
             {/* Upload d'images */}
@@ -292,7 +301,7 @@ export default function DesignPage() {
           {/* Panneau de droite - Galerie */}
           <div className="lg:col-span-2 space-y-6">
             {/* Barre d'outils */}
-            <div className="flex justify-between items-center">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex gap-2">
                 <button
                   onClick={() => setViewMode('grid')}
@@ -308,24 +317,23 @@ export default function DesignPage() {
                 </button>
               </div>
               
-              <div className="flex gap-2">
+              <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                 <button
                   onClick={() => setShowHistory(!showHistory)}
-                  className="px-3 py-2 bg-white/10 rounded-lg text-white text-sm hover:bg-white/20 transition"
+                  className="px-3 py-2 bg-white/10 rounded-lg text-white text-sm sm:text-base hover:bg-white/20 transition"
                 >
                   {showHistory ? '📜 Historique' : '⭐ Favoris'}
                 </button>
-              </div>
-
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
-                <input
-                  type="text"
-                  placeholder="Rechercher..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 pr-4 py-2 bg-white/10 border border-white/10 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
-                />
+                <div className="relative w-full sm:w-auto">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-500" />
+                  <input
+                    type="text"
+                    placeholder="Rechercher..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 bg-white/10 border border-white/10 rounded-lg text-white text-sm sm:text-base placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-orange-500"
+                  />
+                </div>
               </div>
             </div>
 
@@ -346,19 +354,17 @@ export default function DesignPage() {
                         exit={{ opacity: 0, scale: 0.9 }}
                         transition={{ delay: index * 0.05 }}
                         className={`bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden ${
-                          viewMode === 'list' ? 'flex' : ''
+                          viewMode === 'list' ? 'flex flex-col sm:flex-row' : ''
                         }`}
                       >
-                        <div className={viewMode === 'list' ? 'w-32 h-32 flex-shrink-0' : 'w-full aspect-square'}>
+                        <div className={viewMode === 'list' ? 'w-full sm:w-40 h-40 flex-shrink-0' : 'w-full aspect-square'}>
                           <img src={image.url} alt={image.prompt} className="w-full h-full object-cover" />
                         </div>
                         <div className="p-4 flex-1">
-                          <p className="text-white text-sm line-clamp-2">{image.prompt}</p>
-                          <div className="flex items-center gap-3 mt-2">
-                            <span className="text-gray-500 text-xs">{image.size}</span>
-                            <span className="text-gray-500 text-xs">
-                              {new Date(image.createdAt).toLocaleDateString()}
-                            </span>
+                          <p className="text-white text-responsive line-clamp-2">{image.prompt}</p>
+                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 mt-2 text-gray-500 text-xs sm:text-sm">
+                            <span>{image.size}</span>
+                            <span>{new Date(image.createdAt).toLocaleDateString()}</span>
                           </div>
                           <div className="flex gap-2 mt-3">
                             <button
