@@ -39,6 +39,8 @@ COPY --from=builder /app/pnpm-workspace.yaml ./pnpm-workspace.yaml
 COPY --from=builder /app/packages/database/dist ./packages/database/dist
 COPY --from=builder /app/packages/database/generated-client ./packages/database/generated-client
 COPY --from=builder /app/packages/database/package.json ./packages/database/package.json
+# Requis au runtime : `start.sh` lance `prisma db push`, qui a besoin du schéma.
+COPY --from=builder /app/packages/database/schema.prisma ./packages/database/schema.prisma
 COPY --from=builder /app/packages/health/dist ./packages/health/dist
 COPY --from=builder /app/packages/health/package.json ./packages/health/package.json
 COPY --from=builder /app/packages/logging/dist ./packages/logging/dist
