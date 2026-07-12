@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "scripts": {
     "dev": "nodemon src/index.ts",
-    "build": "tsc",
+    "build": "pnpm --filter @zaksoft/database db:push && tsc",
     "start": "node dist/index.js",
     "type-check": "tsc --noEmit"
   },
