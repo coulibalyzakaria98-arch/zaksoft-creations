@@ -4,8 +4,8 @@
 # dans les logs Render) plutôt que de démarrer un serveur qui renverra des 500.
 set -e
 
-echo "🔄 Synchronisation du schéma de la base de données..."
-pnpm --filter @zaksoft/database db:push
+echo "🔄 Synchronisation de la base de données..."
+npx prisma db push
 
-echo "🚀 Démarrage du service Auth..."
-node services/auth/dist/index.js
+echo "🚀 Lancement du service Auth..."
+node dist/index.js
