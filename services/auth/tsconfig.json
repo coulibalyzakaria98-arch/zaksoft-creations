@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "module": "CommonJS",
-    "moduleResolution": "node16",
-    "ignoreDeprecations": "6.0",
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "ignoreDeprecations": "5.0",
     "allowJs": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
@@ -11,11 +11,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "./dist",
-    "rootDir": "./src",
-    "baseUrl": ".",
-    "paths": {
-      "@zaksoft/database": ["../../packages/database/dist/index.js"]
-    }
+    "rootDir": "./src"
   },
   "include": ["src/**/*"]
 }
