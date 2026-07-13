@@ -5,7 +5,16 @@
 set -e
 
 echo "🔄 Synchronisation de la base de données..."
-npx prisma db push
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+SCHEMA_PATH="$REPO_ROOT/packages/database/schema.prisma"
+
+if [ ! -f "$SCHEMA_PATH" ]; then
+  echo "❌ Impossible de trouver le fichier schema.prisma à : $SCHEMA_PATH" >&2
+  exit 1
+fi
+
+npx prisma db push --schema="$SCHEMA_PATH"
 
 echo "🚀 Lancement du service Auth..."
 node dist/index.js
