@@ -14,7 +14,13 @@ if [ ! -f "$SCHEMA_PATH" ]; then
   exit 1
 fi
 
-npx prisma db push --schema="$SCHEMA_PATH"
+if [ -z "${DATABASE_URL:-}" ]; then
+  echo "⚠️ DATABASE_URL non défini. La synchronisation Prisma est ignorée et le service démarrera sans base au démarrage."
+else
+  if ! npx prisma db push --schema="$SCHEMA_PATH"; then
+    echo "⚠️ La synchronisation Prisma a échoué. Le service continue malgré tout pour éviter un crash de déploiement."
+  fi
+fi
 
 echo "🚀 Lancement du service Auth..."
 node dist/index.js

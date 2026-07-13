@@ -1,6 +1,6 @@
 import { Worker } from 'bullmq';
 import Redis from 'ioredis';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@zaksoft/database';
 
 const prisma = new PrismaClient();
 const redis = new Redis(process.env.REDIS_URL || 'redis://localhost:6379');
