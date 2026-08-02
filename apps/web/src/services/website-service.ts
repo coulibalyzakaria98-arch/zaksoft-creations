@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const WEB_GEN_API_URL = process.env.NEXT_PUBLIC_WEB_GEN_API_URL || 'http://localhost:3004';
+const WEB_GEN_API_URL = process.env.NEXT_PUBLIC_WEBGEN_API_URL || process.env.NEXT_PUBLIC_WEB_GEN_API_URL || 'http://localhost:3004';
 
 function getAuthHeaders() {
   if (typeof window === 'undefined') return {};

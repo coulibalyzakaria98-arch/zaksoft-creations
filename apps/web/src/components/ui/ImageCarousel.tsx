@@ -11,7 +11,7 @@ const images = [
     prompt: "Une ville futuriste avec des néons et des drones"
   },
   {
-    url: 'https://images.unsplash.com/photo-1536240474400-b3b87e2f87dd?w=800&h=500&fit=crop',
+    url: 'https://images.unsplash.com/photo-1500375592092-40eb2168fd21?w=800&h=500&fit=crop',
     title: 'Vidéo IA - Cinématique',
     prompt: "Coucher de soleil sur l'océan, style cinématique"
   },

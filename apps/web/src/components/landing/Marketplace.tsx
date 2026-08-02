@@ -24,7 +24,7 @@ const products = [
     price: "25,000 FCFA",
     rating: 4.8,
     downloads: "850",
-    image: "https://images.unsplash.com/photo-1536240478700-b869070f9279?auto=format&fit=crop&q=80&w=500",
+    image: "https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?auto=format&fit=crop&q=80&w=500",
     trending: false
   },
   {

@@ -32,7 +32,7 @@ const tabs = [
     icon: BarChart3,
     title: 'Analysez vos performances',
     description: 'Utilisez l\'IA pour prédire le succès de vos contenus et optimiser vos campagnes marketing en temps réel.',
-    image: 'https://images.unsplash.com/photo-1551288049-bbbda536339a?auto=format&fit=crop&q=80&w=1000',
+    image: 'https://images.unsplash.com/photo-1551038247-3d9af20df552?auto=format&fit=crop&q=80&w=1000',
     features: ['Prédiction d\'engagement', 'Analyse de sentiment', 'Rapports automatisés']
   }
 ];

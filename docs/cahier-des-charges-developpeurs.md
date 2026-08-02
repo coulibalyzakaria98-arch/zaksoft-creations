@@ -1,5 +1,26 @@
 # Cahier des charges — Version développeurs
 
+## 0. Contexte et vision du projet
+
+**ZAKSOFT Créations** est une plateforme intelligente tout-en-un combinant design graphique, développement web, génération vidéo et communication digitale, propulsée par l'IA. Elle vise à rendre la création de contenus numériques accessible à des utilisateurs non-techniques (entrepreneurs, PME, créateurs de contenu, freelances, associations) via des instructions simples en langage naturel.
+
+### Objectifs
+
+- Automatiser la création graphique via l'IA
+- Simplifier la conception de sites web
+- Générer automatiquement des vidéos (marketing, éducatives, promotionnelles) — axe stratégique différenciant
+- Optimiser la communication digitale (rédaction, planification)
+- Rendre la création accessible sans compétences techniques préalables
+
+### Valeur ajoutée
+
+- Solution tout-en-un (design + web + vidéo + marketing), à l'inverse d'outils disjoints
+- Gain de temps et réduction des coûts de production par rapport à une production manuelle
+- Production rapide de contenus de qualité professionnelle
+- Ciblage des marchés africain et international
+
+Les sections suivantes détaillent l'architecture et les spécifications techniques permettant l'implémentation.
+
 ## 1. Architecture générale
 
 - Web app : SPA avec PWA possible
@@ -156,7 +177,7 @@
 
 - GitHub Actions
 - Docker + Docker Compose pour dev
-- Kubernetes pour prod
+- Kubernetes pour prod (GKE / EKS)
 - Environnements : dev, staging, prod
 
 ## 12. Roadmap technique

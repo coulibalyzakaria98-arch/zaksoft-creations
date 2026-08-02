@@ -44,7 +44,7 @@ const webGenQueue = new Queue('web-generation', {
 // Initialiser les métriques BullMQ
 setupBullMQMetrics(webGenQueue);
 
-const corsOriginRaw = process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001,https://zaksoft-creations.vercel.app,https://*.vercel.app';
+const corsOriginRaw = process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001,https://zaksoft.com,https://www.zaksoft.com,https://zaksoft-creations.vercel.app,https://*.vercel.app';
 
 const allowedOrigins: Array<string | RegExp> = corsOriginRaw
   .split(',')

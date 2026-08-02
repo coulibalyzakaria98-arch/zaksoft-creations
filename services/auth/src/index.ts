@@ -1,7 +1,7 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@zaksoft/database';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
@@ -42,7 +42,7 @@ logger.info('Environment variables loaded successfully.');
 
 app.use(helmet()); // Apply security headers
 
-const corsOriginRaw = process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001,https://zaksoft-creations.vercel.app,https://*.vercel.app';
+const corsOriginRaw = process.env.CORS_ORIGINS || 'http://localhost:3000,http://localhost:3001,https://zaksoft.com,https://www.zaksoft.com,https://zaksoft-creations.vercel.app,https://*.vercel.app';
 
 const allowedOrigins: Array<string | RegExp> = corsOriginRaw
   .split(',')
